@@ -1,0 +1,8 @@
+;; A hit circle that changes color halfway (`HitCircle:change_color(0.5,
+;; color)`): white for 0.15 s, then red, shrinking for 0.3 s.
+include "../../src/game.atm"
+spawn Background()
+pin fx = tasks()
+spawn @fx HitCircle(W/2, H/2, [rs=40, color=fg@0, duration=0.3, scale_down=true, change_color=[0.5, red@0]])
+await :all fx
+print("end", eng.tick())

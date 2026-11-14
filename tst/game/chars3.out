@@ -7,148 +7,164 @@
 240	add	Critter 315.6 150.8
 240	add	Critter 315.6 150.8
 240	wave	1
-270	add	SpawnMarker 80.0 135.0
+270	add	SpawnMarker 240.0 135.0
 300	add	Critter 387.6 150.8
 300	add	Critter 387.6 150.8
-350	add	Seeker 68.0 123.0
+350	add	Seeker 228.0 123.0
 351	enemy.die	seeker
-356	add	Seeker 92.0 123.0
+356	add	Seeker 252.0 123.0
+356	enemy.die	seeker
 360	add	Critter 395.1 150.8
 360	add	Critter 395.1 150.8
-362	enemy.die	seeker
-362	add	Seeker 92.0 147.0
-368	add	Seeker 68.0 147.0
-374	add	Seeker 80.0 135.0
-380	add	Seeker 68.0 123.0
+374	add	Seeker 240.0 135.0
+380	add	Seeker 228.0 123.0
 381	enemy.die	seeker
-381	enemy.die	seeker
-381	enemy.die	seeker
-381	enemy.die	seeker
-386	add	Seeker 92.0 123.0
-392	add	Seeker 92.0 147.0
-418	enemy.die	seeker
-418	add	Critter 102.9 151.9
-418	add	Critter 102.9 151.9
-418	add	Critter 102.9 151.9
-418	add	Critter 102.9 151.9
-418	add	Critter 102.9 151.9
-418	add	Critter 102.9 151.9
-418	unit.hit	elementor 205.9
-419	enemy.die	seeker
-419	add	Critter 102.3 136.9
-419	add	Critter 102.3 136.9
-419	add	Critter 102.3 136.9
-419	add	Critter 102.3 136.9
-419	add	Critter 102.3 136.9
-419	add	Critter 102.3 136.9
-419	wave	2
+381	add	Critter 238.5 136.5
+381	add	Critter 238.5 136.5
+381	add	Critter 238.5 136.5
+381	add	Critter 238.5 136.5
+381	add	Critter 238.5 136.5
+381	add	Critter 238.5 136.5
+381	enemy.die	speed_booster
+386	add	Seeker 252.0 123.0
+390	enemy.die	seeker
+393	wave	2
 420	add	Critter 323.1 150.8
 420	add	Critter 323.1 150.8
-449	add	SpawnMarker 80.0 135.0
-480	add	Critter 251.1 150.9
-480	add	Critter 251.1 150.9
+423	add	SpawnMarker 400.0 135.0
+480	add	Critter 250.7 150.9
+480	add	Critter 250.7 150.9
 480	unit.hit	flagellant 633.0
-487	add	Bomb 219.9 150.9
+487	add	Bomb 219.1 150.9
 487	add	Turret 240.3 150.9
-529	add	Seeker 68.0 123.0
-530	enemy.die	seeker
-535	add	Seeker 92.0 123.0
+503	add	Seeker 388.0 123.0
+503	enemy.die	seeker
+503	add	Gold 388.0 123.0
+503	unit.hit	flagellant 622.6
+509	add	Seeker 412.0 123.0
+510	enemy.die	seeker
+515	add	Seeker 412.0 147.0
+516	enemy.die	seeker
+516	add	Gold 412.0 147.0
+521	add	Seeker 388.0 147.0
+527	add	Seeker 400.0 135.0
+533	add	Seeker 388.0 123.0
 536	enemy.die	seeker
-540	add	Critter 180.3 150.8
-540	add	Critter 180.3 150.8
-553	add	Seeker 80.0 135.0
-553	enemy.die	speed_booster
-559	add	Seeker 68.0 123.0
-560	enemy.die	seeker
-560	add	Gold 68.0 123.0
-565	add	Seeker 92.0 123.0
-566	enemy.die	seeker
-583	add	Seeker 80.0 135.0
-589	enemy.die	seeker
-589	wave	3
-600	add	Critter 108.7 150.8
-600	add	Critter 108.7 150.8
-619	add	SpawnMarker 80.0 135.0
-660	add	Critter 68.1 150.8
-660	add	Critter 68.1 150.8
-699	add	Seeker 68.0 123.0
-700	enemy.die	seeker
-705	add	Seeker 92.0 123.0
-711	add	Seeker 92.0 147.0
-717	add	Seeker 68.0 147.0
-719	enemy.die	seeker
-720	add	Critter 141.2 150.9
-720	add	Critter 141.2 150.9
-720	add	ForceField 142.4 150.9
-720	add	ForceField 204.8 150.9
-720	add	ForceField 204.8 150.9
-720	enemy.die	seeker
-722	enemy.die	seeker
-729	add	Seeker 68.0 123.0
-730	enemy.die	seeker
-735	add	Seeker 92.0 123.0
-735	enemy.die	seeker
-735	unit.hit	chronomancer 278.2
-741	add	Seeker 92.0 147.0
-744	enemy.die	speed_booster
-744	add	Gold 92.3 147.0
-747	add	Seeker 68.0 147.0
-753	add	Seeker 80.0 135.0
-753	enemy.die	seeker
-753	unit.hit	chronomancer 268.4
-756	enemy.die	speed_booster
-756	add	Gold 71.6 148.3
-759	add	Seeker 68.0 123.0
-765	add	Seeker 92.0 123.0
-765	enemy.die	seeker
-765	unit.hit	chronomancer 258.6
-765	enemy.die	seeker
-765	unit.hit	chronomancer 248.8
-766	wave	4
-780	add	Critter 212.1 150.8
-780	add	Critter 212.1 150.8
-796	add	SpawnMarker 240.0 135.0
-797	gold	1
-801	add	Volcano 259.0 142.9
-840	add	Critter 284.0 150.9
-840	add	Critter 284.0 150.9
-876	add	Seeker 228.0 123.0
-876	enemy.die	seeker
-882	add	Seeker 252.0 123.0
-882	enemy.die	seeker
-888	add	Seeker 252.0 147.0
-888	enemy.die	seeker
-894	add	Seeker 228.0 147.0
-894	enemy.die	seeker
-900	add	Seeker 240.0 135.0
-900	enemy.die	seeker
-901	add	Critter 332.0 147.5
-901	add	Critter 332.0 147.5
-906	add	Seeker 228.0 123.0
-906	enemy.die	seeker
-912	add	Seeker 252.0 123.0
-913	enemy.die	speed_booster
-913	add	Gold 252.0 123.0
-918	add	Seeker 252.0 147.0
-918	enemy.die	seeker
-924	add	Seeker 228.0 147.0
-924	enemy.die	seeker
-930	add	Seeker 240.0 135.0
-930	enemy.die	seeker
-936	add	Seeker 228.0 123.0
-936	enemy.die	seeker
-942	add	Seeker 252.0 123.0
-942	enemy.die	seeker
-955	clear	3
-960	add	Tree 425.5 149.5
-960	unit.hit	flagellant 1342.6
-961	add	Critter 338.3 138.7
-961	add	Critter 338.3 138.7
-966	add	Bomb 396.7 150.9
-966	add	Turret 408.1 147.0
-970	gold	2
-1021	add	Critter 344.4 130.1
-1021	add	Critter 344.4 130.1
-1081	add	Critter 350.7 121.2
-1081	add	Critter 350.7 121.2
-1082	add	Volcano 240.0 143.0
+536	unit.hit	flagellant 612.2
+539	add	Seeker 412.0 123.0
+540	enemy.die	seeker
+540	enemy.die	seeker
+540	add	Critter 177.9 150.9
+540	add	Critter 177.9 150.9
+540	gold	1
+545	add	Seeker 412.0 147.0
+546	enemy.die	seeker
+546	enemy.die	seeker
+551	add	Seeker 388.0 147.0
+554	gold	2
+557	add	Seeker 400.0 135.0
+572	enemy.die	seeker
+595	enemy.die	speed_booster
+595	wave	3
+600	add	Critter 107.1 150.8
+600	add	Critter 107.1 150.8
+629	add	SpawnMarker 80.0 211.0
+629	add	SpawnMarker 240.0 135.0
+637	add	SpawnMarker 400.0 211.0
+660	add	Critter 69.4 150.8
+660	add	Critter 69.4 150.8
+708	add	Seeker 68.0 199.0
+709	enemy.die	seeker
+709	add	Seeker 228.0 123.0
+709	enemy.die	seeker
+714	add	Seeker 92.0 199.0
+715	add	Seeker 252.0 123.0
+715	enemy.die	seeker
+717	add	Seeker 388.0 199.0
+718	enemy.die	seeker
+720	add	Critter 143.7 151.0
+720	add	Critter 143.7 151.0
+720	add	ForceField 335.0 93.0
+720	add	ForceField 80.8 138.4
+720	add	ForceField 80.8 138.4
+720	add	Seeker 92.0 223.0
+721	add	Volcano 140.2 180.9
+721	add	Volcano 140.2 181.0
+723	add	Seeker 412.0 199.0
+723	enemy.die	seeker
+726	add	Seeker 68.0 223.0
+728	enemy.die	seeker
+729	add	Seeker 412.0 223.0
+735	add	Seeker 388.0 223.0
+739	enemy.die	seeker
+739	enemy.die	seeker
+739	enemy.die	seeker
+749	enemy.die	seeker
+751	add	Volcano 231.5 143.0
+752	add	SpawnMarker 240.0 135.0
+752	add	SpawnMarker 80.0 211.0
+780	add	Critter 183.5 146.8
+780	add	Critter 183.5 146.8
+813	add	Volcano 260.3 142.9
+831	add	Seeker 228.0 123.0
+831	enemy.die	seeker
+832	add	Seeker 68.0 199.0
+837	add	Seeker 252.0 123.0
+837	enemy.die	seeker
+838	add	Seeker 92.0 199.0
+841	add	Critter 189.3 137.5
+841	add	Critter 189.3 137.5
+841	enemy.die	seeker
+841	enemy.die	seeker
+843	add	Seeker 252.0 147.0
+843	enemy.die	seeker
+844	add	Seeker 92.0 223.0
+849	add	Seeker 228.0 147.0
+849	enemy.die	seeker
+849	enemy.die	seeker
+850	add	Seeker 68.0 223.0
+859	enemy.die	seeker
+880	wave	4
+901	add	Critter 194.9 128.4
+901	add	Critter 194.9 128.4
+910	add	SpawnMarker 240.0 135.0
+961	add	Critter 200.6 119.3
+961	add	Critter 200.6 119.3
+961	add	Tree 245.4 117.8
+961	unit.hit	flagellant 1342.6
+967	add	Bomb 274.2 122.4
+967	add	Turret 222.0 119.3
+990	add	Seeker 228.0 123.0
+990	enemy.die	seeker
+990	add	Gold 228.0 123.0
+990	unit.hit	engineer 390.4
+996	add	Seeker 252.0 123.0
+996	enemy.die	seeker
+996	add	Gold 252.0 123.0
+1014	add	Seeker 240.0 135.0
+1014	enemy.die	seeker
+1014	add	Gold 240.0 135.0
+1020	add	Seeker 228.0 123.0
+1020	gold	3
+1021	enemy.die	speed_booster
+1021	add	Critter 206.3 110.1
+1021	add	Critter 206.3 110.1
+1026	add	Seeker 252.0 123.0
+1026	enemy.die	seeker
+1044	add	Seeker 240.0 135.0
+1044	enemy.die	seeker
+1046	gold	4
+1050	add	Seeker 228.0 123.0
+1050	enemy.die	speed_booster
+1056	add	Seeker 252.0 123.0
+1056	enemy.die	seeker
+1067	add	Volcano 279.6 121.7
+1070	clear	3
+1081	add	Critter 211.9 101.1
+1081	add	Critter 211.9 101.1
+1126	gold	5
+1133	add	Volcano 229.3 143.0
+1141	add	Critter 217.6 92.0
+1141	add	Critter 217.6 92.0
+1202	add	Critter 223.2 82.8
+1202	add	Critter 223.2 82.8

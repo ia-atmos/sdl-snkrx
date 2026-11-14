@@ -14,19 +14,17 @@
 479	add	Seeker 400.0 135.0
 516	enemy.die	speed_booster
 564	enemy.die	seeker
-598	enemy.die	seeker
-598	unit.hit	vagrant 582.7
+593	enemy.die	seeker
+597	enemy.die	seeker
+597	unit.hit	vagrant 582.7
 610	enemy.die	seeker
 610	unit.hit	vagrant 565.3
-611	enemy.die	seeker
-611	unit.hit	vagrant 548.0
 612	enemy.die	seeker
-612	unit.hit	vagrant 530.7
-621	enemy.die	seeker
-621	unit.hit	vagrant 513.3
-627	enemy.die	seeker
-631	enemy.die	seeker
+617	enemy.die	seeker
+620	enemy.die	seeker
+620	unit.hit	vagrant 548.0
 643	enemy.die	seeker
-659	enemy.die	seeker
-659	clear	6
-840	buy_screen	11
+660	enemy.die	seeker
+660	enemy.die	seeker
+660	clear	6
+841	buy_screen	11

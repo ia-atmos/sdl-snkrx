@@ -119,8 +119,8 @@ task HitCircle (x, y, o) {
             eng.circle(x, y, st.rs, color)
         }
     }
-    if o.change_color {
-        spawn {
+    spawn {
+        if o.change_color {
             await((o.change_color@0 * dur) * 1s)
             set color = o.change_color@1
         }

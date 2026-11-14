@@ -13,6 +13,7 @@ where it was seen, and its status.
 | 5 | A hang when the program ends inside an emit | fixed in `9ec67ec` |
 | 6 | `await :all` on an empty pool | as the reference Atmos; a question for the author |
 | 7 | A spawn in a loop or an `if` ends with its block, silently | caught at `3cc4855`: a compile error when the spawn ends its block; it found 3 more in the port |
+| 8 | A time await splits the time of the tick for every task | by design of the runtime, as far as the port knows; the port integrates on `:clock`, so a tick can take two steps (a question for the author) |
 
 The port follows `main` of the compiler; it was at `995c3b2` when the
 three fixes arrived.
@@ -244,3 +245,51 @@ at the block inside the spawn, not at the block around it.
   in the transition to the shop (`if e.counting { spawn { ... } }`); it
   showed the zeros of the first text until the end. Fixed by the test
   inside the spawn; `tst/game/gold` shows the three steps.
+- `src/fx.atm`, `HitCircle`: the circles of the hits never changed to
+  the color of the unit or enemy halfway (`if o.change_color { spawn
+  { ... } }`), as `HitCircle:change_color` does. Fixed the same way;
+  `tst/game/hitcircle`. The fix moved positions and deaths in six
+  arena tests, though a color is never read by the game: see 8.
+
+## 8. A time await splits the time of the tick for every task
+
+Seen at `9ad3291` (and at `44dbe47`).
+
+```
+spawn {
+    loop us on :clock {
+        print("clock", eng.tick(), us)
+    }
+}
+spawn {
+    await 25ms
+    print("woke", eng.tick())
+}
+```
+
+prints
+
+```
+clock	1	16666
+clock	2	8334
+woke	2
+clock	2	8333
+clock	3	16667
+```
+
+The runtime wakes a time await at its deadline, so it cuts the time of
+the tick there, and every task that awaits the time gets two events in
+that tick. This is exact for the timers. But the port steps its physics
+on `:clock` (`src/arena.atm`, `phys_step(w, us/1000000)`), and its
+springs, tweens and movements integrate on it, some once per event
+(`loop on :clock`, with no `us`). So any timer, anywhere, gives the
+whole game two steps in that tick, and a change that only adds a timer
+moves the game: the fix of `HitCircle` above (a wait of 0.15 s for a
+color) moved the positions and deaths of six tests.
+
+The original steps once per frame, with the `dt` of the frame.
+
+What the port could do: step and integrate on one event per tick of
+game time, emitted by the engine (not on the events of the runtime's
+time), and keep `await 1s` for the timers. This changes the expected
+outputs of every arena test, so it is left for the author to decide.
