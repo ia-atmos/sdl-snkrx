@@ -125,8 +125,10 @@ task Transition (e) {
     }
     await TweenReal(0.6, st, [rs=1.2*W], linear)
     emit @:global :covered
-    if e.counting {
-        spawn {
+    ;; the test is inside the spawn: a spawn that ends the block of an
+    ;; `if` is aborted with it (it was, until the compiler caught it)
+    spawn {
+        if e.counting {
             loop k in 3 {
                 await WaitReal(if k == 0 => 0.1 => 0.2)
                 set t.lines = gold_lines(e.counting, k)

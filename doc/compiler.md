@@ -12,7 +12,7 @@ where it was seen, and its status.
 | 4 | `pub` accepted as a name | fixed in `9ec67ec`: a compile error |
 | 5 | A hang when the program ends inside an emit | fixed in `9ec67ec` |
 | 6 | `await :all` on an empty pool | as the reference Atmos; a question for the author |
-| 7 | A spawn in a loop or an `if` ends with its block, silently | by design; a warning would help |
+| 7 | A spawn in a loop or an `if` ends with its block, silently | caught at `3cc4855`: a compile error when the spawn ends its block; it found 3 more in the port |
 
 The port follows `main` of the compiler; it was at `995c3b2` when the
 three fixes arrived.
@@ -225,3 +225,22 @@ block (the only one left is meant: a screen pinned in `main.atm`).
 
 What would help: a warning for a spawn with no pool as the last
 statement of a block, or in a block that ends without awaiting it.
+
+### Caught by the compiler, at `3cc4855`
+
+The compiler now refuses a spawn with no pool, whose value is unused,
+that is the last statement of its block, of a task that may await:
+
+```
+invalid spawn : the task is aborted at the end of its block
+```
+
+It found three more in the port, each a `spawn { ... }` inside an `if`.
+The script above missed them: it skipped the anonymous spawns
+(`spawn {`), since the body of one is a task of its own, and it looked
+at the block inside the spawn, not at the block around it.
+
+- `src/shared.atm`, `Transition`: the gold of a level never counted up
+  in the transition to the shop (`if e.counting { spawn { ... } }`); it
+  showed the zeros of the first text until the end. Fixed by the test
+  inside the spawn; `tst/game/gold` shows the three steps.

@@ -1,0 +1,13 @@
+;; The transition from a level to the shop: after it covers the screen,
+;; the gold of the level counts up, line by line (`Arena:transition`):
+;; the gold gained, then the interest, then the total.
+include "../../src/game.atm"
+spawn Background()
+spawn {
+    loop on :covered {
+        print("covered", eng.tick())
+    }
+}
+val A = [ gold_gained=5, gold_picked_up=1, interest=2 ]
+await Transition([ screen=:buy_screen, x=W/2, y=H/2, color=fg@0, lines=gold_lines(A, -1), counting=A ])
+print("end", eng.tick())
