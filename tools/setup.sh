@@ -18,14 +18,16 @@ set -e
 cd "$(dirname "$0")/.."
 mkdir -p ext
 
-ATMOS_REV=main
+# the compiler, at a commit: `main` has since changed the rules of
+# `pin` (98ad03a), which the port does not follow yet
+ATMOS_REV=44dbe47
 BOX2D_REV=v3.1.1
 SNKRX_REV=6b93a64
 
 if [ ! -d ext/atmos ]; then
     git clone -q https://github.com/ia-atmos/lang ext/atmos
 fi
-(cd ext/atmos && git fetch -q origin && git checkout -q "origin/$ATMOS_REV" && make -s)
+(cd ext/atmos && git fetch -q origin && git checkout -q "$ATMOS_REV" && make -s)
 
 if [ ! -d ext/box2d ]; then
     git clone -q --depth 1 -b "$BOX2D_REV" https://github.com/erincatto/box2d ext/box2d

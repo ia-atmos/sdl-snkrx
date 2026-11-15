@@ -15,8 +15,10 @@ where it was seen, and its status.
 | 7 | A spawn in a loop or an `if` ends with its block, silently | caught at `3cc4855`: a compile error when the spawn ends its block; it found 3 more in the port |
 | 8 | A time await splits the time of the tick for every task | by design of the runtime, as far as the port knows; the port integrates on `:clock`, so a tick can take two steps (a question for the author) |
 
-The port follows `main` of the compiler; it was at `995c3b2` when the
-three fixes arrived.
+The port followed `main` of the compiler; it was at `995c3b2` when the
+three fixes arrived. It is now pinned at `44dbe47` (`tools/setup.sh`),
+which has the check of finding 7: `main` has since changed the rules of
+`pin` (`98ad03a`), and moving to them waits for the author.
 
 ## 1. Time is global: no clock for a part of the program
 

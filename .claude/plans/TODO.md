@@ -30,6 +30,9 @@ possible.
 
 ## B. Work known and not done
 
+0. The compiler is pinned at `44dbe47` (`tools/setup.sh`): `main` has
+   new rules of `pin` (`98ad03a`, e.g. `val t = [1,2]` must be `pin`).
+   Moving to them waits for the author's decision.
 1. Features left out, now to be done (the author asked for all):
    the tutorial, the credits
    screen, dragging a unit in the party, the buttons that open web
