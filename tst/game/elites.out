@@ -8,10 +8,11 @@
 120	enemy.die	headbutter
 130	enemy.die	exploder
 173	enemy.die	seeker
-186	enemy.die	seeker
-195	enemy.die	speed_booster
-274	enemy.die	shooter
-305	unit.hit	vagrant 578.7
-338	enemy.die	speed_booster
-338	clear	6
-519	buy_screen
+187	enemy.die	seeker
+257	enemy.die	speed_booster
+280	unit.hit	vagrant 578.7
+290	enemy.die	shooter
+300	unit.hit	vagrant 557.3
+328	enemy.die	speed_booster
+328	clear	6
+509	buy_screen

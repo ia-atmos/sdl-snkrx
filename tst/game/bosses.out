@@ -22,35 +22,46 @@
 101	unit.hit	swordsman 108.4
 126	unit.hit	squire 158.0
 126	unit.hit	cleric 98.7
-189	unit.hit	squire 148.0
-200	unit.hit	cleric 88.0
 201	enemy.die	seeker
 201	enemy.die	seeker
-201	enemy.die	seeker
-206	unit.hit	swordsman 97.8
-210	enemy.die	seeker
-225	unit.hit	cleric 64.5
-225	unit.hit	swordsman 7.3
-227	unit.hit	swordsman -83.3
-227	unit.die	swordsman
-227	unit.hit	cleric -27.1
-227	unit.die	cleric
-240	enemy.die	seeker
-254	unit.hit	squire 51.4
-262	enemy.die	tank
-262	add	EnemyCritter 253.3 78.3
-262	add	EnemyCritter 253.3 78.3
-262	add	EnemyCritter 253.3 78.3
-262	add	EnemyCritter 253.3 78.3
-262	enemy.die	seeker
-316	enemy.die	seeker
-316	unit.hit	squire 41.4
-383	enemy.die	spawner
-383	add	EnemyCritter 244.9 230.1
-383	add	EnemyCritter 244.9 230.1
-383	add	EnemyCritter 244.9 230.1
-383	add	EnemyCritter 244.9 230.1
-383	add	EnemyCritter 244.9 230.1
-417	unit.hit	squire -22.0
-417	unit.die	squire
-417	died	12
+203	unit.hit	swordsman 97.8
+205	unit.hit	cleric 88.0
+205	enemy.die	seeker
+205	unit.hit	squire 148.0
+208	enemy.die	seeker
+217	unit.hit	cleric 64.5
+229	unit.hit	swordsman 7.3
+232	unit.hit	swordsman -83.3
+232	unit.die	swordsman
+259	enemy.die	forcer
+259	add	EnemyCritter 200.0 129.8
+259	add	EnemyCritter 200.0 129.8
+259	add	EnemyCritter 200.0 129.8
+259	add	EnemyCritter 200.0 129.8
+259	add	EnemyCritter 200.0 129.8
+259	add	EnemyCritter 200.0 129.8
+259	enemy.die	tank
+274	enemy.die	seeker
+279	unit.hit	squire 125.9
+334	unit.hit	cleric -3.2
+334	unit.die	cleric
+334	enemy.die	seeker
+445	unit.hit	squire 117.0
+446	enemy.die	seeker
+446	unit.hit	squire 107.0
+535	unit.hit	squire 97.0
+545	enemy.die	seeker
+545	add	EnemyCritter 274.1 44.7
+545	add	EnemyCritter 274.1 44.7
+545	add	EnemyCritter 274.1 44.7
+545	add	EnemyCritter 274.1 44.7
+545	add	EnemyCritter 274.1 44.7
+545	add	EnemyCritter 274.1 44.7
+545	enemy.die	seeker
+558	unit.hit	squire 88.0
+563	unit.hit	squire 79.0
+581	unit.hit	squire 70.1
+668	unit.hit	squire 6.6
+693	unit.hit	squire -3.4
+693	unit.die	squire
+693	died	12

@@ -122,6 +122,15 @@ func angle_to (u, x, y) {
 ;; A unit of the snake. `u` has `character` and `level`, and `x`, `y`,
 ;; `r` for the leader. `fx` and `shots` are the pools of the effects and
 ;; of the projectiles of the arena.
+;; The bounce on a wall, felt by the i-th follower after a delay (the
+;; `trigger:after` of `Player:on_collision_enter`): its flash and sound.
+task WallHit (f, delay, p1, p2, fx) {
+    await(delay * 1s)
+    spawn @fx HfxUse(f.hit, 0.5, 200, 10, 0.1)
+    play(player_hit_wall1, [pitch=p1, volume=0.1])
+    play(pop1, [pitch=p2, volume=0.2])
+}
+
 task Unit (A, u, fx, shots) {
     set u.kind    = :player
     set u.classes = character_classes@(u.character)
@@ -377,14 +386,11 @@ task Unit (A, u, fx, shots) {
                 val p = rfloat(0.9, 1.1)
                 play(player_hit_wall1, [pitch=p, volume=0.1])
                 play(pop1, [pitch=p, volume=0.2])
+                ;; in the pool of the arena, as the global `trigger` of the
+                ;; original: the hits of the followers outlive the bounce
                 loop i, f in A.units {
                     if i > 0 {
-                        spawn {
-                            await((i*(10.6/u.v)) * 1s)
-                            spawn HfxUse(f.hit, 0.5, 200, 10, 0.1)
-                            play(player_hit_wall1, [pitch=p + 0.025*i, volume=0.1])
-                            play(pop1, [pitch=p + 0.05*i, volume=0.2])
-                        }
+                        spawn @fx WallHit(f, i*(10.6/u.v), p + 0.025*i, p + 0.05*i, fx)
                     }
                 }
             }

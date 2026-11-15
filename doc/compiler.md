@@ -250,6 +250,15 @@ at the block inside the spawn, not at the block around it.
   { ... } }`), as `HitCircle:change_color` does. Fixed the same way;
   `tst/game/hitcircle`. The fix moved positions and deaths in six
   arena tests, though a color is never read by the game: see 8.
+- `src/snake.atm`, the bounce on a wall: the followers never flashed
+  nor sounded in turn after the leader (`if i > 0 { spawn { await ...;
+  spawn HfxUse(...) ... } }` in a loop), as the `trigger:after` of
+  `Player:on_collision_enter`. Under it, a second defect the compiler
+  cannot see: the inner `spawn HfxUse` is not the last statement, but
+  its block ends right after the two sounds, so the flash would have
+  been aborted too. Both go now to the pool of the arena (`WallHit`),
+  as the global `trigger` of the original, so they outlive the bounce.
+  Eleven arena tests moved: the new waits split the time (see 8).
 
 ## 8. A time await splits the time of the tick for every task
 

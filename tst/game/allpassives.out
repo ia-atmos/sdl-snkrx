@@ -5,94 +5,38 @@
 66	barrage	swordsman
 86	barrage	swordsman
 105	barrage	swordsman
-120	add	Critter 356.2 150.8
-120	add	Critter 356.2 150.8
+120	add	Critter 358.3 151.0
+120	add	Critter 358.3 151.0
 125	barrage	swordsman
 145	barrage	swordsman
 165	barrage	swordsman
-180	add	Critter 366.8 150.8
-180	add	Critter 366.8 150.8
+180	add	Critter 364.8 151.0
+180	add	Critter 364.8 151.0
 185	barrage	swordsman
-186	unit.hit	squire 633.2
+187	unit.hit	squire 633.2
 204	barrage	swordsman
 224	barrage	swordsman
-240	add	Critter 239.0 150.8
-240	add	Critter 239.0 150.8
+240	add	Critter 236.9 150.9
+240	add	Critter 236.9 150.9
 244	barrage	swordsman
 247	add	SpawnMarker 240.0 135.0
 264	barrage	swordsman
 284	barrage	swordsman
-300	add	Critter 106.8 150.8
-300	add	Critter 106.8 150.8
+300	add	Critter 109.0 150.8
+300	add	Critter 109.0 150.8
 303	barrage	swordsman
-314	add	Seeker 240.0 135.0
-314	wave	boss
-320	enemy.die	speed_booster
-332	barrage	swordsman
+315	add	Seeker 240.0 135.0
+315	enemy.die	speed_booster
+315	clear	6
+341	barrage	swordsman
 366	barrage	swordsman
-367	add	SpawnMarker 80.0 135.0
-383	add	Critter 126.0 150.9
-383	add	Critter 126.0 150.9
+383	add	Critter 124.0 150.9
+383	add	Critter 124.0 150.9
 386	barrage	swordsman
 389	unit.hit	squire 597.5
-389	add	Automaton 178.1 150.9
+389	add	Automaton 175.8 150.9
 406	barrage	swordsman
 425	barrage	swordsman
-443	add	Critter 258.5 151.0
-443	add	Critter 258.5 151.0
-445	barrage	swordsman
-447	add	Seeker 68.0 123.0
-449	enemy.die	seeker
-449	barrage	vagrant
-449	add	Critter 68.2 123.0
-449	add	Critter 68.2 123.0
-453	add	Seeker 92.0 123.0
-459	add	Seeker 92.0 147.0
-465	add	Seeker 68.0 147.0
-465	enemy.die	seeker
-465	barrage	vagrant
-465	barrage	swordsman
-471	add	Seeker 80.0 135.0
-477	add	Seeker 68.0 123.0
-483	add	Seeker 92.0 123.0
-485	barrage	swordsman
-489	add	Seeker 92.0 147.0
-494	enemy.die	seeker
-495	add	Seeker 68.0 147.0
-501	add	Seeker 80.0 135.0
-502	enemy.die	seeker
-502	add	Critter 115.1 118.1
-502	add	Critter 115.1 118.1
-503	add	Critter 385.9 150.9
-503	add	Critter 385.9 150.9
-505	barrage	swordsman
-505	enemy.die	seeker
-505	add	Critter 101.5 119.8
-505	add	Critter 101.5 119.8
-506	enemy.die	seeker
-506	barrage	vagrant
-506	add	Critter 94.9 133.5
-506	add	Critter 94.9 133.5
-507	enemy.die	seeker
-507	barrage	vagrant
-507	add	Seeker 68.0 123.0
-507	enemy.die	seeker
-507	barrage	vagrant
-508	enemy.die	seeker
-509	add	Turret 397.4 150.9
-509	enemy.die	seeker
-513	enemy.die	seeker
-513	clear	6
-524	barrage	swordsman
-544	barrage	swordsman
-549	barrage	vagrant
-563	add	Critter 323.1 150.9
-563	add	Critter 323.1 150.9
-564	barrage	swordsman
-569	unit.hit	squire 637.5
-584	barrage	swordsman
-604	barrage	swordsman
-623	add	Critter 140.6 150.9
-623	add	Critter 140.6 150.9
-623	barrage	swordsman
-644	barrage	swordsman
+444	add	Critter 258.6 150.9
+444	add	Critter 258.6 150.9
+446	barrage	swordsman
