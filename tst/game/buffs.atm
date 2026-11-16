@@ -14,9 +14,7 @@ pin run = [ level=2, loop=0, gold=50, units=[
 pin A = new_arena(2)
 set A.run = run
 spawn Arena(A)
-loop _ in 30 {
-    await :clock
-}
+await(30, :clock)
 ;; All: squire 1.2 dmg and def, reinforce 1.1 dmg, def, and aspd (the
 ;; squire is an enchanter), centipede 1.3 mv, amplify 1.35, magnify 1.5.
 ;; vagrant (leader, an explorer with 1 active set: 1.15): dmg 1.2 x 1.15 x

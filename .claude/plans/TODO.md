@@ -38,8 +38,9 @@ possible.
 1b. Finding 8 (`doc/compiler.md`): a timer splits the time of a tick, so
    the physics and the movements can take two steps in a tick. To step
    once per tick changes every arena test: the author decides.
-2. Use the new `await(n, :e)` (and `watching n, :e`, `loop on n, :e`)
-   where the port counts events by hand.
+2. Done: `await(n, :e)` replaces the loops of a single await in the
+   tests (4); the sources count no events by hand (their counters act
+   at each step: the barrager's volleys, the waves, the gold).
 3. Why the original peaks at 946 MB was not investigated (`bench.md`).
 4. Move the platform part of `eng/` to `ia-atmos/env-sdl` when that
    environment is ready (second after Pingus), with identical traces

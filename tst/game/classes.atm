@@ -16,9 +16,7 @@ pin run = [ level=7, loop=0, gold=3, units=[
 pin A = new_arena(7)
 set A.run = run
 spawn Arena(A)
-loop _ in 3 {
-    await :clock
-}
+await(3, :clock)
 print("levels", A.cl.ranger, A.cl.warrior, A.cl.mage, A.cl.rogue, A.cl.explorer, A.cl.enchanter, "active", active_sets(A.units))
 ;; vagrant: dmg 1.5 (squire) x 1.5 (vagrant) x 1.75 (explorer) = 3.9375,
 ;;          aspd 1.3 x 1.5 x 1.75 = 3.4125

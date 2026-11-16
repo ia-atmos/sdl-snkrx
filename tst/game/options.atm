@@ -14,12 +14,8 @@ spawn Arena(A)
 spawn {
     await :key.dn until it.name == "Escape"
     val t0 = A.time
-    loop _ in 60 {
-        await :tick
-    }
+    await(60, :tick)
     print("paused: game time in 1s of real time", string.format("%.3f", A.time - t0))
 }
-loop _ in 240 {
-    await :tick
-}
+await(240, :tick)
 print("sfx", VOLUME.sfx, "dark", STATE.dark_transitions)
