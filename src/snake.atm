@@ -366,6 +366,7 @@ task Unit (A, u, fx, shots) {
                     set A.path@(256) = nil
                 }
                 set u.x, u.y = body_pos(u.b)
+                set A.places = nil      ;; the path moved: the places of the followers too
                 if !A.menu {
                     if STATE.mouse_control {
                         ;; toward the mouse: the side of the mouse, by the
@@ -484,21 +485,38 @@ task UnitDeathPassives (A, u, fx, shots) {
 }
 
 ;; The place of a follower on the path of the leader, 10.4 pixels per
-;; place behind it, or nil if the path is not that long yet.
+;; place behind it, or nil if the path is not that long yet. The places
+;; of all followers are found in one walk of the path (as the port of a
+;; student does, `kboltiz/SNKRX`, `sample_all_trail`), once after each
+;; step of the leader, which drops them: the original walks the path once
+;; per follower (`player.lua:1399-1408`), with the same result.
 func snake_place (A, u) {
-    val target = 10.4*u.index
+    if !A.places {
+        set A.places = snake_places(A)
+    }
+    A.places@(u.index)
+}
+
+;; The places of the followers 1, 2, ...: the point of the path before the
+;; one where the length of the path from the leader reaches 10.4 times the
+;; place.
+func snake_places (A) {
+    pin out = []
+    val n = #A.units
+    var k = 1
     var sum = 0
     var prev = A.units@0
-    var p = nil
     loop i, q in A.path {
+        while k < n
         set sum += math.sqrt((prev.x - q.x)*(prev.x - q.x) + (prev.y - q.y)*(prev.y - q.y))
-        if sum >= target {
-            set p = A.path@(i-1)
-            break
+        loop {
+            while (k < n) && (sum >= 10.4*k)
+            set out@(k) = A.path@(i-1)
+            set k += 1
         }
         set prev = q
     }
-    p
+    out
 }
 
 ;; Removes a dead unit from the snake, as `recalculate_followers`: the
@@ -516,6 +534,7 @@ func snake_remove (A, u) {
         us
     }
     val us = A.units
+    set A.places = nil
     loop i, o in us {
         set o.index = i
     }

@@ -1238,3 +1238,26 @@ The objects of the group `ui` draw in the order they were made, so a
 text opened later is on top. The tasks of the port draw in the order of
 the tree. The port keeps a list of the texts that are open, in the
 order they opened, and the first one draws them all (`INFO`).
+
+---
+
+## 14. From the port of a student
+
+A student ported SNKRX to Atmos too (`kboltiz/SNKRX`, at `18c593b`,
+with `pico-sdl`). Its numbers differ from the original, so it is not a
+reference for this port, but some of its forms are simpler.
+
+Taken: the places of the followers on the path of the leader are found
+in one walk of the path for all of them (`sample_all_trail` there,
+`snake_places` here), once after each step of the leader, where the
+original walks the path once per follower (`player.lua:1399-1408`). The
+result is the same: the traces and screenshots of the tests did not
+change.
+
+Not taken, since they would change what the original does:
+
+- the bars of the units end with their unit (`watching (unit)`): in the
+  original, the bar of a dead unit stays, gray (`CharacterHP:draw`);
+- the purchase awaits a click with enough gold (`await :click until
+  (gold >= cost ...)`): in the original, a click without the gold plays
+  an error and shows "not enough gold".
