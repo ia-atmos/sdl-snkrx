@@ -1,0 +1,90 @@
+;; The tutorial of the shop (the button "?" of `BuyScreen:on_enter`,
+;; `buy_screen.lua:83-130`, with `TutorialCharacterPart` and
+;; `TutorialClassIcon`): over the shop, which stops (see `Shop`), a dark
+;; screen with the rules of the game, squares of a swordsman at each
+;; level, and the icon of the warriors with 0, 3, and 6 of them. It ends
+;; with its button "x" or with Escape (`:Tutorial.done [key]`).
+
+;; A square of the tutorial (`TutorialCharacterPart`): a unit at a level,
+;; with its text under the mouse.
+task TutorialPart (x, y, character, level, list) {
+    val s = spring(1)
+    spring_pull(s, 0.2, 200, 10)
+    spawn Springs(s)
+    val ramp = RAMPS@(character_color_strings@(character))
+    spawn {
+        loop on :draw {
+            eng.push(x, y, 0, s.x)
+            eng.rect(x, y, 14, 14, 3, 3, character_colors@(character))
+            print_centered(pixul_font, tostring(level), x + 0.5, y + 2, 0, 1, 1, ramp@(-5))
+            eng.pop()
+        }
+    }
+    val inside = func () {
+        val mx, my = eng.mouse()
+        (mx >= x - 10) && (mx <= x + 10) && (my >= y - 10) && (my <= y + 10)
+    }
+    val lines = info_character(character, level)
+    set lines@(0).text = "[" ++ character_color_strings@(character) ++ "]" ++ capitalize(character) ++
+                         "[fg] - [yellow]Lv." ++ tostring(level)
+    loop {
+        if !inside() {
+            await :mouse.mv until inside()
+        }
+        play(ui_hover1, [pitch=rfloat(1.3, 1.5), volume=0.5])
+        spring_pull(s, 0.2, 200, 10)
+        par :any {
+            await :mouse.mv until !inside()
+        } with {
+            await InfoText(W/2, H/2 + H/4 - 12, lines, false, list)
+        }
+    }
+}
+
+task Tutorial () {
+    val list = []           ;; its texts under the mouse, over it
+    val arrow = image("arrow")
+    spawn {
+        loop on :draw {
+            eng.rect(W/2, H/2, 2*W, 2*H, nil, nil, rgba(0.1, 0.1, 0.1, 0.9))
+            draw_image(arrow, W/2 + 93, H/2 - 30, 0, 0.4, 0.35, white@0)
+            draw_image(arrow, W/2 + 93, H/2 - 10, 0, 0.4, 0.35, white@0)
+        }
+    }
+    pin ps = tasks()
+    spawn @ps Text2(W/2, 35, text([ [text="[fg]WELCOME TO SNKRX!", font=fat_font, alignment=:center] ]))
+    spawn @ps Text2(228, 160, text([
+        [text="[fg]You control a snake of multiple heroes that auto-attack nearby enemies.", font=pixul_font, height_multiplier=1.2],
+        [text="[fg]You can steer the snake left or right by pressing [yellow]A/D[fg] or [yellow]left/right arrows[fg].", font=pixul_font, height_multiplier=2.2],
+        [text="[fg]Combine the same heroes to level them up:", font=pixul_font, height_multiplier=1.2],
+        [text="[fg]At [yellow]Lv.3[fg] heroes unlock special effects.", font=pixul_font, height_multiplier=2.2],
+        [text="[fg]Hire heroes of the same classes to unlock class passives:", font=pixul_font, height_multiplier=1.2],
+        [text="[fg]Each hero can have between [yellow]1 to 3[fg] classes.", font=pixul_font, height_multiplier=2.2],
+        [text="[fg]You gain [yellow]1 interest per 5 gold[fg], up to a maximum of 5.", font=pixul_font, height_multiplier=1.2],
+        [text="[fg]This means that saving above [yellow]25 gold[fg] doesn't yield more interest.", font=pixul_font, height_multiplier=2.2],
+        [text="[yellow, wavy_mid]Good luck!", font=pixul_font, height_multiplier=2.2, alignment=:center],
+    ]))
+    loop _, p in [ [34, -30, 1], [54, -30, 1], [74, -30, 1], [34, -10, 2], [54, -10, 2], [74, -10, 2],
+                   [114, -30, 2], [114, -10, 3] ] {
+        spawn @ps TutorialPart(W/2 + p@0, H/2 + p@1, "swordsman", p@2, list)
+    }
+    val warriors = func (cs) {
+        val us = []
+        loop _, c in cs {
+            set us@+ = [ character=c ]
+        }
+        us
+    }
+    spawn @ps ClassIcon(W/2 + 114, H/2 + 18, "warrior", [], nil, spring(1), false, list)
+    spawn @ps ClassIcon(W/2 + 134, H/2 + 18, "warrior", warriors(["swordsman", "barbarian", "juggernaut"]), nil, spring(1), false, list)
+    spawn @ps ClassIcon(W/2 + 154, H/2 + 18, "warrior",
+        warriors(["swordsman", "barbarian", "juggernaut", "vagrant", "outlaw", "blade"]), nil, spring(1), false, list)
+    spawn @ps Button(task, :close, W - 20, 20, "x")
+    par :any {
+        await :Button.click until it.id == :close
+        :close
+    } with {
+        await :key.dn until it.name == "Escape"
+        :escape
+    }
+}

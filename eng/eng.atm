@@ -255,3 +255,13 @@ func trace (ev, details) {
         print(eng.tick() ++ "\t" ++ ev ++ "\t" ++ (details || "-"))
     }
 }
+
+;; Opens a page on the web, as `system.open_url`; in the tests, it only
+;; traces it.
+func open_url (url) {
+    if eng.testing() {
+        trace("url", url)
+    } else {
+        `eg_open_url(eg_cstr($url));`
+    }
+}

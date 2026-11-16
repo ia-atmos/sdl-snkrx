@@ -1,0 +1,133 @@
+;; The credits (`Arena:create_credits`, `arena.lua:887-958`), over the
+;; screen of the win, and the buttons of that screen that open pages on
+;; the web (`open_url` and `SteamFollowButton`). A page opens with
+;; `open_url` (`eng/eng.atm`).
+
+;; The click on a button that opens a page, as `open_url(b, url)`.
+func url_click (e, url) {
+    play(ui_switch2, [pitch=rfloat(0.95, 1.05), volume=0.5])
+    spring_pull(e.spring, 0.2, 200, 10)
+    play(ui_switch1, [pitch=rfloat(0.95, 1.05), volume=0.5])
+    open_url(url)
+}
+
+;; The names of the credits: [x, y, text, color, url] of a button, or
+;; [x, y, text] of a title.
+val CREDITS = [
+    [60, 20, "[bg10]main dev: "],
+    [117, 20, "a327ex", :bg, "https://store.steampowered.com/dev/a327ex/"],
+    [60, 50, "[bg10]mobile: "],
+    [144, 50, "David Khachaturov", :bg, "https://davidobot.net/"],
+    [60, 80, "[blue]libraries: "],
+    [113, 80, "love2d", :blue, "https://love2d.org"],
+    [170, 80, "bakpakin", :blue, "https://github.com/bakpakin/binser"],
+    [237, 80, "davisdude", :blue, "https://github.com/davisdude/mlib"],
+    [306, 80, "tesselode", :blue, "https://github.com/tesselode/ripple"],
+    [60, 110, "[green]music: "],
+    [100, 110, "kubbi", :green, "https://kubbimusic.com/album/ember"],
+    [60, 140, "[yellow]sounds: "],
+    [135, 140, "sidearm studios", :yellow, "https://sidearm-studios.itch.io/ultimate-sound-fx-bundle"],
+    [217, 140, "justinbw", :yellow, "https://freesound.org/people/JustinBW/sounds/80921/"],
+    [279, 140, "jcallison", :yellow, "https://freesound.org/people/jcallison/sounds/258269/"],
+    [342, 140, "hybrid_v", :yellow, "https://freesound.org/people/Hybrid_V/sounds/321215/"],
+    [427, 140, "womb_affliction", :yellow, "https://freesound.org/people/womb_affliction/sounds/376532/"],
+    [106, 160, "bajko", :yellow, "https://freesound.org/people/bajko/sounds/399656/"],
+    [157, 160, "benzix2", :yellow, "https://freesound.org/people/benzix2/sounds/467951/"],
+    [204, 160, "lord", :yellow, "https://store.steampowered.com/developer/T_TGames"],
+    [262, 160, "InspectorJ", :yellow, "https://freesound.org/people/InspectorJ/sounds/458586/"],
+    [70, 190, "[red]playtesters: "],
+    [130, 190, "Jofer", :red, "https://twitter.com/JofersGames"],
+    [172, 190, "ekun", :red, "https://twitter.com/ekunenuke"],
+    [224, 190, "cvisy_GN", :red, "https://twitter.com/cvisy_GN"],
+    [292, 190, "Blue Fairy", :red, "https://twitter.com/blue9fairy"],
+    [362, 190, "Phil Blank", :red, "https://twitter.com/PhilBlankGames"],
+    [440, 190, "DefineDoddy", :red, "https://twitter.com/DefineDoddy"],
+    [140, 210, "Ge0force", :red, "https://twitter.com/Ge0forceBE"],
+    [193, 210, "Vlad", :red, "https://twitter.com/thecryru"],
+    [258, 210, "Yongmin Park", :red, "https://twitter.com/yongminparks"],
+]
+
+;; The colors of a button by its name: [text, background].
+func button_colors (c) {
+    match c {
+        :blue => [ "bluem5", blue ]
+        :green => [ "greenm5", green ]
+        :yellow => [ "yellowm5", yellow ]
+        :red => [ "redm5", red ]
+        else => [ "bg10", bg ]
+    }
+}
+
+;; The credits: a dark screen with the names, each a button to its page.
+;; They end with "x" or Escape.
+task Credits () {
+    spawn {
+        loop on :draw {
+            eng.rect(W/2, H/2, 2*W, 2*H, nil, nil, rgba(0.1, 0.1, 0.1, 0.9))
+        }
+    }
+    pin ps = tasks()
+    val urls = []
+    loop i, c in CREDITS {
+        if c@4 {
+            val cs = button_colors(c@3)
+            set urls@(i) = c@4
+            spawn @ps Button(task, i, c@0, c@1, c@2, [ fg_color=cs@0, bg_color=cs@1 ])
+        } else {
+            spawn @ps Text2(c@0, c@1, text([ [text=c@2, font=pixul_font] ]))
+        }
+    }
+    spawn @ps Button(task, :close, W - 20, 20, "x")
+    par :any {
+        loop e on :Button.click {
+            until e.id == :close
+            url_click(e, urls@(e.id))
+        }
+    } with {
+        await :key.dn until it.name == "Escape"
+    }
+}
+
+;; The buttons of the win (`Arena:quit`): "loop", "restart" (or not, after
+;; the last new game plus), "credits", and the pages; the choice of loop or
+;; restart goes to `won` (`:Won.pick [id]`). While the credits are open,
+;; the buttons below stop (`in_credits`), as the shop under its tutorial.
+task WinButtons (won, last) {
+    par {
+        toggle on :Win.on with :draw {
+            pin bs = tasks()
+            val me = task
+            val follow = [ fg_color="greenm5", bg_color=green, w=text_width(pixul_font, "follow me on steam!") + 12, pull=0.05, dy=0 ]
+            if last {
+                spawn @bs Button(me, :follow, W/2 + 40, H/2 + 58, "follow me on steam!", follow)
+                spawn @bs Button(me, :credits, W - 40, H - 44, "credits")
+                spawn @bs Button(me, :loop, W - 39, H - 20, "  loop  ")
+                spawn @bs Button(me, :nimble, W/2 - 50 + 40, H/2 + 12, "nimble quest", [ fg_color="bluem5", bg_color=blue ])
+                spawn @bs Button(me, :underlords, W/2 + 50 + 40, H/2 + 12, "dota underlords", [ fg_color="bluem5", bg_color=blue ])
+            } else {
+                spawn @bs Button(me, :follow, W/2 + 40, H/2 - 10, "follow me on steam!", follow)
+                spawn @bs Button(me, :soundtrack, W/2 + 40, H/2 + 33, "buy the soundtrack!", [ fg_color="greenm5", bg_color=green ])
+                spawn @bs Button(me, :loop, W - 40, H - 44, "  loop  ")
+                spawn @bs Button(me, :restart, W - 40, H - 20, "restart")
+                spawn @bs Button(me, :credits, W - 40, H - 68, "credits")
+            }
+            loop e on :Button.click {
+                match e.id {
+                    :follow => url_click(e, "https://store.steampowered.com/dev/a327ex/")
+                    :soundtrack => url_click(e, "https://kubbimusic.com/album/ember")
+                    :nimble => url_click(e, "https://store.steampowered.com/app/259780/Nimble_Quest/")
+                    :underlords => url_click(e, "https://store.steampowered.com/app/1046930/Dota_Underlords/")
+                    :credits => emit @me :Credits.open
+                    else => emit @won :Won.pick [ id=e.id ]
+                }
+            }
+        }
+    } with {
+        loop {
+            await :Credits.open
+            emit @:task :Win.on [false]
+            await Credits()
+            emit @:task :Win.on [true]
+        }
+    }
+}

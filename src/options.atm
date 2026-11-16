@@ -176,6 +176,8 @@ task Pause (kind, run) {
         par :any {
             await :key.dn until it.name == "Escape"
         } with {
+            await :Pause.open
+        } with {
             await RunClock(run)
         }
         play(ui_switch1, [pitch=rfloat(0.95, 1.05), volume=0.5])

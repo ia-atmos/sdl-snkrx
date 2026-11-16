@@ -349,8 +349,8 @@ task Clear (A, ui) {
 
 ;; The end of the last level of a loop, as the branch of `Arena:quit` for
 ;; `level % 25 == 0`: the new game plus goes up, the screen says so, and
-;; the run either loops (harder) or starts again (`Arena:endless`). The
-;; buttons that open pages on the web are left out.
+;; the run either loops (harder) or starts again (`Arena:endless`), and
+;; the credits and the pages on the web are a click away (`WinButtons`).
 task Won (A, ui) {
     trace("won", tostring(A.level))
     eng.cursor(true)
@@ -378,19 +378,21 @@ task Won (A, ui) {
         spawn @ui Text2(W/2 + 40, H/2 + 20, text([
             [text="[fg]now you've really beaten the game!", font=pixul_font, alignment=:center, height_multiplier=1.24],
             [text="[fg]thanks a lot for playing it and completing it entirely!", font=pixul_font, alignment=:center, height_multiplier=1.24],
+            [text="[fg]this game was inspired by:", font=pixul_font, alignment=:center, height_multiplier=3.5],
+            [text="[fg]so check them out! and to get more games like this:", font=pixul_font, alignment=:center, height_multiplier=3.5],
             [text="[wavy_mid, yellow]thanks for playing!", font=pixul_font, alignment=:center] ]))
         spawn @ui Text2(W - 144, H - 20, text([ [text="[bg10]continue run (+difficulty):", font=pixul_font, alignment=:center] ]))
-        spawn @ui Button(task, :loop, W - 39, H - 20, "  loop  ")
     } else {
         spawn @ui Text2(W/2 + 40, H/2 + 5, text([
             [text="[fg]you've beaten the game!", font=pixul_font, alignment=:center, height_multiplier=1.24],
+            [text="[fg]if you liked it:", font=pixul_font, alignment=:center, height_multiplier=3.5],
+            [text="[fg]and if you liked the music:", font=pixul_font, alignment=:center, height_multiplier=3.5],
             [text="[wavy_mid, yellow]thanks for playing!", font=pixul_font, alignment=:center] ]))
         spawn @ui Text2(W - 200, H - 44, text([ [text="[bg10]continue run (+difficulty, +1 max snake size):", font=pixul_font, alignment=:center] ]))
         spawn @ui Text2(W - 187, H - 20, text([ [text="[bg10]new run (+difficulty, +1 max snake size):", font=pixul_font, alignment=:center] ]))
-        spawn @ui Button(task, :loop, W - 40, H - 44, "  loop  ")
-        spawn @ui Button(task, :restart, W - 40, H - 20, "restart")
     }
-    val e = await :Button.click until X.xin(it.id, [:loop, :restart])
+    spawn @ui WinButtons(task, last)
+    val e = await :Won.pick
     play(ui_switch2, [pitch=rfloat(0.95, 1.05), volume=0.5])
     if e.id == :restart {
         play(ui_transition2, [pitch=rfloat(0.95, 1.05), volume=0.5])

@@ -17,8 +17,8 @@
 ;; each. The first one draws all of them.
 val INFO = []
 
-func info_draw () {
-    loop _, r in INFO {
+func info_draw (list) {
+    loop _, r in list {
         eng.push(r.x, r.y, 0, r.st.sx*r.s.x, r.st.sy*r.s.x)
         eng.rect(r.x, r.y, r.t.w + 16, r.t.h + 4, r.t.h/12, r.t.h/12, bg@(-2))
         text_draw(r.t, r.x, r.y + 2)
@@ -29,15 +29,18 @@ func info_draw () {
 ;; As `activate(lines, nil, nil, nil, nil, 16, 4, nil, 2)`, the call of
 ;; every text of the original: 16 and 4 pixels around the text, which is
 ;; 2 pixels down. With `real`, it moves in real time (`force_update`).
-task InfoText (x, y, lines, real) {
+;; With `list`, it goes in that list of texts instead of `INFO` (the
+;; texts of the tutorial, drawn over it, as its group `tutorial`).
+task InfoText (x, y, lines, real, list) {
+    val l = list || INFO
     val st = [ sx=0, sy=0 ]
     val s = spring(1)
     val r = [ t=text(lines), x=x, y=y, st=st, s=s ]
-    set INFO@+ = r
+    set l@+ = r
     defer {
-        loop i, o in INFO {
+        loop i, o in l {
             if o == r {
-                vector.remove(INFO, i)
+                vector.remove(l, i)
                 break
             }
         }
@@ -52,8 +55,8 @@ task InfoText (x, y, lines, real) {
         set st.sy = 1
     }
     loop on :overlay {
-        if INFO@0 == r {
-            info_draw()
+        if l@(0) == r {
+            info_draw(l)
         }
     }
 }
@@ -154,10 +157,11 @@ func class_info_level (class, units) {
 }
 
 ;; A class (`ClassIcon`): its name and how many units have it; its sets,
-;; with the one reached in yellow.
-func info_class (class, units) {
-    val lv = class_info_level(class, units)
-    val name = if class == "conjurer" => "Builder" => capitalize(class)
+;; with the one reached in yellow. In the tutorial (`TutorialClassIcon`),
+;; the conjurer keeps its name, and the third set does not count.
+func info_class (class, units, tut) {
+    val lv = if tut => math.min(class_info_level(class, units), 2) => class_info_level(class, units)
+    val name = if (class == "conjurer") && !tut => "Builder" => capitalize(class)
     ;; the level 0 is as the level 3 of a class of two sets: all gray
     val desc = ifs {
         lv > 0 => class_descriptions@(class)@(lv)

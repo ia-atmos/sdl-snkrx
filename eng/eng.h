@@ -19,6 +19,8 @@
 // Colors cross as integers 0xRRGGBBAA. Images and fonts cross as
 // indexes in tables of this file, which live until the program ends.
 
+#include <unistd.h>
+#include <sys/wait.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -1127,6 +1129,21 @@ static double eg_window (double s) {
         EG_SPX = NULL;
     }
     return s;
+}
+
+// Opens a page on the web, as `system.open_url` (`love.system.openURL`):
+// `xdg-open` with the URL as its argument, with no shell, in a process of
+// its own (a double fork, so that none is left to wait for).
+static void eg_open_url (const char* url) {
+    pid_t p = fork();
+    if (p == 0) {
+        if (fork() == 0) {
+            execlp("xdg-open", "xdg-open", url, (char*) NULL);
+        }
+        _exit(0);
+    } else if (p > 0) {
+        waitpid(p, NULL, 0);
+    }
 }
 
 // Shows or hides the mouse cursor over the window.

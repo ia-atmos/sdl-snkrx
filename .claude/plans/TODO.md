@@ -34,8 +34,7 @@ possible.
    new rules of `pin` (`98ad03a`, e.g. `val t = [1,2]` must be `pin`).
    Moving to them waits for the author's decision.
 1. Features left out, now to be done (the author asked for all):
-   the tutorial, the credits screen, the buttons that open web pages,
-   and the achievements (local, without Steam).
+   the achievements (local, without Steam).
 1b. Finding 8 (`doc/compiler.md`): a timer splits the time of a tick, so
    the physics and the movements can take two steps in a tick. To step
    once per tick changes every arena test: the author decides.

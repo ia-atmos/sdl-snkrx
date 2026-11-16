@@ -60,11 +60,13 @@ a time, in the parts that the port covers, with what became of each one.
 | `info_text`, `info_text_2` of a message (`BuyScreen`, `GoButton`, `RerollButton`, `LevelButton`, `ItemCard`), with a tagged timer | `buy_screen.lua:275-322, 692-700, 824-864, 998-1027, 1445-1452` | one message at a time for its owner, closed 2 s after the last request | gone: a task per owner (`Messages`), whose 2 s start again in a `par :any` |
 | `CharacterPart.highlighted` | `buy_screen.lua:1335-1345, 2004-2050` | the look of a square while the icon of one of its classes is under the mouse | a local of the square, set on `:Shop.highlight` from the icon |
 | `CharacterPart.grabbed`, `BuyScreen.unit_grabbed` | `buy_screen.lua:1170-1201`, `BuyScreen:draw` | a unit dragged in the party: its squares are not drawn in their row, and the screen draws a ghost of them at the mouse | `grabbed` kept, as a field of the row shared by the squares of the unit (each draws its own ghost); `unit_grabbed` gone: the drag is a phase of the square, from the click to the release |
+| `BuyScreen.in_tutorial` | `buy_screen.lua:84, 185-209, 222-233` | the shop stops (its groups are not updated) and Escape closes the tutorial instead of opening the options | gone: the shop is toggled off but for `:draw` while the tutorial runs beside it (`toggle on :Shop.on`) |
+| `Arena.in_credits` | `arena.lua:361, 395-404, 811, 896-907`, `SteamFollowButton` | the buttons of the win stop, the screen darkens, Escape closes the credits | gone: the buttons are toggled off while the credits run (`WinButtons`) |
 
-Count so far: 68 variables in the original (counting the nine flags of
+Count so far: 70 variables in the original (counting the nine flags of
 the steering as one, the `selected` of the four buttons of the shop as
 one, and the `info_text` of the objects under the mouse, and of the
-messages, as one each). In the port, 34 of them are gone. The other 34
+messages, as one each). In the port, 36 of them are gone. The other 34
 became 34 variables, none of which guards a phase of the task that sets
 it:
 

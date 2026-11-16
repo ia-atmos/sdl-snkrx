@@ -1,0 +1,20 @@
+;; The tutorial of the shop, by script: "?" opens it over the shop, which
+;; stops; a square and the icon of a class show their texts; a click on a
+;; card below buys nothing; Escape closes it, and (as the original) the
+;; same Escape opens the options.
+include "../../src/game.atm"
+spawn Background()
+spawn Input()
+val run = [ level=1, loop=0, gold=3, units=[], passives=[], shop_level=1, shop_xp=0 ]
+spawn {
+    loop e on :mouse.dn {
+        print("dn", eng.tick(), e.x, e.y, "gold", run.gold, "units", #run.units)
+    }
+}
+spawn {
+    loop e on :key.dn {
+        await :tick
+        print("key", eng.tick(), e.name, "gold", run.gold, "units", #run.units)
+    }
+}
+await Shop(run)

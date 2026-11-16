@@ -134,8 +134,10 @@ func class_lit (class, units) {
 ;; its first set, with a pip per unit of the class. On a card, `next` is
 ;; the character of the card: the pip it would add blinks. Under the
 ;; mouse, it shows the sets of the class; in the party (`party`), it also
-;; lights up the units of the class (`:Shop.highlight [class, on]`).
-task ClassIcon (x, y, class, units, next, s, party) {
+;; lights up the units of the class (`:Shop.highlight [class, on]`). In
+;; the tutorial (`tut`, the list of its texts), its text is that of
+;; `TutorialClassIcon`, at another place.
+task ClassIcon (x, y, class, units, next, s, party, tut) {
     spring_pull(s, 0.2, 200, 10)
     spawn UISprings(s)
     val sets = CLASS_SETS@(class)
@@ -164,7 +166,11 @@ task ClassIcon (x, y, class, units, next, s, party) {
             par :any {
                 await :mouse.mv until !inside()
             } with {
-                await InfoText(W/2, H/2 + 10, info_class(class, units))
+                if tut {
+                    await InfoText(W/2 - 25, H/2 + 25, info_class(class, units, true), false, tut)
+                } else {
+                    await InfoText(W/2, H/2 + 10, info_class(class, units))
+                }
             }
             if party {
                 emit @:global :Shop.highlight [ class=class, on=false ]
@@ -721,8 +727,36 @@ func shop_sell (run, i, copy) {
 ;;; SHOP ;;;
 
 ;; The shop. It emits `:goto` to the arena on GO.
+;; The shop, and its tutorial over it. While the tutorial is open, the
+;; shop is toggled off but for `:draw`: it stays on the screen as it was,
+;; and nothing in it moves or answers the mouse (the original stops
+;; updating its groups `main` and `effects` while `in_tutorial`).
 task Shop (run) {
     eng.cursor(true)
+    par {
+        toggle on :Shop.on with :draw {
+            await ShopMain(run, task)
+        }
+    } with {
+        loop {
+            await :Tutorial.open
+            emit @:task :Shop.on [false]
+            val how = par :any {
+                await Tutorial()
+            } with {
+                await RunClock(run)     ;; not paused (`BuyScreen:update`)
+            }
+            emit @:task :Shop.on [true]
+            if how == :escape {
+                ;; the same Escape opens the options: the original quits
+                ;; the tutorial, then sees the key again in the same frame
+                emit @:task :Pause.open
+            }
+        }
+    }
+}
+
+task ShopMain (run, shop) {
     pin fx = tasks()
 
     ;; the texts
@@ -817,6 +851,7 @@ task Shop (run) {
     spawn @bs ShopButton(task, :go, W - 90, H - 20, \{
         [ w=28, h=18, out="[greenm5]GO!", over="[fgm5]GO!", color=green@0 ] })
     spawn @bs Button(task, :restart, W/2 + 148, 18, "R", [ info=info_line("[fg]restart run") ])
+    spawn @bs Button(task, :guide, W/2 + 129, 18, "?", [ info=info_line("[fg]guide") ])
 
     ;; the messages, each of its owner in the original: the shop (a unit
     ;; at its maximum level, the party full), GO, reroll, the level of the
@@ -977,6 +1012,9 @@ task Shop (run) {
                     set run.gold -= 10
                     emit @:task :Shop.gold
                 }
+            }
+            id == :guide => {
+                emit @shop :Tutorial.open
             }
             id == :restart => {
                 play(ui_transition2, [pitch=rfloat(0.95, 1.05), volume=0.5])

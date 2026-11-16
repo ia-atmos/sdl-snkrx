@@ -30,8 +30,11 @@ The options came complete: mouse control, the run timer, the size of
 the window, the cooldowns and the arrow drawn on the snake, and screen
 movement.
 
-Left out: the tutorial, the credits, the achievements and Steam, and the
-buttons that open pages on the web.
+The tutorial of the shop, the credits, and the buttons that open pages
+on the web came last: the shop under its tutorial, and the win under its
+credits, are toggled off (`toggle`) but for their drawing.
+
+Left out: the achievements and Steam.
 
 ## The timers
 
@@ -59,11 +62,11 @@ Six patterns cover the timers of the original:
 
 ## The flags
 
-`state.md` lists 68 variables of the original that guard a phase or
+`state.md` lists 70 variables of the original that guard a phase or
 compute a time (counting the nine flags of the steering as one, the
 `selected` of the four buttons of the shop as one, and the `info_text`
 of the objects under the mouse, and of the messages, as one each). In
-the port, 34 of them are gone: the phase they guarded is a place in the
+the port, 36 of them are gone: the phase they guarded is a place in the
 code of a task. The other 34 became 34 variables, and none guards a
 phase of the task that sets it: 18 are fields that other tasks read (a
 curse, a slow, a stun), 6 count running tasks or events, 6 are locals
@@ -72,7 +75,7 @@ of a task, and 4 are fields of the run or of the HUD.
 So the flags that remain are state that one task shows to another. The
 flags that a task kept for itself (`dead`, `being_pushed`,
 `transitioning`, `quitting`, `choosing_passives`, `selected`,
-`cant_be_picked_up`, `info_text`) are gone.
+`cant_be_picked_up`, `info_text`, `in_tutorial`, `in_credits`) are gone.
 
 ## What the port taught about Atmos
 
