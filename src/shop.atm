@@ -374,12 +374,20 @@ func sale_price (character, level, reserve) {
 }
 
 ;; A square of the party (`CharacterPart`): a unit with its level, or a
-;; copy toward its next level (`copy` is its level). Under the mouse, it
-;; shows the unit (in real time out of the shop, `force_update`). A right
-;; click sells it (`:Shop.sell [i, copy]`). Out of the shop (`shop` is
-;; nil: the build at the end of a level), it is not clicked. It lights up
-;; while the mouse is over the icon of one of its classes.
-task CharacterPart (shop, i, x, y, u, copy, sc) {
+;; copy toward its next level (`copy` is its level), in the row `row.i`
+;; (`row` is shared by the squares of a unit, and changes when the unit
+;; moves). Under the mouse, it shows the unit (in real time out of the
+;; shop, `force_update`). A right click sells it (`:Shop.sell [i, copy]`).
+;; Out of the shop (`shop` is nil: the build at the end of a level), it is
+;; not clicked. It lights up while the mouse is over the icon of one of
+;; its classes.
+;;
+;; In the shop, the square of a unit may be dragged (`CharacterPart:update`,
+;; `buy_screen.lua:1170-1201`): from a left click on it to the release,
+;; wherever the mouse goes, the unit moves one row per tick toward the
+;; mouse (`:Shop.move [from, to]`), and its squares show as a gray ghost
+;; at the height of the mouse (`BuyScreen:draw`).
+task CharacterPart (shop, row, x, u, copy, sc) {
     val c = unit_character(u)
     val s = spring(1)
     spring_pull(s, 0.2, 200, 10)
@@ -387,12 +395,25 @@ task CharacterPart (shop, i, x, y, u, copy, sc) {
     val level = copy || unit_level(u)
     val ramp = RAMPS@(character_color_strings@(c))
     var lit = false
+    val y = func () {
+        40 + row.i*19
+    }
     spawn {
         loop on :draw {
-            eng.push(x, y, 0, (sc || 1)*s.x)
-            eng.rect(x, y, 14, 14, 3, 3, if lit => bg@10 => character_colors@(c))
-            print_centered(pixul_font, tostring(level), x + 0.5, y + 2, 0, 1, 1, if lit => bg@5 => ramp@(-5))
-            eng.pop()
+            if row.grabbed {
+                ;; the ghost, at the height of the mouse, between the rows
+                val _, my = eng.mouse()
+                val gy = math.max(40, math.min(my, 40 + (row.n - 1)*19))
+                eng.push(x, gy, 0, if copy => (sc || 1)*s.x => 1)
+                eng.rect(x, gy, 14, 14, 3, 3, bg@5)
+                print_centered(pixul_font, tostring(level), x + 0.5, gy + 2, 0, 1, 1, bg@10)
+                eng.pop()
+            } else {
+                eng.push(x, y(), 0, (sc || 1)*s.x)
+                eng.rect(x, y(), 14, 14, 3, 3, if lit => bg@10 => character_colors@(c))
+                print_centered(pixul_font, tostring(level), x + 0.5, y() + 2, 0, 1, 1, if lit => bg@5 => ramp@(-5))
+                eng.pop()
+            }
         }
     }
     spawn {
@@ -406,7 +427,34 @@ task CharacterPart (shop, i, x, y, u, copy, sc) {
     val inside = func () {
         val mx, my = eng.mouse()
         val h = 10*(sc || 1)
-        (mx >= x - h) && (mx <= x + h) && (my >= y - h) && (my <= y + h)
+        (mx >= x - h) && (mx <= x + h) && (my >= y() - h) && (my <= y() + h)
+    }
+    spawn {
+        ;; the drag, of the square of a unit in the shop
+        if shop && !copy {
+            loop {
+                await :mouse.dn until (it.but == 1) && inside()
+                set row.grabbed = true
+                par :any {
+                    await :mouse.up until it.but == 1
+                } with {
+                    loop on :tick {
+                        val _, my = eng.mouse()
+                        val to = ifs {
+                            my < (y() - 19) => row.i - 1
+                            my > (y() + 19) => row.i + 1
+                            else => row.i
+                        }
+                        val to2 = math.max(0, math.min(to, row.n - 1))
+                        if to2 != row.i {
+                            emit @shop :Shop.move [ from=row.i, to=to2 ]
+                        }
+                    }
+                }
+                set row.grabbed = false
+                spring_pull(s, 0.2, 200, 10)
+            }
+        }
     }
     var created = true          ;; as `just_created`, for 0.1s
     spawn {
@@ -415,19 +463,25 @@ task CharacterPart (shop, i, x, y, u, copy, sc) {
     }
     loop {
         if !inside() {
-            await :mouse.mv until inside()
+            loop {
+                await <:mouse.mv || :Shop.move>
+                until inside()
+            }
         }
         play(ui_hover1, [pitch=rfloat(1.3, 1.5), volume=0.5])
         spring_pull(s, 0.2, 200, 10)
         val price = if copy => sale_price(c, copy) => sale_price(c, level, shop && u.reserve)
         par :any {
-            await :mouse.mv until !inside()
+            loop {
+                await <:mouse.mv || :Shop.move>
+                until !inside()
+            }
         } with {
             await InfoText(W/2, H/2 + 10, info_character(c, level, price), !shop)
         } with {
             if shop {
                 loop on :mouse.dn until (it.but == 3) && !created {
-                    emit @shop :Shop.sell [ i=i, copy=copy ]
+                    emit @shop :Shop.sell [ i=row.i, copy=copy ]
                 }
             } else {
                 await(false)
@@ -437,20 +491,24 @@ task CharacterPart (shop, i, x, y, u, copy, sc) {
 }
 
 ;; The party: the squares of the units and of their copies, and the
-;; classes (`set_party_and_sets`).
+;; classes (`set_party_and_sets`). A move of a unit swaps two rows, and
+;; the squares follow, without being made again.
 task Party (shop, run, fx) {
     pin ps = tasks()
+    val rows = []
     loop i, u in run.units {
+        val row = [ i=i, n=#run.units, grabbed=false ]
+        set rows@+ = row
         val y = 40 + i*19
         val x = W - 30
-        spawn @ps CharacterPart(shop, i, x, y, u)
+        spawn @ps CharacterPart(shop, row, x, u)
         var px = x - 20
         if u.reserve@1 == 1 {
-            spawn @ps CharacterPart(shop, i, px, y, u, 2)
+            spawn @ps CharacterPart(shop, row, px, u, 2)
             set px -= 20
         }
         loop _ in u.reserve@0 {
-            spawn @ps CharacterPart(shop, i, px, y, u, 1, 0.9)
+            spawn @ps CharacterPart(shop, row, px, u, 1, 0.9)
             set px -= 20
         }
         if u.spawn_effect {
@@ -463,7 +521,14 @@ task Party (shop, run, fx) {
     loop i, c in cls {
         spawn @ps ClassIcon((if #cls <= 6 => 319 => 308) + (i % w)*20, 45 + (i // w)*56, c, run.units, nil, spring(1), true)
     }
-    await(false)
+    loop e on :Shop.move {
+        val a = rows@(e.from)
+        val b = rows@(e.to)
+        set rows@(e.from) = b
+        set rows@(e.to) = a
+        set a.i = e.to
+        set b.i = e.from
+    }
 }
 
 ;;; ITEMS ;;;
@@ -554,7 +619,7 @@ task Build (run, iy) {
     spawn @ps Text2(40, 20, text([ [text="[wavy_mid, fg]your build", font=pixul_font, alignment=:center] ]))
     loop i, u in run.units {
         val c = unit_character(u)
-        spawn @ps CharacterPart(nil, i, 20, 40 + i*19, u)
+        spawn @ps CharacterPart(nil, [ i=i, n=#run.units ], 20, u)
         spawn @ps Text2(20 + 14 + text_width(pixul_font, c)/2, 40 + i*19,
                         text([ [text="[" ++ character_color_strings@(c) ++ "]" ++ c, font=pixul_font, alignment=:left] ]))
     }
@@ -781,7 +846,7 @@ task Shop (run) {
         }
     }
     loop {
-        val e = await <:Button.click || :Shop.buy || :Shop.sell || :Shop.item_up || :Shop.item_sell || :key.dn>
+        val e = await <:Button.click || :Shop.buy || :Shop.sell || :Shop.move || :Shop.item_up || :Shop.item_sell || :key.dn>
         defer {
             run_save(run)       ;; after each change, as `system.save_run`
         }
@@ -855,6 +920,12 @@ task Shop (run) {
                 vector.remove(run.passives, e.i)
                 emit @:task :Shop.items
                 emit @:task :Shop.gold
+            }
+            e ?? :Shop.move => {
+                ;; the order of the party, saved (by the `defer` above)
+                val u = run.units@(e.from)
+                set run.units@(e.from) = run.units@(e.to)
+                set run.units@(e.to) = u
             }
             e ?? :Shop.sell => {
                 coins()

@@ -1,0 +1,33 @@
+;; Dragging a unit in the party of the shop, by script: the first unit
+;; down to the last row (one row per tick), and the order saved with the
+;; run. A ghost of its squares follows the mouse while it is dragged.
+include "../../src/game.atm"
+spawn Background()
+spawn Input()
+val run = [ level=2, loop=0, gold=0, shop_level=1, shop_xp=0, passives=[],
+            units=[ [character="swordsman", level=1, reserve=[1, 0]], [character="archer", level=1, reserve=[0, 0]],
+                    [character="cleric", level=2, reserve=[0, 0]] ] ]
+val order = func () {
+    vector.join(loop_chars_of(run.units), " ")
+}
+func loop_chars_of (us) {
+    val out = []
+    loop _, u in us {
+        set out@+ = u.character
+    }
+    out
+}
+spawn {
+    loop e on :mouse.dn {
+        print("dn", eng.tick(), order())
+    }
+}
+spawn {
+    loop e on :mouse.up {
+        print("up", eng.tick(), order())
+        await 100ms
+        val r = run_load()
+        print("saved", vector.join(loop_chars_of(r.units), " "))
+    }
+}
+await Shop(run)

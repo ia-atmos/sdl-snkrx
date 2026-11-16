@@ -35,7 +35,7 @@ possible.
    Moving to them waits for the author's decision.
 1. Features left out, now to be done (the author asked for all):
    the tutorial, the credits
-   screen, dragging a unit in the party, the buttons that open web
+   screen, the buttons that open web
    pages, the options for mouse control, the run timer, the window
    size, the cooldowns and the arrow drawn on the snake, and the
    achievements (local, without Steam).
