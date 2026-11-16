@@ -14,6 +14,7 @@ where it was seen, and its status.
 | 6 | `await :all` on an empty pool | as the reference Atmos; a question for the author |
 | 7 | A spawn in a loop or an `if` ends with its block, silently | caught at `3cc4855`: a compile error when the spawn ends its block; it found 3 more in the port |
 | 8 | A time await splits the time of the tick for every task | by design of the runtime, as far as the port knows; the port integrates on `:clock`, so a tick can take two steps (a question for the author) |
+| 9 | The new rules of `pin` | migrated at `3a6ffe9`, tests identical; three strange cases and one workaround (shared springs) left |
 
 The port followed `main` of the compiler; it was at `995c3b2` when the
 three fixes arrived. It is now pinned at `44dbe47` (`tools/setup.sh`),
@@ -323,3 +324,141 @@ What the port could do: step and integrate on one event per tick of
 game time, emitted by the engine (not on the events of the runtime's
 time), and keep `await 1s` for the timers. This changes the expected
 outputs of every arena test, so it is left for the author to decide.
+
+## 9. The new rules of `pin`
+
+Seen at `3a6ffe9` (the rules since `98ad03a`). The port moved to them
+from `44dbe47`, with the guide of the compiler session
+(`.claude/plans/261115-pin-migration.md`). The traces and screenshots
+of the tests stayed identical.
+
+Most of it was a change of keyword: a table or a function that a block
+creates is declared with `pin`, and a `val` only names a value that has
+an owner. The rest was a handful of shapes, each with a rewrite.
+
+**Built in a task, kept outside.** Many objects of the game are built
+by their task and kept in a table of the arena (`A.enemies`,
+`A.critters`, `A.units`, the bodies of the world, `CAM.shakes`, the
+texts under the mouse). Such an object is now made in the place that
+keeps it, and the task names it:
+
+```
+val c = vector.insert(A.critters, [ kind=:critter, ... ])
+val o = body(A.w, [ kind=:bomb, ... ], :static, x, y, :player, [:rect, 8, 8])
+set e.st = steerable(e.b, ...)      ;; and `val st = e.st`
+```
+
+`body()` now keeps the record in the world and returns it. A token
+(section 12 of the study) is made in its field the same way.
+
+**A filtered list.** `pin es = [] ... set A.enemies = es` became
+`set A.enemies = do { pin es = [] ... es }`.
+
+**A variable that takes a new table.** `var cs = []` with `set cs = []`
+became `pin cs = []` and `vector.clear(cs)`, or a field of a pinned
+table (`pin g = [ run=..., screen=... ]` in `main.atm`).
+
+**An event kept after the await.** `set p = await :Push` (the push of a
+critter or an elite) became a copy of its fields: an event has no
+owner, and a variable cannot own it.
+
+**A value of a task, emitted to its owner.** A button sent its spring
+in its click (`[id, spring=s]`), and the owner pulled it. A value of
+the button cannot go out to its owner, and the item cards are in a
+pool inside a `do` of the shop, deeper than the shop. The springs that
+go in events are now owned by the program (`SHARED_SPRINGS`, removed in
+a `defer` when the widget ends).
+
+**Objects of the arena in global events.** The hits, pushes, curses,
+and heals were `emit @:global`, carrying the enemy, the unit, the area,
+the projectile. A global emit only accepts values of the global block.
+The tests pinned the arena at the top of the program, so they passed;
+the game keeps it in the task `Play`, and the first hit of a real run
+failed. These events now go to the task of the arena (`send(to, ev)`,
+to `to.at`, which `body()` sets from the world).
+
+**A task given to a task of an outer pool.** The buttons of the win and
+of the death, spawned in the pool `ui` of the arena, received the task
+that awaited them (`Won`, `Died`), which ends earlier. The win now
+emits its choice to the program (it holds only an id); the death keeps
+its button in a pool of its own (it lasts until the next screen); the
+choice of a passive keeps its reroll button in a pool of its own and
+ends with the transition.
+
+**A text shared by two tasks of an outer pool.** `Text2` and `Cbyc`
+received the same text, pinned in `Won` and `Died`; the text is now
+`Text2`'s, which runs its own `Cbyc`.
+
+### What is strange
+
+A function cannot name its argument, nor a part of it, with either
+keyword, when its callers pass both fresh and owned values:
+
+```
+func f (t) {
+    val m = t           ;; fails when called as f([1, 2])
+    pin m = t           ;; fails when called as f(owned)
+    val p = t@0         ;; and the same for a part of it
+}
+```
+
+Only the parameter itself, or a copy (`X.copy(t)`), works for both.
+The port reads the numbers it needs (`polys_overlap`) or copies
+(`X.copy(mods || [])`).
+
+A closure that captures a fresh argument pins it, and the argument can
+no longer go out in an event. The line in the message is the line of
+the closure, not of the argument:
+
+```
+task Area (a) {
+    pin res = \(d) { a.n + d }
+    emit @:global :Hit [ area=a ]   ;; invalid escape : table pinned at <the closure>
+}
+```
+
+Without the closure, the emit passes. The port captures a number
+instead.
+
+`text(lines)` kept the lines of its caller; a message that comes in an
+event then made its text unable to go into the list of open texts. The
+text now copies its lines.
+
+The registry of springs is a workaround that the rules impose for a
+plain need: a child that hands a small mutable value to its owner.
+
+A task cannot go into a fresh table that is then given to the world,
+but it can go into the same table once the world owns it:
+
+```
+set rec.at = w.at           ;; invalid escape : pinned task (rec fresh)
+set w.objs@(b) = rec
+set w.objs@(b).at = w.at    ;; passes
+```
+
+### Removed workarounds
+
+None. Finding 2's broadcast of contacts was the candidate: a nested
+table of a pinned table now keeps the tasks of a pool, as its status
+hoped. But in the port the world belongs to `A`, which is outside the
+task `Arena`, and the tasks of the bodies are in pools of `Arena`; the
+world cannot keep them (`invalid escape : pinned task`, measured with
+the delivery of each contact to the task of its body). A table in the
+block of the pools could keep them, but every `body()` and the step of
+the world would need it, not `A`. The broadcast stays. The port had no
+`keep(spawn ...)`, tables of context, or task accepting its own
+connection.
+
+### The cost
+
+The commit `5c489ea`: 617 lines changed, of which 433 only from `val`
+or `var` to `pin` (the compiler found most of them at compile time, the
+rest at run time on the paths that the tests run). About 60 places
+needed a rewrite: about 26 objects made in the place that keeps them,
+7 lists given by a `do`, 4 variables cleared or kept as fields, 2
+events copied, 3 widgets with shared springs, 14 emits sent to the task
+of the arena (and the gold of the transition copied), 3 buttons given
+pools that hold their owners, 2 texts owned by their `Text2`, the lines
+of a text copied, 2 arguments read without a name, and 1 closure that
+captures a number. The 40 tests gave the same traces and screenshots.
+A test of the game compiles in about a minute of C, as before.
