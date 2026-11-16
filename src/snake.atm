@@ -196,6 +196,12 @@ task Unit (A, u, fx, shots) {
                 eng.rect(u.x, u.y, 9, 9, 3, 3,
                          if (u.hit.f > 0) || (u.shoot.f > 0) => fg@0 => u.color)
             }
+            ;; the arrow in front of the leader (`state.arrow_snake`)
+            if STATE.arrow_snake && (A.units@0 == u) && !A.menu {
+                val ax = u.x + 0.9*9
+                eng.line(ax + 3, u.y, ax, u.y - 3, character_colors@(u.character), 1)
+                eng.line(ax + 3, u.y, ax, u.y + 3, character_colors@(u.character), 1)
+            }
             ;; the halos: ouroboros (yellow), divined (green), the fairy (blue)
             if (u.ouroboros_def_m || 1) > 1 {
                 eng.rect(u.x, u.y, 1.25*9, 1.25*9, 3, 3, alpha(yellow@0, 0.5))
@@ -350,11 +356,25 @@ task Unit (A, u, fx, shots) {
                 }
                 set u.x, u.y = body_pos(u.b)
                 if !A.menu {
-                    if HELD.left > 0 {
-                        set u.r -= 1.66*math.pi*dt
-                    }
-                    if HELD.right > 0 {
-                        set u.r += 1.66*math.pi*dt
+                    if STATE.mouse_control {
+                        ;; toward the mouse: the side of the mouse, by the
+                        ;; perpendicular of the direction, kept for 64 ticks
+                        ;; (`mouse_control_v_buffer`, read by the ouroboros)
+                        val m = cam_mouse()
+                        val a = math.atan2(m.y - u.y, m.x - u.x)
+                        val v = -math.sin(u.r)*math.cos(a) + math.cos(u.r)*math.sin(a)
+                        set u.r += sign(v)*1.66*math.pi*dt
+                        set A.mouse_v = [v] ++ (A.mouse_v || [])
+                        if #A.mouse_v > 64 {
+                            set A.mouse_v@(64) = nil
+                        }
+                    } else {
+                        if HELD.left > 0 {
+                            set u.r -= 1.66*math.pi*dt
+                        }
+                        if HELD.right > 0 {
+                            set u.r += 1.66*math.pi*dt
+                        }
                     }
                 }
                 var total = 0
@@ -363,7 +383,7 @@ task Unit (A, u, fx, shots) {
                 }
                 set total = math.floor(total / #A.units)
                 body_set(u.b, :velocity, total*math.cos(u.r), total*math.sin(u.r))
-                if !A.menu {
+                if !A.menu && STATE.screen_movement {
                     val vx, vy = body_vel(u.b)
                     val hd = remap(math.abs(u.x - W/2), 0, 192, 1, 0)
                     val vd = remap(math.abs(u.y - H/2), 0, 108, 1, 0)

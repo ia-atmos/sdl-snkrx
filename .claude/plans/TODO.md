@@ -34,11 +34,11 @@ possible.
    new rules of `pin` (`98ad03a`, e.g. `val t = [1,2]` must be `pin`).
    Moving to them waits for the author's decision.
 1. Features left out, now to be done (the author asked for all):
-   the tutorial, the credits
-   screen, the buttons that open web
-   pages, the options for mouse control, the run timer, the window
-   size, the cooldowns and the arrow drawn on the snake, and the
-   achievements (local, without Steam).
+   the tutorial, the credits screen, the buttons that open web pages,
+   and the achievements (local, without Steam).
+1b. Finding 8 (`doc/compiler.md`): a timer splits the time of a tick, so
+   the physics and the movements can take two steps in a tick. To step
+   once per tick changes every arena test: the author decides.
 2. Use the new `await(n, :e)` (and `watching n, :e`, `loop on n, :e`)
    where the port counts events by hand.
 3. Why the original peaks at 946 MB was not investigated (`bench.md`).

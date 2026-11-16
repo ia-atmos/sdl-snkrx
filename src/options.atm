@@ -1,10 +1,11 @@
 ;; The options, with the game paused (`open_options` and `close_options`
 ;; of `main.lua:1844-2105`): a modal with buttons, opened and closed with
-;; Escape. The options that change what the port has: the volumes of the
-;; sounds and of the music, dark transitions, screen shake, the new game
-;; plus (in the menu), a restart of the run, the menu, and quit. Left
-;; out: mouse control, the run timer, the size of the window, and the
-;; cooldowns and the arrow drawn on the snake.
+;; Escape: the volumes of the sounds and of the music, mouse control,
+;; dark transitions, the run timer, the size of the window, screen shake,
+;; the cooldowns and the arrow drawn on the snake, screen movement, the
+;; new game plus (in the menu), a restart of the run, the menu, and quit.
+;; The window starts at 2 game pixels per pixel, not at the size of the
+;; desktop as the original, until a size is chosen and saved.
 
 ;; The text of an option.
 func onoff (b) {
@@ -39,6 +40,7 @@ task NgText () {
 ;; (:arena). It ends on resume; restart, the menu, and quit go to their
 ;; screens (`:goto`).
 task Options (kind) {
+    eng.cursor(true)
     pin ps = tasks()
     spawn @ps Modal()
     ;; the game stops in 0.25s, and comes back in 0.25s
@@ -58,6 +60,15 @@ task Options (kind) {
             :music => "music volume: " ++ tostring(math.floor(VOLUME.music*10 + 0.5))
             :dark => "dark transitions: " ++ onoff(STATE.dark_transitions)
             :shake => "screen shake: " ++ onoff(STATE.screen_shake != false)
+            :mouse => "mouse control: " ++ onoff(STATE.mouse_control)
+            :timer => "run timer: " ++ onoff(STATE.run_timer)
+            :size_down => "window size-"
+            :size_up => "window size+"
+            :fullscreen => "fullscreen"
+            :reset_video => "reset video settings"
+            :cooldowns => "cooldowns on snake: " ++ onoff(STATE.cooldown_snake)
+            :arrow => "arrow on snake: " ++ onoff(STATE.arrow_snake)
+            :movement => "screen movement: " ++ onoff(STATE.screen_movement)
             :ng_down => "NG+ down"
             :ng_up => "NG+ up"
             :menu => "main menu"
@@ -66,7 +77,12 @@ task Options (kind) {
     }
     val places = [
         [:resume, W/2, H - 225], [:sfx, W/2 - 46, H - 175], [:music, W/2 + 48, H - 175],
-        [:dark, W/2 + 13, H - 150], [:shake, W/2 - 57, H - 100], [:quit, W/2, H - 25],
+        [:mouse, W/2 - 113, H - 150], [:dark, W/2 + 13, H - 150], [:timer, W/2 + 121, H - 150],
+        [:size_down, W/2 - 136, H - 125], [:size_up, W/2 - 50, H - 125],
+        [:fullscreen, W/2 + 29, H - 125], [:reset_video, W/2 + 129, H - 125],
+        [:shake, W/2 - 57, H - 100, 110], [:cooldowns, W/2 + 75, H - 100, 145],
+        [:movement, W/2 - 69, H - 75, 135], [:arrow, W/2 + 65, H - 75, 125],
+        [:quit, W/2, H - 25],
     ]
     if kind == :menu {
         set places@+ = [:ng_down, W/2 - 58, H - 50]
@@ -82,7 +98,7 @@ task Options (kind) {
             do {
                 pin bs = tasks()
                 loop _, p in places {
-                    spawn @bs Button(me, p@0, p@1, p@2, label(p@0))
+                    spawn @bs Button(me, p@0, p@1, p@2, label(p@0), p@3 && [ w=p@3 ])
                 }
                 await :Options.changed
             }
@@ -110,6 +126,22 @@ task Options (kind) {
             }
             :dark => set STATE.dark_transitions = !STATE.dark_transitions
             :shake => set STATE.screen_shake = !(STATE.screen_shake != false)
+            :mouse => set STATE.mouse_control = !STATE.mouse_control
+            :timer => set STATE.run_timer = !STATE.run_timer
+            :cooldowns => set STATE.cooldown_snake = !STATE.cooldown_snake
+            :arrow => set STATE.arrow_snake = !STATE.arrow_snake
+            :movement => {
+                set STATE.screen_movement = !STATE.screen_movement
+                if !STATE.screen_movement {
+                    set CAM.x = W/2
+                    set CAM.y = H/2
+                    set CAM.r = 0
+                }
+            }
+            :size_down => window_step(-0.5)
+            :size_up => window_step(0.5)
+            :fullscreen => set STATE.sx = eng.window(0)
+            :reset_video => set STATE.sx = eng.window(0)
             :ng_down => set STATE.ng = math.max(0, math.min(STATE.ng - 1, 5))
             :ng_up => set STATE.ng = math.max(0, math.min(STATE.ng + 1, STATE.ng_max))
             :restart => {
@@ -134,13 +166,50 @@ task Options (kind) {
         emit @me :Options.changed
     }
     await TweenReal(0.25, st, [v=1], linear)
+    eng.cursor((kind != :arena) || STATE.mouse_control)
 }
 
-;; Escape opens the options, and Escape (or resume) closes them.
-task Pause (kind) {
+;; Escape opens the options, and Escape (or resume) closes them. While
+;; they are closed, the time of the run goes on (`run_time`).
+task Pause (kind, run) {
     loop {
-        await :key.dn until it.name == "Escape"
+        par :any {
+            await :key.dn until it.name == "Escape"
+        } with {
+            await RunClock(run)
+        }
         play(ui_switch1, [pitch=rfloat(0.95, 1.05), volume=0.5])
         await Options(kind)
+    }
+}
+
+;; The time of the run, in real time, as `run_time = run_time + dt` in
+;; the shop and in the arena (not while paused, nor after the death or
+;; the win).
+task RunClock (run) {
+    if run {
+        loop e on :tick {
+            set run.time = (run.time || 0) + tick_dt(e.us)
+        }
+    }
+    await(false)
+}
+
+;; The size of the window, half a step smaller or larger (the buttons
+;; "window size-" and "+", and the keys K and L): not below 1.
+func window_step (d) {
+    val s = (STATE.sx || 2) + d
+    if s >= 1 {
+        set STATE.sx = eng.window(s)
+    }
+}
+
+;; The keys K and L, anywhere, as the update of `main.lua`.
+task WindowKeys () {
+    loop e on :key.dn {
+        match e.name {
+            "K" => if (STATE.sx || 2) > 1 { window_step(-0.5) ; state_save() }
+            "L" => { window_step(0.5) ; state_save() }
+        }
     }
 }

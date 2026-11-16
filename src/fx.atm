@@ -79,6 +79,17 @@ task Camera () {
     }
 }
 
+;; The mouse in the world, through the camera, as
+;; `camera:get_mouse_position()` (`Camera:get_world_coords`).
+func cam_mouse () {
+    val mx, my = eng.mouse()
+    val c = math.cos(-CAM.r)
+    val s = math.sin(-CAM.r)
+    val x = mx - W/2
+    val y = my - H/2
+    [ x=c*x - s*y + CAM.x, y=s*x + c*y + CAM.y ]
+}
+
 ;; The transform of the camera, as `camera:attach()`; `eng.pop()` ends it.
 func cam_push () {
     eng.push(0, 0, 0, 1)

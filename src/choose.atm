@@ -51,6 +51,7 @@ task PassiveCard (screen, i, x, y, passive) {
 ;; with a merchant of level 3), the build, and the passives so far. The
 ;; cards that are not chosen go back to the pool.
 task ChoosePassive (A, ui) {
+    eng.cursor(true)
     val run = A.run
     spawn @ui Modal()
     spawn @ui TweenReal(4, CAM, [x=W/2, y=H/2, r=0], linear)

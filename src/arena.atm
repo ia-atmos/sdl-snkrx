@@ -102,6 +102,9 @@ task Arena (A, enemies) {
     set A.spawns_prevented = 0
     set A.gold_picked_up = 0
     set A.loop = A.run && A.run.loop || 0
+    if !A.menu {
+        eng.cursor(STATE.mouse_control)     ;; as `Arena:on_enter`
+    }
     spawn Springs(A.cond1.s, A.cond2.s)
 
     ;; the layers, through the camera
@@ -212,7 +215,7 @@ task Arena (A, enemies) {
     } with {
         ;; the options, while the level is being played
         if !A.menu {
-            await Pause(:arena)
+            await Pause(:arena, A.run)
         }
         await(false)
     } with {

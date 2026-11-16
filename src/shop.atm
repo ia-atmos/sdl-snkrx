@@ -722,6 +722,7 @@ func shop_sell (run, i, copy) {
 
 ;; The shop. It emits `:goto` to the arena on GO.
 task Shop (run) {
+    eng.cursor(true)
     pin fx = tasks()
 
     ;; the texts
@@ -829,7 +830,7 @@ task Shop (run) {
     val gold_short = info_line("[fg]not enough gold")
 
     run_save(run)
-    spawn Pause(:shop)
+    spawn Pause(:shop, run)
     val coins = func () {
         play(rtable([coins1, coins2, coins3]), [pitch=rfloat(0.95, 1.05), volume=0.5])
     }

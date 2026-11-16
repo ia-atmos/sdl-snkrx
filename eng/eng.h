@@ -34,7 +34,7 @@
 
 static SDL_Window*   EG_WIN  = NULL;
 static SDL_Renderer* EG_REN  = NULL;
-static int           EG_SCALE = 2;      // window pixels per game pixel
+static double        EG_SCALE = 2;      // window pixels per game pixel
 static int           EG_SND  = 0;       // audio is open
 static int           EG_TEST = 0;       // test mode: fixed ticks, no cap
 static int           EG_TICK = 0;       // the number of the current tick
@@ -309,7 +309,8 @@ static Uint8* EG_SPX = NULL;                // the shadow read back
 static Uint32* EG_WPX = NULL;               // the window
 
 static void eg_compose_cpu (void) {
-    int S = EG_SCALE, WW = EG_W*S, WH = EG_H*S;
+    double S = EG_SCALE;
+    int WW = (int)(EG_W*S + 0.5), WH = (int)(EG_H*S + 0.5);
     if (EG_OUT == NULL) {
         EG_OUT = SDL_CreateTexture(EG_REN, SDL_PIXELFORMAT_RGBA32,
                                    SDL_TEXTUREACCESS_STREAMING, WW, WH);
@@ -351,17 +352,19 @@ static void eg_compose_cpu (void) {
         under[k*3+2] = b > 255 ? 255 : b;
     }
     for (int y=0; y<WH; y++) {
-        int gy = y / S;
-        int sy = (y - off) / S;
+        int gy = (int)(y / S);
+        int sy = (int)((y - off) / S);
+        if (gy >= EG_H) gy = EG_H - 1;
         int sy_ok = (y - off) >= 0;
         Uint8* row = (Uint8*) &EG_WPX[y*WW];
         for (int x=0; x<WW; x++) {
-            int gx = x / S;
+            int gx = (int)(x / S);
+            if (gx >= EG_W) gx = EG_W - 1;
             int k = gy*EG_W + gx;
             int r = under[k*3+0], g = under[k*3+1], b = under[k*3+2];
             if (top >= 0) {
                 if (sy_ok && x >= off) {
-                    Uint8* q = &EG_SPX[(sy*EG_W + (x - off)/S)*4];
+                    Uint8* q = &EG_SPX[(sy*EG_W + (int)((x - off)/S))*4];
                     int a = (q[3]*128) / 255;
                     if (a) {
                         r = EG_DIV255(q[0]*a + r*(255 - a));
@@ -1095,6 +1098,42 @@ static AStatus eg_emit (const char* tag, const char* name, double x, double y, i
     return st;
 }
 
+// The size of the window: `s` window pixels per game pixel, or with
+// `s <= 0` the size of the desktop (as the buttons "fullscreen" and
+// "reset video settings" of the original, which make a window of that
+// size). Returns the scale. The composition on the CPU starts again at
+// the new size.
+static double eg_window (double s) {
+    if (s <= 0) {
+        SDL_DisplayMode m;
+        int d = EG_WIN ? SDL_GetWindowDisplayIndex(EG_WIN) : 0;
+        if (SDL_GetDesktopDisplayMode(d < 0 ? 0 : d, &m) == 0) {
+            double a = (double)m.w/EG_W, b = (double)m.h/EG_H;
+            s = a < b ? a : b;
+        } else {
+            s = EG_SCALE;
+        }
+    }
+    EG_SCALE = s;
+    if (EG_WIN) {
+        SDL_SetWindowSize(EG_WIN, (int)(EG_W*s + 0.5), (int)(EG_H*s + 0.5));
+    }
+    if (EG_OUT != NULL) {
+        SDL_DestroyTexture(EG_OUT);
+        EG_OUT = NULL;
+        free(EG_WPX);
+        EG_WPX = NULL;
+        free(EG_SPX);
+        EG_SPX = NULL;
+    }
+    return s;
+}
+
+// Shows or hides the mouse cursor over the window.
+static void eg_cursor (int on) {
+    SDL_ShowCursor(on ? SDL_ENABLE : SDL_DISABLE);
+}
+
 static void eg_shot (const char* path) {
     int w, h;
     SDL_SetRenderTarget(EG_REN, NULL);
@@ -1241,12 +1280,12 @@ int main (int argc, char** argv) {
         EG_TEST = 1;
     }
     EG_RENDER_ALL = getenv("SNX_RENDER") != NULL;
-    if (getenv("SNX_SCALE") != NULL && atoi(getenv("SNX_SCALE")) > 0) {
-        EG_SCALE = atoi(getenv("SNX_SCALE"));
+    if (getenv("SNX_SCALE") != NULL && atof(getenv("SNX_SCALE")) > 0) {
+        EG_SCALE = atof(getenv("SNX_SCALE"));
     }
     SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "0");
     EG_WIN = SDL_CreateWindow("SNKRX", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
-                              EG_W*EG_SCALE, EG_H*EG_SCALE, 0);
+                              (int)(EG_W*EG_SCALE + 0.5), (int)(EG_H*EG_SCALE + 0.5), 0);
     if (EG_WIN != NULL) {
         // the test mode renders in software, so that screenshots repeat
         const char* r = getenv("SNX_RENDERER");

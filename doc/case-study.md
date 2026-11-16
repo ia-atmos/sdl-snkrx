@@ -26,10 +26,12 @@ messages of the shop came later, with the build at the end of a level.
 
 Dragging a unit in the party came with them.
 
-Left out: the tutorial, the credits,
-the achievements and Steam, the buttons that open pages on the web, and
-the options for mouse control, the run timer, the size of the window,
-and the cooldowns and arrow drawn on the snake.
+The options came complete: mouse control, the run timer, the size of
+the window, the cooldowns and the arrow drawn on the snake, and screen
+movement.
+
+Left out: the tutorial, the credits, the achievements and Steam, and the
+buttons that open pages on the web.
 
 ## The timers
 

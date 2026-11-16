@@ -1141,7 +1141,7 @@ func unit_buffs (A, u) {
     }
     ;; the leader holding left for more than 1s gives defense to all
     if (i == 0) && u.ouroboros_technique_l {
-        val d = if held_for(:left, 1) => lv(u.ouroboros_technique_l, 1.15, 1.25, 1.35) => 1
+        val d = if mouse_turning(A, -1) || held_for(:left, 1) => lv(u.ouroboros_technique_l, 1.15, 1.25, 1.35) => 1
         loop _, o in A.units {
             set o.ouroboros_def_m = d
         }

@@ -24,6 +24,21 @@ func held_release (a) {
     }
 }
 
+;; With mouse control, whether the leader turned to one side (`dir`, -1
+;; left or 1 right) in all of the last 64 ticks, by at least half
+;; (`table.all(mouse_control_v_buffer, ...)`: true while it is empty).
+func mouse_turning (A, dir) {
+    if !STATE.mouse_control {
+        return false
+    }
+    loop _, v in A.mouse_v || [] {
+        if (v*dir) < 0.5 {
+            return false
+        }
+    }
+    true
+}
+
 ;; Whether an action is held for more than `s` seconds.
 func held_for (a, s) {
     HELD_SINCE@(a) && ((eng.tick()/60 - HELD_SINCE@(a)) > s)

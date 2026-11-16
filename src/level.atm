@@ -205,6 +205,10 @@ task Hud (A) {
             eng.pop()
           }
         }
+        ;; the time of the run, as `Arena:draw` with `state.run_timer`
+        if STATE.run_timer && A.run && !A.menu {
+            print_centered(fat_font, tostring(math.floor((A.run.time || 0) + 0.5)), A.x2 - 12, A.y2 + 16, 0, 0.6, 0.6, fg@0)
+        }
     }
 }
 
@@ -228,6 +232,14 @@ task CharacterHP (A, u, x, y) {
             eng.line(x - 8, y + 5, x - 8 + 15.5*(u.cooldown || 0), y + 5, c, 2)
         }
         eng.pop()
+        ;; the cooldown under the unit itself (`state.cooldown_snake`)
+        if STATE.cooldown_snake && !dead && X.nin(u.character, non_cooldown_characters) {
+            eng.push(u.x, u.y, 0, u.chp.s.x)
+            eng.line(u.x - 4, u.y + 8, u.x + 4, u.y + 8, if u.chp.f > 0 => fg@0 => bg@(-2), 2)
+            eng.line(u.x - 4, u.y + 8, u.x - 4 + 8*(u.cooldown || 0), u.y + 8,
+                     if u.chp.f > 0 => fg@0 => RAMPS@(character_color_strings@(u.character))@(-2), 2)
+            eng.pop()
+        }
     }
 }
 
@@ -313,6 +325,8 @@ task Clear (A, ui) {
         }
         await ClearGo(A)
     }
+    ;; the time of the run goes on until the shop (the game is not won)
+    spawn RunClock(A.run)
     spawn {
         await WaitReal(2)
         await SlowDown(0.7)
@@ -339,6 +353,7 @@ task Clear (A, ui) {
 ;; buttons that open pages on the web are left out.
 task Won (A, ui) {
     trace("won", tostring(A.level))
+    eng.cursor(true)
     if STATE.ng == STATE.ng_max {
         set STATE.ng_max += 1
     }
@@ -402,6 +417,7 @@ task ClearGo (A) {
 ;; the level reached, and a button to restart the run.
 task Died (A, ui) {
     trace("died", tostring(A.level))
+    eng.cursor(true)
     run_clear()                 ;; as `system.save_run()` in `Arena:die`
     spawn @ui Modal()
     val t = text([ [text="[wavy_mid]you died...", font=fat_font, alignment=:center, height_multiplier=1.25] ])

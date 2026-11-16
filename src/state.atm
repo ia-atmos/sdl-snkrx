@@ -8,4 +8,10 @@ val STATE = [
     screen_shake = true,
     sfx_volume = 0.5,
     music_volume = 0.5,
+    mouse_control = false,      ;; the leader turns toward the mouse
+    run_timer = false,          ;; the time of the run, in the arena
+    cooldown_snake = false,     ;; the cooldown of each unit, under it
+    arrow_snake = false,        ;; an arrow in front of the leader
+    screen_movement = true,     ;; the camera follows the leader (`no_screen_movement`)
+    sx = nil,                   ;; the size of the window, once changed
 ]

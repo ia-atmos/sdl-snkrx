@@ -1,0 +1,39 @@
+;; The options added later, in the arena: clicks turn on mouse control,
+;; turn off screen movement, and make the window larger; the key K makes
+;; it smaller again. Then the leader turns toward the mouse, and the run
+;; timer, the cooldowns, and the arrow on the snake show.
+include "../../src/game.atm"
+spawn Background()
+spawn Camera()
+spawn SlowMotion()
+spawn Input()
+spawn WindowKeys()
+
+set STATE.run_timer = true
+set STATE.cooldown_snake = true
+set STATE.arrow_snake = true
+val run = [ level=2, loop=0, gold=3, time=100, units=[ ["vagrant", 1], ["swordsman", 1], ["archer", 1] ], passives=[], pool=[] ]
+val A = new_arena(2)
+set A.run = run
+spawn Arena(A, [[440, 240, 1]])
+spawn {
+    loop on :mouse.up {
+        await :tick
+        print("click", eng.tick(), "mouse", STATE.mouse_control, "movement", STATE.screen_movement, "sx", STATE.sx)
+    }
+}
+spawn {
+    await :key.dn until it.name == "K"
+    await :tick
+    print("K", "sx", STATE.sx)
+}
+spawn {
+    await 3s
+    loop _ in 6 {
+        val l = A.units@0
+        print("tick", eng.tick(), "r", string.format("%.2f", l.r), "time", math.floor(run.time + 0.5),
+              "cam", string.format("%.1f %.1f", CAM.x, CAM.y))
+        await 500ms
+    }
+}
+await 7s

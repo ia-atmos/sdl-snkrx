@@ -49,7 +49,12 @@ func state_save () {
         "screen_shake " ++ tostring(STATE.screen_shake),
         "sfx_volume " ++ tostring(STATE.sfx_volume),
         "music_volume " ++ tostring(STATE.music_volume),
-    ])
+        "mouse_control " ++ tostring(STATE.mouse_control),
+        "run_timer " ++ tostring(STATE.run_timer),
+        "cooldown_snake " ++ tostring(STATE.cooldown_snake),
+        "arrow_snake " ++ tostring(STATE.arrow_snake),
+        "screen_movement " ++ tostring(STATE.screen_movement),
+    ] ++ (if STATE.sx => [ "sx " ++ tostring(STATE.sx) ] => []))
 }
 
 func state_load () {
@@ -61,7 +66,16 @@ func state_load () {
             "screen_shake" => set STATE.screen_shake = w@1 == "true"
             "sfx_volume" => set STATE.sfx_volume = tonumber(w@1)
             "music_volume" => set STATE.music_volume = tonumber(w@1)
+            "mouse_control" => set STATE.mouse_control = w@1 == "true"
+            "run_timer" => set STATE.run_timer = w@1 == "true"
+            "cooldown_snake" => set STATE.cooldown_snake = w@1 == "true"
+            "arrow_snake" => set STATE.arrow_snake = w@1 == "true"
+            "screen_movement" => set STATE.screen_movement = w@1 == "true"
+            "sx" => set STATE.sx = tonumber(w@1)
         }
+    }
+    if STATE.sx {
+        eng.window(STATE.sx)        ;; as `engine_run`, with `state.sx`
     }
     set VOLUME.sfx = STATE.sfx_volume
     set VOLUME.music = STATE.music_volume
@@ -76,6 +90,7 @@ func run_save (run) {
         "loop " ++ tostring(run.loop),
         "gold " ++ tostring(run.gold),
         "shop " ++ tostring(run.shop_level) ++ " " ++ tostring(run.shop_xp),
+        "time " ++ tostring(run.time || 0),
     ]
     if run.locked && run.cards {
         val cs = []
@@ -111,6 +126,7 @@ func run_load () {
             "level" => set run.level = tonumber(w@1)
             "loop" => set run.loop = tonumber(w@1)
             "gold" => set run.gold = tonumber(w@1)
+            "time" => set run.time = tonumber(w@1)
             "shop" => {
                 set run.shop_level = tonumber(w@1)
                 set run.shop_xp = tonumber(w@2)

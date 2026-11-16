@@ -10,6 +10,15 @@ func lerp (t, src, dst) {
     src*(1 - t) + dst*t
 }
 
+;; As `math.sign`: 1, -1, or 0.
+func sign (v) {
+    ifs {
+        v > 0 => 1
+        v < 0 => -1
+        else => 0
+    }
+}
+
 func linear (t) {
     t
 }

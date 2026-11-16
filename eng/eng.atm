@@ -127,6 +127,15 @@ val eng = [
     write_file = func (p, s) {
         `:boolean eg_write_file(eg_cstr($p), eg_cstr($s))`
     },
+    ;; the window: eng.window(s) gives it s window pixels per game pixel
+    ;; (or the size of the desktop, with s <= 0) and returns s;
+    ;; eng.cursor(on) shows or hides the mouse over it
+    window = func (s) {
+        `:number eg_window(eg_dbl($s))`
+    },
+    cursor = func (show) {
+        `eg_cursor(a_truthy($show));`
+    },
 ]
 
 ;;; COLORS ;;;
