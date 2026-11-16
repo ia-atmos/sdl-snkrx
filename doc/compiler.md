@@ -461,4 +461,3 @@ of the arena (and the gold of the transition copied), 3 buttons given
 pools that hold their owners, 2 texts owned by their `Text2`, the lines
 of a text copied, 2 arguments read without a name, and 1 closure that
 captures a number. The 40 tests gave the same traces and screenshots.
-A test of the game compiles in about a minute of C, as before.
