@@ -1,0 +1,31 @@
+;; The achievements, kept in the state and not in Steam: the win of level
+;; 25 at new game plus 1, with three warriors at level 2, gives the boss
+;; level (cluster), new game plus 1, and all units at level 2; not the
+;; warriors, whose second set is 6. Each once, and saved.
+include "../../src/game.atm"
+spawn Background()
+spawn Camera()
+spawn SlowMotion()
+spawn Input()
+
+set STATE.ng = 1
+set STATE.ng_max = 1
+val run = [ level=25, loop=0, gold=10, passives=[], pool=passive_pool(), shop_level=1, shop_xp=0,
+            units=[ [character="swordsman", level=2, reserve=[0, 0]], [character="barbarian", level=2, reserve=[0, 0]],
+                    [character="juggernaut", level=2, reserve=[0, 0]] ] ]
+val A = new_arena(25)
+set A.run = run
+spawn Arena(A, [ [100, 100, 1] ])
+await :goto
+loop _, w in load_lines("state.txt") {
+    if string.find(w@0, "achievement_") == 0 {
+        print(w@0, w@1)
+    }
+}
+set STATE.achievements = []
+state_load()
+loop _, a in ACHIEVEMENTS {
+    if STATE.achievements@(a) {
+        print("loaded", a)
+    }
+}

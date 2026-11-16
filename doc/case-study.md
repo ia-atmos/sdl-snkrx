@@ -34,7 +34,12 @@ The tutorial of the shop, the credits, and the buttons that open pages
 on the web came last: the shop under its tutorial, and the win under its
 credits, are toggled off (`toggle`) but for their drawing.
 
-Left out: the achievements and Steam.
+The 24 achievements are kept in the state, with their names in the
+original (`achievement_*`), and set where the original sets them; no
+screen of the original shows them, so the port shows none.
+
+Left out: Steam (the achievements were kept for it, and its rich
+presence).
 
 ## The timers
 

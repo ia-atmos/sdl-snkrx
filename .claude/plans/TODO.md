@@ -33,8 +33,8 @@ possible.
 0. The compiler is pinned at `44dbe47` (`tools/setup.sh`): `main` has
    new rules of `pin` (`98ad03a`, e.g. `val t = [1,2]` must be `pin`).
    Moving to them waits for the author's decision.
-1. Features left out, now to be done (the author asked for all):
-   the achievements (local, without Steam).
+1. Features: all of the original are in, but Steam (the achievements are
+   kept in `state.txt`, and nothing shows them, as in the original).
 1b. Finding 8 (`doc/compiler.md`): a timer splits the time of a tick, so
    the physics and the movements can take two steps in a tick. To step
    once per tick changes every arena test: the author decides.

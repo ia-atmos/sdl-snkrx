@@ -28,6 +28,7 @@
 315	add	Seeker 240.0 135.0
 315	enemy.die	speed_booster
 315	clear	6
+315	achievement	speed_booster
 341	barrage	swordsman
 366	barrage	swordsman
 383	add	Critter 124.0 150.9

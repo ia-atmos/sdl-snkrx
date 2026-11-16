@@ -315,6 +315,14 @@ task SlowDown (dur) {
 ;; the slow motion, and the transition to the shop.
 task Clear (A, ui) {
     trace("clear", tostring(A.level))
+    ;; the boss levels of the first loop (`arena.lua:146-173`)
+    match A.level {
+        6 => achieve("speed_booster")
+        12 => achieve("exploder")
+        18 => achieve("swarmer")
+        24 => achieve("forcer")
+        25 => achieve("cluster")
+    }
     gain_gold(A)
     ;; the last level of a loop: the game is won
     if (A.level % 25) == 0 {
@@ -360,6 +368,7 @@ task Won (A, ui) {
     set STATE.ng += 1
     run_clear()
     state_save()
+    win_achievements(A)
     spawn @ui Modal()
     spawn @ui TweenReal(4, CAM, [x=W/2, y=H/2, r=0], linear)
     val t = text([ [text="[wavy_mid, cbyc2]congratulations!", font=fat_font, alignment=:center] ])
@@ -403,6 +412,42 @@ task Won (A, ui) {
     set STATE.ng = if STATE.ng >= 5 => 5 => math.max(STATE.ng - 1, 0)
     state_save()
     set A.run.loop += 1
+}
+
+;; The achievements of a win (`arena.lua:521-668`): the new game plus
+;; reached, a class at its second set (the third for the sorcerers) with
+;; the units of the level, and all units at level 2 or at level 3.
+func win_achievements (A) {
+    if STATE.ng == 2 {
+        achieve("new_game_1")
+    }
+    if STATE.ng == 6 {
+        achieve("new_game_5")
+    }
+    val cl = A.cl || class_levels(A.run.units)
+    loop _, c in [ ["ranger", "rangers_win"], ["warrior", "warriors_win"], ["mage", "mages_win"],
+                   ["rogue", "rogues_win"], ["healer", "healers_win"], ["enchanter", "enchanters_win"],
+                   ["nuker", "nukers_win"], ["conjurer", "conjurers_win"], ["psyker", "psykers_win"],
+                   ["curser", "cursers_win"], ["forcer", "forcers_win"], ["swarmer", "swarmers_win"],
+                   ["voider", "voiders_win"], ["mercenary", "mercenaries_win"] ] {
+        if (cl@(c@0) || 0) >= 2 {
+            achieve(c@1)
+        }
+    }
+    if (cl.sorcerer || 0) >= 3 {
+        achieve("sorcerers_win")
+    }
+    loop _, lv in [2, 3] {
+        var all = true
+        loop _, u in A.run.units {
+            if unit_level(u) != lv {
+                set all = false
+            }
+        }
+        if all {
+            achieve("level_" ++ tostring(lv) ++ "_win")
+        }
+    }
 }
 
 ;; The transition from a level that is clear to the shop.

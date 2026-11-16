@@ -14,4 +14,16 @@ val STATE = [
     arrow_snake = false,        ;; an arrow in front of the leader
     screen_movement = true,     ;; the camera follows the leader (`no_screen_movement`)
     sx = nil,                   ;; the size of the window, once changed
+    achievements = [],          ;; the achievements, by name (`achievement_*`)
+]
+
+;; The achievements of the original, kept here and not in Steam: those of
+;; the boss levels, of the new game plus, and of the wins.
+val ACHIEVEMENTS = [
+    "speed_booster", "exploder", "swarmer", "forcer", "cluster",
+    "new_game_1", "new_game_5",
+    "rangers_win", "warriors_win", "mages_win", "rogues_win", "healers_win", "enchanters_win",
+    "nukers_win", "conjurers_win", "psykers_win", "cursers_win", "forcers_win", "swarmers_win",
+    "voiders_win", "sorcerers_win", "mercenaries_win",
+    "level_2_win", "level_3_win",
 ]

@@ -54,7 +54,27 @@ func state_save () {
         "cooldown_snake " ++ tostring(STATE.cooldown_snake),
         "arrow_snake " ++ tostring(STATE.arrow_snake),
         "screen_movement " ++ tostring(STATE.screen_movement),
-    ] ++ (if STATE.sx => [ "sx " ++ tostring(STATE.sx) ] => []))
+    ] ++ (if STATE.sx => [ "sx " ++ tostring(STATE.sx) ] => []) ++ achievement_lines())
+}
+
+func achievement_lines () {
+    val ls = []
+    loop _, a in ACHIEVEMENTS {
+        if STATE.achievements@(a) {
+            set ls@+ = "achievement_" ++ a ++ " true"
+        }
+    }
+    ls
+}
+
+;; An achievement, as `state.achievement_x = true; system.save_state()`
+;; with `steam.userStats.setAchievement`: once, saved with the state.
+func achieve (name) {
+    if !STATE.achievements@(name) {
+        set STATE.achievements@(name) = true
+        trace("achievement", name)
+        state_save()
+    }
 }
 
 func state_load () {
@@ -72,6 +92,9 @@ func state_load () {
             "arrow_snake" => set STATE.arrow_snake = w@1 == "true"
             "screen_movement" => set STATE.screen_movement = w@1 == "true"
             "sx" => set STATE.sx = tonumber(w@1)
+            else => if (string.find(w@0, "achievement_") == 0) && (w@1 == "true") {
+                set STATE.achievements@(string.sub(w@0, 12)) = true
+            }
         }
     }
     if STATE.sx {

@@ -1,7 +1,9 @@
 0	add	Seeker 100.0 100.0
 220	enemy.die	seeker
 220	clear	25
+220	achievement	cluster
 220	won	25
+220	achievement	level_3_win
 642	url	https://kubbimusic.com/album/ember
 702	url	https://store.steampowered.com/dev/a327ex/
 722	buy_screen	loop	1	ng	0	1

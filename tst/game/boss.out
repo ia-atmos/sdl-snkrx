@@ -29,4 +29,5 @@
 620	enemy.die	seeker
 620	unit.hit	vagrant 478.7
 620	clear	6
+620	achievement	speed_booster
 801	buy_screen	11

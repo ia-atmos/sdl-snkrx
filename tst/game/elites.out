@@ -15,4 +15,5 @@
 300	unit.hit	vagrant 557.3
 328	enemy.die	speed_booster
 328	clear	6
+328	achievement	speed_booster
 509	buy_screen

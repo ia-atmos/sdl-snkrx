@@ -1,0 +1,13 @@
+0	add	Seeker 100.0 100.0
+290	enemy.die	seeker
+290	clear	25
+290	achievement	cluster
+290	won	25
+290	achievement	new_game_1
+290	achievement	level_2_win
+achievement_cluster	true
+achievement_new_game_1	true
+achievement_level_2_win	true
+loaded	cluster
+loaded	new_game_1
+loaded	level_2_win
