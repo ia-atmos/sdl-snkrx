@@ -12,7 +12,8 @@ possible.
    from S6 to S9, unseen.
 2. `doc/compiler.md`, 1: a clock of its own for a task or a pool. An
    emit of time must be global today (`emit @t (10ms)` is refused with
-   `invalid emit : expected global`, at `9ad3291`). Recommended: allow
+   `invalid emit : expected global`, a check at run time in `a_emit`, at
+   `9ad3291`; item 33 of the compiler, not decided). Recommended: allow
    `emit @t (d)` (and `@ts`), which would let the options freeze the
    game while the interface runs, instead of the global `eng.slow`.
 3. `doc/compiler.md`, 2: tables built inside a `pin` pinned with it.

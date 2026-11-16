@@ -55,6 +55,25 @@ toggled off for the global time.
 Status: time is global by design. Whether a pool or a task may have a
 clock of its own is a question of the language, raised to its author.
 
+The answer of the compiler session (read from `rt/task.c`, 2026-11-16):
+each timer keeps its own time left, and time is an ordinary event; only
+the bookkeeping of the pieces of a tick (`CLK_MIN`, `CLK_LATE`) is
+global. The refusal is a check at run time, in `a_emit`, not at compile
+time; the reference in Lua has the same check (`atmos/run.lua`). To
+allow `emit @t (d)` and `@ts (d)` would cost about 40 lines in the
+runtime, but two tasks could then disagree on the time (`late` and
+`atm_step` would need a rule): item 33 of the list of the compiler, not
+decided. A game frozen while a menu runs needs no clock of its own:
+`toggle` does it (a subtree toggled off gets no events, time included);
+a clock per subtree is needed only for another speed, as slow motion.
+
+In the port: the shop under its tutorial and the win under its credits
+are frozen that way (`toggle on ... with :draw`). The options could
+replace `eng.slow(0)` by a `toggle` only in part: they slow the game to
+a stop in 0.25 s and back (`PauseTime`, as the tweens of `slow_amount`
+in `open_options` and `close_options`), and that ramp is another speed,
+which a toggle cannot give. Not changed.
+
 ## 2. A table cannot keep the tasks of a pool
 
 Seen at `2f45211`.
