@@ -7,7 +7,7 @@
 ;; the flag `spawning_enemies` of the original.
 
 ;; The ramps of the colors by name, as `_G[name]` of the original.
-val RAMPS = [
+pin RAMPS = [
     white=white, black=black, bg=bg, fg=fg, fg_alt=fg_alt, yellow=yellow,
     orange=orange, blue=blue, green=green, red=red, purple=purple,
     blue2=blue2, yellow2=yellow2,
@@ -17,7 +17,7 @@ val RAMPS = [
 task SpawnMarker (x, y) {
     trace("add", string.format("SpawnMarker %.1f %.1f", x, y))
     val r = rfloat(0, 2*math.pi)
-    val s = spring(1)
+    pin s = spring(1)
     spring_pull(s, rfloat(0.4, 0.6), 200, 10)
     spawn Springs(s)
     play(pop3, [pitch=1, volume=0.15])
@@ -58,8 +58,8 @@ task SpawnEffect (x, y, color, fx) {
 }
 
 task SpawnCircle (x, y, target, fx) {
-    val st = [ rs=0, color=fg@0 ]
-    val s = spring(1)
+    pin st = [ rs=0, color=fg@0 ]
+    pin s = spring(1)
     spawn Springs(s)
     spawn {
         loop on :draw {
@@ -81,7 +81,7 @@ task SpawnCircle (x, y, target, fx) {
 ;; Whether a small circle at (x,y) touches a unit or an enemy, as
 ;; `get_objects_in_shape(Circle(x, y, 2), ...)`.
 func spawn_blocked (A, x, y) {
-    val hit = \(o) {
+    pin hit = \(o) {
         ;; the point in the frame of the rectangle of o, against its box
         val dx = x - o.x
         val dy = y - o.y
@@ -105,7 +105,7 @@ func spawn_blocked (A, x, y) {
 ;; enemy that would spawn over another body does not, and is counted in
 ;; `A.spawns_prevented`, unless `pass`.
 task SpawnN (A, p, n, pass, foes, fx, shots) {
-    val offsets = [[-12, -12], [12, -12], [12, 12], [-12, 12], [0, 0]]
+    pin offsets = [[-12, -12], [12, -12], [12, 12], [-12, 12], [0, 0]]
     pin ss = tasks()
     loop i in (n || 4) {
         await 100ms
@@ -168,9 +168,9 @@ task MarkLater (A, ps, n, pass, foes, fx, shots) {
 ;; As `spawn_distributed_enemies`: one of six patterns over the spawn
 ;; points, which lasts as the original's flag `spawning_enemies`.
 task SpawnDistributed (A, foes, fx, shots) {
-    val kinds = ["4", "4+4", "4+4+4", "2x4", "3x4", "4x2"]
+    pin kinds = ["4", "4+4", "4+4+4", "2x4", "3x4", "4x2"]
     val kind = kinds@(rweighted([20, 20, 10, 15, 10, 15]))
-    val ps = spawn_points(A)
+    pin ps = spawn_points(A)
     match kind {
         "4" => par :all {
             await 2250ms

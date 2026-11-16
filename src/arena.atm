@@ -19,7 +19,7 @@ func new_arena (level, menu) {
 ;; The physics world of the arena, with the tags and filters of the
 ;; original (`Arena:on_enter`).
 func arena_world () {
-    val w = phys_world(32, [:player, :enemy, :projectile, :enemy_projectile, :force_field, :ghost])
+    pin w = phys_world(32, [:player, :enemy, :projectile, :enemy_projectile, :force_field, :ghost])
     phys_disable(w, :player, :player)
     phys_disable(w, :player, :projectile)
     phys_disable(w, :player, :enemy_projectile)
@@ -47,16 +47,15 @@ func arena_world () {
 
 ;; A wall: a static rectangle, drawn as `Wall` and `WallCover`.
 task Wall (A, x1, y1, x2, y2) {
-    val rec = [ kind=:wall ]
     val cx = (x1 + x2)/2
     val cy = (y1 + y2)/2
     val hw = (x2 - x1)/2
     val hh = (y2 - y1)/2
-    body(A.w, rec, :static, cx, cy, :solid, [:polygon, [-hw,-hh, hw,-hh, hw,hh, -hw,hh]])
+    val rec = body(A.w, [ kind=:wall ], :static, cx, cy, :solid, [:polygon, [-hw,-hh, hw,-hh, hw,hh, -hw,hh]])
     defer {
         body_free(A.w, rec.b)
     }
-    val vs = rect_vertices(x1, y1, x2, y2)
+    pin vs = rect_vertices(x1, y1, x2, y2)
     loop on :draw {
         eng.polygon(vs, bg@(-1))
     }
@@ -75,8 +74,8 @@ func arena_walls (A) {
 ;; The texts of the first level, on the floor: the keys, which shrink
 ;; away after 8s.
 task FloorText (x, y, lines, sx) {
-    val t = text(lines)
-    val st = [ sy=sx ]
+    pin t = text(lines)
+    pin st = [ sy=sx ]
     spawn {
         loop on :draw {
             text_draw(t, x, y, 0, sx, st.sy)
@@ -92,8 +91,9 @@ task FloorText (x, y, lines, sx) {
 ;; has those instead of waves (for the tests). It ends when the next
 ;; screen covers it.
 task Arena (A, enemies) {
-    val w = arena_world()
-    set A.w = w
+    set A.w = arena_world()
+    val w = A.w
+    set w.at = task             ;; the events about its objects go to it
     defer {
         phys_world_free()
     }
@@ -136,14 +136,13 @@ task Arena (A, enemies) {
     ;; the levels of the classes, as `Arena:on_enter` counts them
     set A.cl = class_levels(A.run.units)
     loop i, c in A.run.units {
-        val u = [ character=unit_character(c), level=unit_level(c), index=i, chp=hfx(1) ]
+        val u = vector.insert(A.units, [ character=unit_character(c), level=unit_level(c), index=i, chp=hfx(1) ])
         unit_passives(u, A.run.passives)
         if i == 0 {
             set u.x = A.start && A.start.x || (W/2)
             set u.y = A.start && A.start.y || (H/2 + 16)
             set u.r = A.start && A.start.r || 0
         }
-        set A.units@+ = u
         spawn @main Unit(A, u, effects, shots)
         if !A.menu {
             spawn @effects CharacterHP(A, u, A.x1 + 8 + i*22, A.y2 + 14)
@@ -161,13 +160,13 @@ task Arena (A, enemies) {
     spawn {
         if !A.menu {
             await 1s
-            val ps = []
+            pin ps = []
             loop _, u in A.units {
                 if has_class(u, "psyker") {
                     set ps@+ = u
                 }
             }
-            val orb = \(u) {
+            pin orb = \(u) {
                 [ x=u.x + 24*math.cos(u.r), y=u.y + 24*math.sin(u.r), r=0, color=fg@0, v=200,
                   dmg=u.dmg, character="psyker", parent=u ]
             }

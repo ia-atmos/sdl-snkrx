@@ -53,6 +53,25 @@ func spring_update (s, dt) {
     set s.x = s.x + s.v*dt
 }
 
+;; The springs that go in events to the task that owns a widget (a click
+;; and its spring, which the owner pulls): a value of a task cannot go
+;; out to its owner, so these belong to the program, and are removed
+;; when their widget ends (`shared_spring_free`, in a `defer`).
+pin SHARED_SPRINGS = []
+
+func shared_spring () {
+    vector.insert(SHARED_SPRINGS, spring(1))
+}
+
+func shared_spring_free (s) {
+    loop i, o in SHARED_SPRINGS {
+        if o == s {
+            vector.remove(SHARED_SPRINGS, i)
+            break
+        }
+    }
+}
+
 ;; Pulls the spring by f, as `Spring:pull(f, k, d)`.
 func spring_pull (s, f, k, d) {
     if k { set s.k = k }
@@ -69,7 +88,7 @@ func spring_animate (s, x, k, d) {
 
 ;; Updates springs in every tick of game time, while it lives.
 task Springs (...) {
-    val ss = [...]
+    pin ss = [...]
     loop us on :clock {
         val dt = us / 1000000
         loop _, s in ss {
@@ -85,7 +104,7 @@ task Springs (...) {
 ;; fields change in every tick, and the tween ends in the first tick past
 ;; `dur` (its fields may overshoot the values by a tick).
 task Tween (dur, target, source, method) {
-    val from = []
+    pin from = []
     loop k, _ in source {
         set from@(k) = target@(k)
     }
@@ -112,7 +131,7 @@ func tick_dt (us) {
 
 ;; A tween in real time (as the global `trigger` of the original).
 task TweenReal (dur, target, source, method) {
-    val from = []
+    pin from = []
     loop k, _ in source {
         set from@(k) = target@(k)
     }
@@ -130,7 +149,7 @@ task TweenReal (dur, target, source, method) {
 ;; The same, in every tick of real time, for the interface, which keeps
 ;; moving in slow motion (`force_update` of the original).
 task UISprings (...) {
-    val ss = [...]
+    pin ss = [...]
     loop e on :tick {
         val dt = e.us / 1000000
         loop _, s in ss {

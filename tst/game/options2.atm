@@ -12,8 +12,8 @@ spawn WindowKeys()
 set STATE.run_timer = true
 set STATE.cooldown_snake = true
 set STATE.arrow_snake = true
-val run = [ level=2, loop=0, gold=3, time=100, units=[ ["vagrant", 1], ["swordsman", 1], ["archer", 1] ], passives=[], pool=[] ]
-val A = new_arena(2)
+pin run = [ level=2, loop=0, gold=3, time=100, units=[ ["vagrant", 1], ["swordsman", 1], ["archer", 1] ], passives=[], pool=[] ]
+pin A = new_arena(2)
 set A.run = run
 spawn Arena(A, [[440, 240, 1]])
 spawn {

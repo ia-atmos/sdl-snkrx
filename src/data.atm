@@ -1,7 +1,7 @@
 ;; The data of the original (a327ex/SNKRX@6b93a64), as dumped by
 ;; tools/bench/dump.lua from the running game: do not edit.
 
-val class_colors = [
+pin class_colors = [
     conjurer = 0xF07021FF,
     curser = 0x8E559EFF,
     enchanter = 0x019BD6FF,
@@ -20,7 +20,7 @@ val class_colors = [
     warrior = 0xFACF00FF,
 ]
 
-val class_color_strings = [
+pin class_color_strings = [
     conjurer = "orange",
     curser = "purple",
     enchanter = "blue",
@@ -39,7 +39,7 @@ val class_color_strings = [
     warrior = "yellow",
 ]
 
-val character_names = [
+pin character_names = [
     arcanist = "Arcanist",
     archer = "Archer",
     artificer = "Artificer",
@@ -99,7 +99,7 @@ val character_names = [
     wizard = "Wizard",
 ]
 
-val character_colors = [
+pin character_colors = [
     arcanist = 0x4778BAFF,
     archer = 0x8BBF40FF,
     artificer = 0x4778BAFF,
@@ -159,7 +159,7 @@ val character_colors = [
     wizard = 0x019BD6FF,
 ]
 
-val character_color_strings = [
+pin character_color_strings = [
     arcanist = "blue2",
     archer = "green",
     artificer = "blue2",
@@ -219,7 +219,7 @@ val character_color_strings = [
     wizard = "blue",
 ]
 
-val character_classes = [
+pin character_classes = [
     arcanist = ["sorcerer"],
     archer = ["ranger"],
     artificer = ["sorcerer", "conjurer"],
@@ -276,7 +276,7 @@ val character_classes = [
     wizard = ["mage", "nuker"],
 ]
 
-val character_class_strings = [
+pin character_class_strings = [
     arcanist = "[blue2]Sorcerer",
     archer = "[green]Ranger",
     artificer = "[blue2]Sorcerer, [orange]Builder",
@@ -333,7 +333,7 @@ val character_class_strings = [
     wizard = "[blue]Mage, [red]Nuker",
 ]
 
-val character_descriptions = [
+pin character_descriptions = [
     arcanist = [@1="[fg]launches a slow moving orb that launches projectiles, each dealing [yellow]13[fg] damage", @2="[fg]launches a slow moving orb that launches projectiles, each dealing [yellow]26[fg] damage", @3="[fg]launches a slow moving orb that launches projectiles, each dealing [yellow]52[fg] damage"],
     archer = [@1="[fg]shoots an arrow that deals [yellow]12[fg] damage and pierces", @2="[fg]shoots an arrow that deals [yellow]24[fg] damage and pierces", @3="[fg]shoots an arrow that deals [yellow]48[fg] damage and pierces"],
     artificer = [@1="[fg]spawns an automaton that shoots a projectile that deals [yellow]13[fg] damage", @2="[fg]spawns an automaton that shoots a projectile that deals [yellow]26[fg] damage", @3="[fg]spawns an automaton that shoots a projectile that deals [yellow]52[fg] damage"],
@@ -393,7 +393,7 @@ val character_descriptions = [
     wizard = [@1="[fg]shoots a projectile that deals [yellow]14 AoE[fg] damage", @2="[fg]shoots a projectile that deals [yellow]28 AoE[fg] damage", @3="[fg]shoots a projectile that deals [yellow]56 AoE[fg] damage"],
 ]
 
-val character_effect_names = [
+pin character_effect_names = [
     arcanist = "[blue2]Arcane Orb",
     archer = "[green]Bounce Shot",
     artificer = "[blue2]Spell Formula Efficiency",
@@ -453,7 +453,7 @@ val character_effect_names = [
     wizard = "[blue]Magic Missile",
 ]
 
-val character_effect_names_gray = [
+pin character_effect_names_gray = [
     arcanist = "[light_bg]Arcane Orb",
     archer = "[light_bg]Bounce Shot",
     artificer = "[light_bg]Spell Formula Efficiency",
@@ -513,7 +513,7 @@ val character_effect_names_gray = [
     wizard = "[light_bg]Magic Missile",
 ]
 
-val character_effect_descriptions = [
+pin character_effect_descriptions = [
     arcanist = [@1="[yellow]+50%[fg] attack speed for the orb and [yellow]2[fg] projectiles are released per cast", @2="[yellow]+50%[fg] attack speed for the orb and [yellow]2[fg] projectiles are released per cast", @3="[yellow]+50%[fg] attack speed for the orb and [yellow]2[fg] projectiles are released per cast"],
     archer = [@1="[fg]the arrow ricochets off walls [yellow]3[fg] times", @2="[fg]the arrow ricochets off walls [yellow]3[fg] times", @3="[fg]the arrow ricochets off walls [yellow]3[fg] times"],
     artificer = [@1="[fg]automatons shoot and move 50% faster and release [yellow]12[fg] projectiles on death", @2="[fg]automatons shoot and move 50% faster and release [yellow]12[fg] projectiles on death", @3="[fg]automatons shoot and move 50% faster and release [yellow]12[fg] projectiles on death"],
@@ -573,7 +573,7 @@ val character_effect_descriptions = [
     wizard = [@1="[fg]the projectile chains [yellow]2[fg] times", @2="[fg]the projectile chains [yellow]2[fg] times", @3="[fg]the projectile chains [yellow]2[fg] times"],
 ]
 
-val character_effect_descriptions_gray = [
+pin character_effect_descriptions_gray = [
     arcanist = [@1="[light_bg]+50% attack speed for the orb and 2 projectiles are released per cast", @2="[light_bg]+50% attack speed for the orb and 2 projectiles are released per cast", @3="[light_bg]+50% attack speed for the orb and 2 projectiles are released per cast"],
     archer = [@1="[light_bg]the arrow ricochets off walls 3 times", @2="[light_bg]the arrow ricochets off walls 3 times", @3="[light_bg]the arrow ricochets off walls 3 times"],
     artificer = [@1="[light_bg]automatons shoot and move 50% faster and release 12 projectiles on death", @2="[light_bg]automatons shoot and move 50% faster and release 12 projectiles on death", @3="[light_bg]automatons shoot and move 50% faster and release 12 projectiles on death"],
@@ -633,7 +633,7 @@ val character_effect_descriptions_gray = [
     wizard = [@1="[light_bg]the projectile chains 3 times", @2="[light_bg]the projectile chains 3 times", @3="[light_bg]the projectile chains 3 times"],
 ]
 
-val class_stat_multipliers = [
+pin class_stat_multipliers = [
     conjurer = [
         area_dmg = 1,
         area_size = 1,
@@ -816,7 +816,7 @@ val class_stat_multipliers = [
     ],
 ]
 
-val class_descriptions = [
+pin class_descriptions = [
     conjurer = [@1="[yellow]2[light_bg]/[light_bg]4 [fg]- [yellow]+25%[light_bg]/[light_bg]+50% [fg]construct damage and duration", @2="[light_bg]2[light_bg]/[yellow]4 [fg]- [light_bg]+25%[light_bg]/[yellow]+50% [fg]construct damage and duration", @3="[light_bg]2[light_bg]/[light_bg]4 [fg]- [light_bg]+25%[light_bg]/[light_bg]+50% [fg]construct damage and duration"],
     curser = [@1="[yellow]2[light_bg]/[light_bg]4 [fg]- [yellow]+1[light_bg]/[light_bg]+3 [fg]max curse targets to allied cursers", @2="[light_bg]2[light_bg]/[yellow]4 [fg]- [light_bg]+1[light_bg]/[yellow]+3 [fg]max curse targets to allied cursers", @3="[light_bg]2[light_bg]/[light_bg]4 [fg]- [light_bg]+1[light_bg]/[light_bg]+3 [fg]max curse targets to allied cursers"],
     enchanter = [@1="[yellow]2[light_bg]/[light_bg]4 [fg]- [yellow]+15%[light_bg]/[light_bg]+25% [fg]damage to all allies", @2="[light_bg]2[light_bg]/[yellow]4 [fg]- [light_bg]+15%[light_bg]/[yellow]+25% [fg]damage to all allies", @3="[light_bg]2[light_bg]/[light_bg]4 [fg]- [light_bg]+15%[light_bg]/[light_bg]+25% [fg]damage to all allies"],
@@ -835,18 +835,18 @@ val class_descriptions = [
     warrior = [@1="[yellow]3[light_bg]/[light_bg]6 [fg]- [yellow]+25[light_bg]/[light_bg]+50 [fg]defense to allied warriors", @2="[light_bg]3[light_bg]/[yellow]6 [fg]- [light_bg]+25[light_bg]/[yellow]+50 [fg]defense to allied warriors", @3="[light_bg]3[light_bg]/[light_bg]6 [fg]- [light_bg]+25[light_bg]/[light_bg]+50 [fg]defense to allied warriors"],
 ]
 
-val tier_to_characters = [
+pin tier_to_characters = [
     @1 = ["vagrant", "swordsman", "magician", "archer", "scout", "cleric", "arcanist", "merchant"],
     @2 = ["wizard", "bomber", "sage", "squire", "dual_gunner", "sentry", "chronomancer", "barbarian", "cryomancer", "beastmaster", "jester", "carver", "psychic", "witch", "silencer", "outlaw", "miner"],
     @3 = ["elementor", "stormweaver", "spellblade", "psykeeper", "engineer", "juggernaut", "pyromancer", "host", "assassin", "bane", "barrager", "infestor", "flagellant", "artificer", "usurer", "gambler"],
     @4 = ["priest", "highlander", "psykino", "fairy", "blade", "plague_doctor", "cannoneer", "vulcanist", "warden", "corruptor", "thief"],
 ]
 
-val non_attacking_characters = ["cleric", "stormweaver", "squire", "chronomancer", "sage", "psykeeper", "bane", "carver", "fairy", "priest", "flagellant", "merchant", "miner"]
+pin non_attacking_characters = ["cleric", "stormweaver", "squire", "chronomancer", "sage", "psykeeper", "bane", "carver", "fairy", "priest", "flagellant", "merchant", "miner"]
 
-val non_cooldown_characters = ["squire", "chronomancer", "psykeeper", "merchant", "miner"]
+pin non_cooldown_characters = ["squire", "chronomancer", "psykeeper", "merchant", "miner"]
 
-val character_tiers = [
+pin character_tiers = [
     arcanist = 1,
     archer = 1,
     artificer = 3,
@@ -901,11 +901,11 @@ val character_tiers = [
     wizard = 2,
 ]
 
-val class_set_numbers = [
+pin class_set_numbers = [
 
 ]
 
-val passive_names = [
+pin passive_names = [
     amplify = "Amplify",
     annihilation = "Annihilation",
     assassination = "Assassination",
@@ -992,7 +992,7 @@ val passive_names = [
     whispers_of_doom = "Whispers of Doom",
 ]
 
-val passive_descriptions = [
+pin passive_descriptions = [
     amplify = "[yellow]+20/35/50%[fg] AoE damage",
     annihilation = "[fg]when a voider dies deal its DoT damage to all enemies for [yellow]3[fg] seconds",
     assassination = "[fg]crits from rogues deal [yellow]8/10/12x[fg] damage but normal attacks deal [yellow]half[fg] damage",
@@ -1079,7 +1079,7 @@ val passive_descriptions = [
     whispers_of_doom = "[fg]curses apply doom, deal [yellow]100/150/200[fg] damage every [yellow]4/3/2[fg] doom instances",
 ]
 
-val passive_descriptions_level = [
+pin passive_descriptions_level = [
     amplify = [@1="[yellow]+20%[light_bg]/[light_bg]35%[light_bg]/[light_bg]50%[fg] AoE damage", @2="[light_bg]+20%[light_bg]/[yellow]35%[light_bg]/[light_bg]50%[fg] AoE damage", @3="[light_bg]+20%[light_bg]/[light_bg]35%[light_bg]/[yellow]50%[fg] AoE damage"],
     annihilation = [@1="[fg]when a voider dies deal its DoT damage to all enemies for [yellow]3[fg] seconds", @2="[fg]when a voider dies deal its DoT damage to all enemies for [yellow]3[fg] seconds", @3="[fg]when a voider dies deal its DoT damage to all enemies for [yellow]3[fg] seconds"],
     assassination = [@1="[fg]crits from rogues deal [yellow]8x[light_bg]/[light_bg]10x[light_bg]/[light_bg]12x[fg] damage but normal attacks deal [yellow]half[fg] damage", @2="[fg]crits from rogues deal [light_bg]8x[light_bg]/[yellow]10x[light_bg]/[light_bg]12x[fg] damage but normal attacks deal [yellow]half[fg] damage", @3="[fg]crits from rogues deal [light_bg]8x[light_bg]/[light_bg]10x[light_bg]/[yellow]12x[fg] damage but normal attacks deal [yellow]half[fg] damage"],
@@ -1166,7 +1166,7 @@ val passive_descriptions_level = [
     whispers_of_doom = [@1="[fg]curses apply doom, deal [yellow]100[light_bg]/[light_bg]150[light_bg]/[light_bg]200[fg] every [yellow]4[light_bg]/[light_bg]3[light_bg]/[light_bg]2[fg] doom instances", @2="[fg]curses apply doom, deal [light_bg]100[light_bg]/[yellow]150[light_bg]/[light_bg]200[fg] every [light_bg]4[light_bg]/[yellow]3[light_bg]/[light_bg]2[fg] doom instances", @3="[fg]curses apply doom, deal [light_bg]100[light_bg]/[light_bg]150[light_bg]/[yellow]200[fg] every [light_bg]4[light_bg]/[light_bg]3[light_bg]/[yellow]2[fg] doom instances"],
 ]
 
-val level_to_tier_weights = [
+pin level_to_tier_weights = [
     @1 = [90, 10, 0, 0],
     @2 = [80, 15, 5, 0],
     @3 = [75, 20, 5, 0],
@@ -1194,7 +1194,7 @@ val level_to_tier_weights = [
     @25 = [0, 0, 0, 100],
 ]
 
-val level_to_gold_gained = [
+pin level_to_gold_gained = [
     @1 = [3, 3],
     @2 = [3, 3],
     @3 = [5, 6],
@@ -1347,7 +1347,7 @@ val level_to_gold_gained = [
     @150 = [600, 600],
 ]
 
-val level_to_elite_spawn_weights = [
+pin level_to_elite_spawn_weights = [
     @1 = [0],
     @2 = [4, 2],
     @3 = [10],
@@ -1500,7 +1500,7 @@ val level_to_elite_spawn_weights = [
     @150 = [37, 37, 37, 37, 37, 37],
 ]
 
-val level_to_boss = [
+pin level_to_boss = [
     @6 = "speed_booster",
     @12 = "exploder",
     @18 = "swarmer",
@@ -1533,7 +1533,7 @@ val level_to_boss = [
     @150 = "randomizer",
 ]
 
-val level_to_elite_spawn_types = [
+pin level_to_elite_spawn_types = [
     @1 = ["speed_booster"],
     @2 = ["speed_booster", "shooter"],
     @3 = ["speed_booster"],
@@ -1686,7 +1686,7 @@ val level_to_elite_spawn_types = [
     @150 = ["speed_booster", "exploder", "headbutter", "tank", "shooter", "spawner"],
 ]
 
-val level_to_shop_odds = [
+pin level_to_shop_odds = [
     @1 = [70, 20, 10, 0],
     @2 = [50, 30, 15, 5],
     @3 = [25, 45, 20, 10],
@@ -1694,6 +1694,6 @@ val level_to_shop_odds = [
     @5 = [5, 15, 30, 50],
 ]
 
-val unlevellable_items = ["speed_3", "damage_4", "shoot_5", "death_6", "lasting_7", "kinetic_bomb", "porcupine_technique", "last_stand", "annihilation", "tremor", "heavy_impact", "fracture", "meat_shield", "divine_punishment", "unleash", "freezing_field", "burning_field", "gravity_field", "magnetism", "insurance", "dividends", "haste", "rearm", "ceremonial_dagger", "burning_strike", "lucky_strike", "healing_strike", "psycholeak", "divine_blessing", "hardening"]
+pin unlevellable_items = ["speed_3", "damage_4", "shoot_5", "death_6", "lasting_7", "kinetic_bomb", "porcupine_technique", "last_stand", "annihilation", "tremor", "heavy_impact", "fracture", "meat_shield", "divine_punishment", "unleash", "freezing_field", "burning_field", "gravity_field", "magnetism", "insurance", "dividends", "haste", "rearm", "ceremonial_dagger", "burning_strike", "lucky_strike", "healing_strike", "psycholeak", "divine_blessing", "hardening"]
 
 ;; run_passive_pool: not found

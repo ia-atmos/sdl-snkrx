@@ -7,9 +7,8 @@
 ;; bounces once).
 task Pet (A, x, y, r, v, parent, fx) {
     trace("add", string.format("Pet %.1f %.1f", x, y))
-    val o = [ kind=:pet, w=8, h=8, x=x, y=y, r=r, v=v, pierce=6, ricochet=1, hit=hfx(1),
-              color=character_colors@("hunter") ]
-    body(A.w, o, :dynamic, x, y, :projectile, [:rect, 8, 8])
+    val o = body(A.w, [ kind=:pet, w=8, h=8, x=x, y=y, r=r, v=v, pierce=6, ricochet=1, hit=hfx(1),
+              color=character_colors@("hunter") ], :dynamic, x, y, :projectile, [:rect, 8, 8])
     defer {
         body_free(A.w, o.b)
     }
@@ -66,24 +65,25 @@ task Critter (A, x, y, r, v, dmg, parent, fx) {
         return nil
     }
     trace("add", string.format("Critter %.1f %.1f", x, y))
-    val c = [ kind=:critter, w=7, h=4, x=x, y=y, r=r, level=nil, stats=:critter,
-              classes=[:enemy_critter], color=orange@0, hit=hfx(1) ]
+    val c = vector.insert(A.critters, [ kind=:critter, w=7, h=4, x=x, y=y, r=r, level=nil, stats=:critter,
+              classes=[:enemy_critter], color=orange@0, hit=hfx(1) ])
     unit_stats(c, true, 0)
     set c.dmg = dmg || parent.dmg
     set c.hp = 1 + (match A.cl.swarmer { 2 => 3 ; 1 => 1 ; else => 0 }) + (parent.hive || 0)
     body(A.w, c, :dynamic, x, y, :player, [:rect, 7, 4])
     body_restitution(c.b, 0.5)
-    val st = steerable(c.b, c.v, 400, math.pi, 1)
-    set A.critters@+ = c
+    pin st = steerable(c.b, c.v, 400, math.pi, 1)
     defer {
         body_free(A.w, c.b)
-        val cs = []
-        loop _, o in A.critters {
-            if o != c {
-                set cs@+ = o
+        set A.critters = do {
+            pin cs = []
+            loop _, o in A.critters {
+                if o != c {
+                    set cs@+ = o
+                }
             }
+            cs
         }
-        set A.critters = cs
     }
     spawn Springs(c.hit.s)
     pin fxs = tasks()
@@ -125,7 +125,7 @@ task Critter (A, x, y, r, v, dmg, parent, fx) {
         }
     } with {
         ;; thrown out (as `Critter:push`), then chasing
-        var p = [ f=v, r=r ]
+        pin p = [ f=v, r=r ]
         var target = nil
         loop {
             loop {
@@ -134,7 +134,7 @@ task Critter (A, x, y, r, v, dmg, parent, fx) {
                     rtable([rfloat(-12*math.pi, -4*math.pi), rfloat(4*math.pi, 12*math.pi)]))
                 body_set(c.b, :damping, 1.5)
                 body_set(c.b, :angular_damping, 1.5)
-                set p = par :any {
+                val e = par :any {
                     loop on :clock {
                         set c.x, c.y = body_pos(c.b)
                         set c.r = body_angle(c.b)
@@ -145,11 +145,13 @@ task Critter (A, x, y, r, v, dmg, parent, fx) {
                 } with {
                     await :Push until it.to == c
                 }
-                until !p
+                until !e
+                set p.f = e.f
+                set p.r = e.r
             }
             body_set(c.b, :damping, 0)
             body_set(c.b, :angular_damping, 0)
-            set p = par :any {
+            val e = par :any {
                 loop on :clock {
                     set c.x, c.y = body_pos(c.b)
                     set c.r = body_angle(c.b)
@@ -169,6 +171,8 @@ task Critter (A, x, y, r, v, dmg, parent, fx) {
             } with {
                 await :Push until it.to == c
             }
+            set p.f = e.f
+            set p.r = e.r
         }
     }
     ;; as `Critter:die`
@@ -193,15 +197,14 @@ task Critter (A, x, y, r, v, dmg, parent, fx) {
 ;; level 3.
 task Automaton (A, x, y, parent, fx, shots) {
     trace("add", string.format("Automaton %.1f %.1f", x, y))
-    val a = [ kind=:automaton, w=8, h=8, x=x, y=y, r=0, level=parent.level, stats=:automaton,
-              classes=[:sorcerer, :conjurer], color=character_colors@("artificer"), hit=hfx(1), alive=true ]
+    val a = body(A.w, [ kind=:automaton, w=8, h=8, x=x, y=y, r=0, level=parent.level, stats=:automaton,
+              classes=[:sorcerer, :conjurer], color=character_colors@("artificer"), hit=hfx(1), alive=true ], :dynamic, x, y, :player, [:rect, 8, 8])
     unit_stats(a, true, 0)
     defer {
         set a.alive = false
     }
-    body(A.w, a, :dynamic, x, y, :player, [:rect, 8, 8])
     body_restitution(a.b, 0.5)
-    val st = steerable(a.b, a.v, 2000, 4*math.pi, 4)
+    pin st = steerable(a.b, a.v, 2000, 4*math.pi, 4)
     defer {
         body_free(A.w, a.b)
     }
@@ -237,7 +240,7 @@ task Automaton (A, x, y, parent, fx, shots) {
         }
     } with {
         ;; its cooldown is 2s, times 0.75 at level 3 (`set_every_multiplier`)
-        val u = [ aspd_m=(if parent.level == 3 => 0.75 => 1) ]
+        pin u = [ aspd_m=(if parent.level == 3 => 0.75 => 1) ]
         loop {
             await Cooldown(u, 2, \{ #enemies_in_circle(A, a.x, a.y, 96) > 0 })
             val e = closest_enemy(A, a.x, a.y, 96)
@@ -272,7 +275,7 @@ task Automaton (A, x, y, parent, fx, shots) {
 ;; The damage of a character of a level with no buffs, as
 ;; `get_character_stat(character, level, 'dmg')` (a new unit, rounded).
 func character_dmg (character, level) {
-    val u = [ character=character, level=level, stats=:player, classes=character_classes@(character) ]
+    pin u = [ character=character, level=level, stats=:player, classes=character_classes@(character) ]
     unit_stats(u, true, 0)
     math.floor(u.dmg*100 + 0.5) / 100
 }
@@ -293,13 +296,12 @@ task Unstable (A, o, parent, k, fx) {
 ;; first one it touches (a larger area, twice the damage, on a crit).
 task Saboteur (A, x, y, parent, crit, fx) {
     trace("add", string.format("Saboteur %.1f %.1f", x, y))
-    val o = [ kind=:saboteur, w=8, h=8, x=x, y=y, r=0, level=parent.level, stats=:player,
+    val o = body(A.w, [ kind=:saboteur, w=8, h=8, x=x, y=y, r=0, level=parent.level, stats=:player,
               character="saboteur", classes=character_classes@("saboteur"),
-              color=character_colors@("saboteur"), hit=hfx(1) ]
+              color=character_colors@("saboteur"), hit=hfx(1) ], :dynamic, x, y, :player, [:rect, 8, 8])
     unit_stats(o, true, 0)
-    body(A.w, o, :dynamic, x, y, :player, [:rect, 8, 8])
     body_restitution(o.b, 0.5)
-    val st = steerable(o.b, o.v, 2000, 4*math.pi, 4)
+    pin st = steerable(o.b, o.v, 2000, 4*math.pi, 4)
     defer {
         body_free(A.w, o.b)
     }
@@ -347,8 +349,7 @@ task Saboteur (A, x, y, parent, crit, fx) {
 ;; As `Bomb`: a mine that explodes after 8s or when an enemy touches it.
 task Bomb (A, x, y, parent, fx) {
     trace("add", string.format("Bomb %.1f %.1f", x, y))
-    val o = [ kind=:bomb, w=8, h=8, x=x, y=y, r=0, color=orange@0, hit=hfx(1) ]
-    body(A.w, o, :static, x, y, :player, [:rect, 8, 8])
+    val o = body(A.w, [ kind=:bomb, w=8, h=8, x=x, y=y, r=0, color=orange@0, hit=hfx(1) ], :static, x, y, :player, [:rect, 8, 8])
     defer {
         body_free(A.w, o.b)
     }
@@ -385,20 +386,21 @@ task Bomb (A, x, y, parent, fx) {
 ;; (the engineer of level 3) makes it hit harder and faster.
 task Turret (A, x, y, parent, fx, shots) {
     trace("add", string.format("Turret %.1f %.1f", x, y))
-    val o = [ kind=:turret, w=14, h=6, x=x, y=y, r=0, color=orange@0, hit=hfx(1), upgrade_dmg_m=1, upgrade_aspd_m=1, alive=true ]
+    val o = vector.insert(A.turrets, [ kind=:turret, w=14, h=6, x=x, y=y, r=0, color=orange@0, hit=hfx(1), upgrade_dmg_m=1, upgrade_aspd_m=1, alive=true ])
     body(A.w, o, :static, x, y, :player, [:rect, 14, 6])
     defer {
         body_free(A.w, o.b)
     }
-    set A.turrets@+ = o
     defer {
-        val ts = []
-        loop _, t in A.turrets {
-            if t != o {
-                set ts@+ = t
+        set A.turrets = do {
+            pin ts = []
+            loop _, t in A.turrets {
+                if t != o {
+                    set ts@+ = t
+                }
             }
+            ts
         }
-        set A.turrets = ts
     }
     play(turret_deploy, [pitch=1.2, volume=0.2])
     spawn Springs(o.hit.s)
@@ -431,7 +433,7 @@ task Turret (A, x, y, parent, fx, shots) {
             }
         }
     } with {
-        val tk = [ t=0 ]
+        pin tk = [ t=0 ]
         loop {
             ;; its period shrinks with the upgrades (`set_every_multiplier`)
             await Every([ aspd_m=1/o.upgrade_aspd_m ], rfloat(2.75, 3.5), tk)
@@ -463,14 +465,13 @@ task Turret (A, x, y, parent, fx, shots) {
 ;; 6s (3s at level 3), for 12s.
 task Tree (A, x, y, parent, fx) {
     trace("add", string.format("Tree %.1f %.1f", x, y))
-    val o = [ kind=:tree, w=9, h=9, x=x, y=y, r=0, color=fg@0, hit=hfx(1), alive=true ]
-    body(A.w, o, :static, x, y, :player, [:rect, 9, 9])
+    val o = body(A.w, [ kind=:tree, w=9, h=9, x=x, y=y, r=0, color=fg@0, hit=hfx(1), alive=true ], :static, x, y, :player, [:rect, 9, 9])
     defer {
         body_free(A.w, o.b)
     }
     play(buff1, [pitch=rfloat(0.95, 1.05), volume=0.5])
     val faint = alpha(parent.color, 0.08)
-    val s = spring(1)
+    pin s = spring(1)
     spawn Springs(s, o.hit.s)
     pin fxs = tasks()
     spawn {
@@ -523,14 +524,13 @@ task Tree (A, x, y, parent, fx) {
 ;; (0.5s at level 3), 4 times (8), an area each time, for 4s.
 task Volcano (A, x, y, parent, fx) {
     trace("add", string.format("Volcano %.1f %.1f", x, y))
-    val o = [ kind=:volcano, w=9, h=9, x=x, y=y, r=0, color=fg@0, hit=hfx(1) ]
-    body(A.w, o, :static, x, y, :player, [:rect, 9, 9])
+    val o = body(A.w, [ kind=:volcano, w=9, h=9, x=x, y=y, r=0, color=fg@0, hit=hfx(1) ], :static, x, y, :player, [:rect, 9, 9])
     body_restitution(o.b, 0.5)
     defer {
         body_free(A.w, o.b)
     }
     val faint = alpha(parent.color, 0.08)
-    val s = spring(1)
+    pin s = spring(1)
     spawn Springs(s, o.hit.s)
     spawn {
         await 200ms
@@ -581,13 +581,12 @@ task Volcano (A, x, y, parent, fx) {
 task ForceField (A, u, fx) {
     trace("add", string.format("ForceField %.1f %.1f", u.x, u.y))
     val rs = match u.magnify { 1 => 14 ; 2 => 17 ; 3 => 20 ; else => 12 }
-    val o = [ kind=:force_field, x=u.x, y=u.y, r=0, color=fg@0, hit=hfx(1) ]
-    body(A.w, o, :static, u.x, u.y, :force_field, [:circle, rs])
+    val o = body(A.w, [ kind=:force_field, x=u.x, y=u.y, r=0, color=fg@0, hit=hfx(1) ], :static, u.x, u.y, :force_field, [:circle, rs])
     defer {
         body_free(A.w, o.b)
     }
     val faint = alpha(yellow@0, 0.08)
-    val s = spring(1)
+    pin s = spring(1)
     spawn Springs(s, o.hit.s)
     pin fxs = tasks()
     spawn {
@@ -648,8 +647,7 @@ task Gold (A, x, y, fx, shots) {
     }
     set A.golds += 1
     trace("add", string.format("Gold %.1f %.1f", x, y))
-    val o = [ kind=:gold, w=3, h=3, x=x, y=y, r=0, hit=hfx(1), color=yellow2@0 ]
-    body(A.w, o, :dynamic, x, y, :ghost, [:rect, 3, 3])
+    val o = body(A.w, [ kind=:gold, w=3, h=3, x=x, y=y, r=0, hit=hfx(1), color=yellow2@0 ], :dynamic, x, y, :ghost, [:rect, 3, 3])
     defer {
         body_free(A.w, o.b)
         set A.golds -= 1
@@ -707,7 +705,7 @@ task Gold (A, x, y, fx, shots) {
 func taunt (A, o, parent, fx) {
     if parent.taunt && rbool(lv(parent.taunt, 10, 20, 30)) {
         loop _, e in enemies_in_circle(A, o.x, o.y, 96) {
-            emit @:global :Taunt [ to=e, by=o ]
+            send(e, :Taunt [ to=e, by=o ])
         }
     }
 }

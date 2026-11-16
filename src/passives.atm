@@ -7,7 +7,7 @@
 ;; (`self[v.passive] = v.level`), which its behaviors read.
 
 ;; The passives of a new run, in the order of the original.
-val PASSIVE_POOL = [
+pin PASSIVE_POOL = [
     "centipede", "ouroboros_technique_r", "ouroboros_technique_l", "amplify", "resonance", "ballista",
     "call_of_the_void", "crucio", "speed_3", "damage_4", "shoot_5", "death_6", "lasting_7",
     "defensive_stance", "offensive_stance", "kinetic_bomb", "porcupine_technique", "last_stand", "seeping",
@@ -26,7 +26,7 @@ val PASSIVE_POOL = [
 ]
 
 func passive_pool () {
-    val p = []
+    pin p = []
     loop _, x in PASSIVE_POOL {
         set p@+ = x
     }
@@ -34,8 +34,8 @@ func passive_pool () {
 }
 
 ;; The icons of the passives, by name.
-val PASSIVE_IMAGES = do {
-    val t = []
+pin PASSIVE_IMAGES = do {
+    pin t = []
     loop _, p in PASSIVE_POOL {
         set t@(p) = image(p)
     }

@@ -12,8 +12,8 @@ val MAIN  = eng.canvas(true, true)
 eng.background(bg@0)
 eng.target(MAIN)
 
-val fat_font   = font("FatPixelFont", 8)
-val pixul_font = font("PixulBrush", 8)
+pin fat_font   = font("FatPixelFont", 8)
+pin pixul_font = font("PixulBrush", 8)
 
 ;; The background: a checkerboard of 22-pixel cells and a vertical
 ;; gradient, drawn while it lives.
@@ -34,11 +34,11 @@ task Background () {
 
 ;;; STARS ;;;
 
-val star_image = image("star")
+pin star_image = image("star")
 
 ;; Where the stars start: a column left of the screen and a row below.
-val STAR_POSITIONS = do {
-    val ps = []
+pin STAR_POSITIONS = do {
+    pin ps = []
     loop i in (-30, H+30) {
         if (i+30) % 15 == 0 {
             set ps@+ = [x=-40, y=i]
@@ -108,10 +108,10 @@ func dark_text (s) {
 ;; as `Arena:transition`. In real time, as the group `transitions` of
 ;; the original: the game may be slowed down or stopped below it.
 task Transition (e) {
-    val st = [ x=e.x, y=e.y, rs=0, ts=0 ]
+    pin st = [ x=e.x, y=e.y, rs=0, ts=0 ]
     ;; dark transitions: a dark circle, and a light text
     val color = if STATE.dark_transitions => bg@(-2) => e.color
-    val t = text(e.lines || [ [text=dark_text(e.text || ""), font=pixul_font, alignment=:center] ])
+    pin t = text(e.lines || [ [text=dark_text(e.text || ""), font=pixul_font, alignment=:center] ])
     spawn {
         loop on :overlay {
             eng.circle(st.x, st.y, st.rs, color)

@@ -25,7 +25,7 @@ func seeker_push (e, f, r) {
 }
 
 ;; The colors of the elites and bosses.
-val ELITE_COLORS = [
+pin ELITE_COLORS = [
     speed_booster=green@0, exploder=blue@0, shooter=fg@0, headbutter=orange@0,
     tank=yellow@0, spawner=purple@0, swarmer=purple@0, forcer=yellow@0,
 ]
@@ -72,8 +72,8 @@ task Seeker (A, e, fx, shots) {
     }
     body(A.w, e, :dynamic, e.x, e.y, :enemy, [:rect, e.w, e.h])
     body_restitution(e.b, 0.5)
-    val st = if e.boss => steerable(e.b, e.v, 1000, 2*math.pi, 2) => steerable(e.b, e.v, 2000, 4*math.pi, 4)
-    set e.st = st
+    set e.st = if e.boss => steerable(e.b, e.v, 1000, 2*math.pi, 2) => steerable(e.b, e.v, 2000, 4*math.pi, 4)
+    val st = e.st
     set e.stunned = false
     spawn SpeedBoosts(e)
     spawn SeekerSlows(e)
@@ -143,13 +143,15 @@ task Seeker (A, e, fx, shots) {
     set A.enemies@+ = e
     defer {
         body_free(A.w, e.b)
-        val es = []
-        loop _, o in A.enemies {
-            if o != e {
-                set es@+ = o
+        set A.enemies = do {
+            pin es = []
+            loop _, o in A.enemies {
+                if o != e {
+                    set es@+ = o
+                }
             }
+            es
         }
-        set A.enemies = es
     }
     spawn Springs(e.hit.s)
     ;; the effects of the seeker (a flash, its bar of hp), which live with it
@@ -462,8 +464,10 @@ task Dot (e, dmg, duration, color, fx) {
 ;; it for `d` seconds, and a new curse of the kind replaces it (the old one
 ;; then expires without clearing it).
 task Cursed (e, k, v, d) {
-    val token = [ v=v ]
-    set e@(k) = token
+    ;; the token is made in the field, which owns it: one made here could
+    ;; not go to the enemy, which outlives this task
+    set e@(k) = [ v=v ]
+    val token = e@(k)
     await(d * 1s)
     if e@(k) == token {
         set e@(k) = nil
@@ -480,8 +484,8 @@ task TimedField (e, k, v, back, d) {
 ;; The curse of the launcher: after it, the enemy flies along an axis, and
 ;; hits itself on the wall (`launcher_push`).
 task LauncherCurse (e, c) {
-    val token = []
-    set e.launcher_curse = token
+    set e.launcher_curse = []
+    val token = e.launcher_curse
     await(c.duration * 1s)
     if e.launcher_curse == token {
         set e.launcher_push = c.a1

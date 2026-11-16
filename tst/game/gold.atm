@@ -8,6 +8,6 @@ spawn {
         print("covered", eng.tick())
     }
 }
-val A = [ gold_gained=5, gold_picked_up=1, interest=2 ]
+pin A = [ gold_gained=5, gold_picked_up=1, interest=2 ]
 await Transition([ screen=:buy_screen, x=W/2, y=H/2, color=fg@0, lines=gold_lines(A, -1), counting=A ])
 print("end", eng.tick())

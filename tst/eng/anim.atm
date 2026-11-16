@@ -3,10 +3,10 @@
 include "../../eng/eng.atm"
 include "../../eng/anim.atm"
 
-val f = \(x) { string.format("%.4f", x) }
+pin f = \(x) { string.format("%.4f", x) }
 
 ;; a spring pulled by 0.2 (the bounce of a button), for 12 ticks
-val s = spring(1, 200, 10)
+pin s = spring(1, 200, 10)
 spring_pull(s, 0.2)
 spawn Springs(s)
 spawn {
@@ -17,7 +17,7 @@ spawn {
 }
 
 ;; a tween of 0.1s, linear and cubic, awaited
-val o = [ a=0, b=10 ]
+pin o = [ a=0, b=10 ]
 spawn {
     await Tween(0.1, o, [a=1, b=20], cubic_in_out)
     print(:tween, eng.tick(), f(o.a), f(o.b))

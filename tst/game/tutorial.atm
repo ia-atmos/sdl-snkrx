@@ -5,7 +5,7 @@
 include "../../src/game.atm"
 spawn Background()
 spawn Input()
-val run = [ level=1, loop=0, gold=3, units=[], passives=[], shop_level=1, shop_xp=0 ]
+pin run = [ level=1, loop=0, gold=3, units=[], passives=[], shop_level=1, shop_xp=0 ]
 spawn {
     loop e on :mouse.dn {
         print("dn", eng.tick(), e.x, e.y, "gold", run.gold, "units", #run.units)

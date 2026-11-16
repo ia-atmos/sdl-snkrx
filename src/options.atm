@@ -44,7 +44,7 @@ task Options (kind) {
     pin ps = tasks()
     spawn @ps Modal()
     ;; the game stops in 0.25s, and comes back in 0.25s
-    val st = [ v=1 ]
+    pin st = [ v=1 ]
     spawn @ps PauseTime(st)
     spawn @ps TweenReal(0.25, st, [v=0], linear)
     if kind == :arena {
@@ -52,7 +52,7 @@ task Options (kind) {
         spawn @ps Text2(W/2, H/2 - 92, text([ [text="[bg10]turn left                                            turn right", font=pixul_font, alignment=:center] ]))
     }
     val me = task
-    val label = func (id) {
+    pin label = func (id) {
         match id {
             :resume => if kind == :menu => "main menu (esc)" => "resume game (esc)"
             :restart => "restart run (r)"
@@ -75,7 +75,7 @@ task Options (kind) {
             else => "quit"
         }
     }
-    val places = [
+    pin places = [
         [:resume, W/2, H - 225], [:sfx, W/2 - 46, H - 175], [:music, W/2 + 48, H - 175],
         [:mouse, W/2 - 113, H - 150], [:dark, W/2 + 13, H - 150], [:timer, W/2 + 121, H - 150],
         [:size_down, W/2 - 136, H - 125], [:size_up, W/2 - 50, H - 125],

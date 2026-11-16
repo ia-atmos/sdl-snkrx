@@ -1,7 +1,7 @@
 ;; The state that outlives a run, as `state` of the original (`main.lua`,
 ;; saved by `system.save_state`): the new game plus reached and the one in
 ;; play, and the options.
-val STATE = [
+pin STATE = [
     ng_max = 0,         ;; new_game_plus
     ng = 0,             ;; current_new_game_plus
     dark_transitions = false,
@@ -19,7 +19,7 @@ val STATE = [
 
 ;; The achievements of the original, kept here and not in Steam: those of
 ;; the boss levels, of the new game plus, and of the wins.
-val ACHIEVEMENTS = [
+pin ACHIEVEMENTS = [
     "speed_booster", "exploder", "swarmer", "forcer", "cluster",
     "new_game_1", "new_game_5",
     "rangers_win", "warriors_win", "mages_win", "rogues_win", "healers_win", "enchanters_win",

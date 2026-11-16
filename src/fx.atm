@@ -6,7 +6,7 @@
 ;; The camera of the world: the point at the center of the screen, a
 ;; rotation, shakes, and two springs for kicks. As the original, it is
 ;; one for the whole game, and moves in real time.
-val CAM = [
+pin CAM = [
     x=W/2, y=H/2, r=0,
     shakes=[],                  ;; [amp, dur (ms), freq, xs, ys, t0 (ms)]
     sx=spring(0), sy=spring(0),
@@ -20,15 +20,13 @@ func shake (intensity, duration, frequency) {
     }
     val f = frequency || 60
     val d = 1000*(duration || 0)
-    val xs = []
-    val ys = []
+    val sh = vector.insert(CAM.shakes, [ amp=intensity, dur=d, freq=f, xs=[], ys=[], t0=1000*eng.tick()/60 ])
     loop i in (1, math.floor((d/1000)*f)) {
-        set xs@(i) = 2*math.random() - 1
+        set sh.xs@(i) = 2*math.random() - 1
     }
     loop i in (1, math.floor((d/1000)*f)) {
-        set ys@(i) = 2*math.random() - 1
+        set sh.ys@(i) = 2*math.random() - 1
     }
-    set CAM.shakes@+ = [ amp=intensity, dur=d, freq=f, xs=xs, ys=ys, t0=1000*eng.tick()/60 ]
 }
 
 ;; As `camera:spring_shake(intensity, r, k, d)`.
@@ -58,16 +56,18 @@ task Camera () {
         val dt = e.us / 1000000
         val now = 1000*eng.tick()/60
         var ax, ay = 0, 0
-        val keep = []
-        loop _, s in CAM.shakes {
-            val t = now - s.t0
-            if t <= s.dur {
-                set ax += shake_amp(s, s.xs, t)
-                set ay += shake_amp(s, s.ys, t)
-                set keep@+ = s
+        set CAM.shakes = do {
+            pin keep = []
+            loop _, s in CAM.shakes {
+                val t = now - s.t0
+                if t <= s.dur {
+                    set ax += shake_amp(s, s.xs, t)
+                    set ay += shake_amp(s, s.ys, t)
+                    set keep@+ = s
+                }
             }
+            keep
         }
-        set CAM.shakes = keep
         spring_update(CAM.sx, dt)
         spring_update(CAM.sy, dt)
         set ax += CAM.sx.x
@@ -124,7 +124,7 @@ task HitCircle (x, y, o) {
     var rs = o.rs || 8
     var color = o.color || fg@0
     val dur = o.duration || 0.05
-    val st = [ rs=rs ]
+    pin st = [ rs=rs ]
     spawn {
         loop on :draw {
             eng.circle(x, y, st.rs, color)
@@ -145,7 +145,7 @@ task HitCircle (x, y, o) {
 
 ;; As `HitParticle`: a rounded rectangle that flies and shrinks.
 task HitParticle (x0, y0, o) {
-    val st = [
+    pin st = [
         x = x0, y = y0,
         v = o.v || rfloat(50, 150),
         r = o.r || rfloat(0, 2*math.pi),

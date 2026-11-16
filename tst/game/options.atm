@@ -7,8 +7,8 @@ spawn Camera()
 spawn SlowMotion()
 spawn Input()
 
-val run = [ level=1, loop=0, gold=3, units=[ ["vagrant", 1] ], passives=[], pool=[] ]
-val A = new_arena(1)
+pin run = [ level=1, loop=0, gold=3, units=[ ["vagrant", 1] ], passives=[], pool=[] ]
+pin A = new_arena(1)
 set A.run = run
 spawn Arena(A)
 spawn {

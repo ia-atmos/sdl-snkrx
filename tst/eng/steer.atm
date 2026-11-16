@@ -11,10 +11,10 @@ include "../../eng/phys.atm"
 include "../../eng/steer.atm"
 
 pin w = phys_world(32, [:enemy])
-val rec = []
-val b = body(w, rec, :dynamic, 100, 100, :enemy, [:rect, 14, 6])
-val st = steerable(b, 100, 2000, 2*math.pi, 2)
-val f = \(v) { string.format("%.1f", v) }
+pin rec = []
+val b = body(w, rec, :dynamic, 100, 100, :enemy, [:rect, 14, 6]).b
+pin st = steerable(b, 100, 2000, 2*math.pi, 2)
+pin f = \(v) { string.format("%.1f", v) }
 
 loop us on :clock {
     steer_update(st)

@@ -8,7 +8,7 @@
 ;; A square of the tutorial (`TutorialCharacterPart`): a unit at a level,
 ;; with its text under the mouse.
 task TutorialPart (x, y, character, level, list) {
-    val s = spring(1)
+    pin s = spring(1)
     spring_pull(s, 0.2, 200, 10)
     spawn Springs(s)
     val ramp = RAMPS@(character_color_strings@(character))
@@ -20,11 +20,11 @@ task TutorialPart (x, y, character, level, list) {
             eng.pop()
         }
     }
-    val inside = func () {
+    pin inside = func () {
         val mx, my = eng.mouse()
         (mx >= x - 10) && (mx <= x + 10) && (my >= y - 10) && (my <= y + 10)
     }
-    val lines = info_character(character, level)
+    pin lines = info_character(character, level)
     set lines@(0).text = "[" ++ character_color_strings@(character) ++ "]" ++ capitalize(character) ++
                          "[fg] - [yellow]Lv." ++ tostring(level)
     loop {
@@ -42,8 +42,8 @@ task TutorialPart (x, y, character, level, list) {
 }
 
 task Tutorial () {
-    val list = []           ;; its texts under the mouse, over it
-    val arrow = image("arrow")
+    pin list = []           ;; its texts under the mouse, over it
+    pin arrow = image("arrow")
     spawn {
         loop on :draw {
             eng.rect(W/2, H/2, 2*W, 2*H, nil, nil, rgba(0.1, 0.1, 0.1, 0.9))
@@ -68,8 +68,8 @@ task Tutorial () {
                    [114, -30, 2], [114, -10, 3] ] {
         spawn @ps TutorialPart(W/2 + p@0, H/2 + p@1, "swordsman", p@2, list)
     }
-    val warriors = func (cs) {
-        val us = []
+    pin warriors = func (cs) {
+        pin us = []
         loop _, c in cs {
             set us@+ = [ character=c ]
         }

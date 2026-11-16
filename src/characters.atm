@@ -42,7 +42,7 @@ task Shoot (A, u, r, mods, fx, shots) {
             spawn @shots Critter(A, u.x, u.y, rfloat(0, 2*math.pi), 10, u.dmg, u, fx)
         }
     }
-    val o = [ dmg=u.dmg*dmg_m, crit=crit ] ++ (mods || [])
+    pin o = [ dmg=u.dmg*dmg_m, crit=crit ] ++ (mods || [])
     match u.character {
         "outlaw" => {
             spawn @fx HitCircle(u.x + 0.8*9*math.cos(r), u.y + 0.8*9*math.sin(r), [rs=6])
@@ -126,7 +126,7 @@ task Barrage (A, u, r, n, o, fx, shots) {
 task Attack (A, u, size, mods, fx) {
     shake(2, 0.5)
     spawn @fx HfxUse(u.shoot, 0.25)
-    val m = mods || []
+    pin m = X.copy(mods || [])  ;; fresh or owned: a copy fits both
     spawn @fx Area(A, [x=m.x || u.x, y=m.y || u.y, r=u.r, w=u.area_size_m*(size || 64), color=u.color,
                        dmg=u.area_dmg_m*u.dmg, character=u.character, level=u.level, parent=u,
                        stun=m.stun, juggernaut_push=m.juggernaut_push], fx)
@@ -157,8 +157,8 @@ task DotAttack (A, u, size, mods, fx, d) {
 ;; The enemies a curser curses: a random few of those within 128, as
 ;; `table.first2(table.shuffle(...), n)`, `n` more with the cursers.
 func curse_targets (A, u, n) {
-    val es = enemies_in_circle(A, u.x, u.y, 128)
-    val out = []
+    pin es = enemies_in_circle(A, u.x, u.y, 128)
+    pin out = []
     loop _ in math.min(n + (match A.cl.curser { 2 => 3 ; 1 => 1 ; else => 0 })
                          + (match u.malediction { 1 => 1 ; 2 => 3 ; 3 => 5 ; else => 0 }), #es) {
         set out@+ = rtable_remove(es)
@@ -190,8 +190,7 @@ task HealingOrb (A, x, y, fx, extra) {
         return nil
     }
     set A.orbs += 1
-    val o = [ kind=:orb, w=4, h=4, x=x, y=y, r=0, hit=hfx(1) ]
-    body(A.w, o, :dynamic, x, y, :ghost, [:rect, 4, 4])
+    val o = body(A.w, [ kind=:orb, w=4, h=4, x=x, y=y, r=0, hit=hfx(1) ], :dynamic, x, y, :ghost, [:rect, 4, 4])
     defer {
         body_free(A.w, o.b)
         set A.orbs -= 1
@@ -243,7 +242,7 @@ task HealingOrb (A, x, y, fx, extra) {
         }
     }
     if low {
-        emit @:global :Heal [ to=low, amount=0.2*low.max_hp*(low.heal_effect_m || 1) ]
+        send(low, :Heal [ to=low, amount=0.2*low.max_hp*(low.heal_effect_m || 1) ])
     }
     ;; haste: the units run faster for 4s
     if passive_level(A, "haste") {
@@ -282,13 +281,12 @@ func magnet (A, o) {
 ;; As `Sentry`: a cross that turns, shoots four arrows every 2.75 to 3.5s,
 ;; and lasts 15s.
 task Sentry (A, u, fx, shots) {
-    val s = [ kind=:sentry, w=6, h=6, x=u.x, y=u.y, r=0, color=u.color, hit=hfx(1), dmg=u.dmg,
-              area_size_m=u.area_size_m, area_dmg_m=u.area_dmg_m ]
-    body(A.w, s, :static, s.x, s.y, :player, [:rect, 6, 6])
+    val s = body(A.w, [ kind=:sentry, w=6, h=6, x=u.x, y=u.y, r=0, color=u.color, hit=hfx(1), dmg=u.dmg,
+              area_size_m=u.area_size_m, area_dmg_m=u.area_dmg_m ], :static, u.x, u.y, :player, [:rect, 6, 6])
     defer {
         body_free(A.w, s.b)
     }
-    val sp = spring(1)
+    pin sp = spring(1)
     spawn Springs(sp, s.hit.s)
     spawn {
         loop on :draw {
@@ -330,8 +328,8 @@ task Sentry (A, u, fx, shots) {
 ;; The behavior of a unit by its character, while the unit lives.
 task Character (A, u, fx, shots) {
     pin acts = tasks()          ;; the attacks, which live with the unit
-    val near = \(rs) { #enemies_in_circle(A, u.x, u.y, rs) > 0 }
-    val toward = \(e) { math.atan2(e.y - u.y, e.x - u.x) }
+    pin near = \(rs) { #enemies_in_circle(A, u.x, u.y, rs) > 0 }
+    pin toward = \(e) { math.atan2(e.y - u.y, e.x - u.x) }
     match u.character {
         "vagrant" => loop {
             await Cooldown(u, 2, \{ near(96) })
@@ -397,7 +395,7 @@ task Character (A, u, fx, shots) {
             if e { spawn @acts Shoot(A, u, toward(e), [], fx, shots) }
         }
         "spellblade" => do {
-            val tk = [ t=0 ]
+            pin tk = [ t=0 ]
             loop {
                 await Every(u, 2, tk)
                 spawn @acts Shoot(A, u, rfloat(0, 2*math.pi), [], fx, shots)
@@ -548,7 +546,7 @@ task Character (A, u, fx, shots) {
             }
         }
         "witch" => do {
-            val tk = [ t=0 ]
+            pin tk = [ t=0 ]
             loop {
                 await Every(u, 4, tk)
                 spawn @acts DotAttack(A, u, 42, [duration=rfloat(12, 16)], fx, 0)
@@ -563,7 +561,7 @@ task Character (A, u, fx, shots) {
                 spawn @fx DotArea(A, [x=u.x, y=u.y, rs=u.area_size_m*48, color=u.color, dmg=u.area_dmg_m*u.dmg,
                                       character=u.character, level=u.level, parent=u], fx)
             }
-            val tk = [ t=0 ]
+            pin tk = [ t=0 ]
             loop {
                 await Every(u, 5, tk)
                 spawn @acts DotAttack(A, u, 24, [duration=12, plague_doctor_unmovable=true], fx, 0)
@@ -580,7 +578,7 @@ task Character (A, u, fx, shots) {
             await(false)
         }
         "psykino" => do {
-            val tk = [ t=0 ]
+            pin tk = [ t=0 ]
             loop {
                 await Every(u, 4, tk)
                 val e = random_enemy(A, u.x, u.y, 160)
@@ -591,7 +589,7 @@ task Character (A, u, fx, shots) {
             }
         }
         "vulcanist" => do {
-            val tk = [ t=0 ]
+            pin tk = [ t=0 ]
             loop {
                 await Every(u, 12, tk)
                 spawn @acts Erupt(A, u, 0, fx)
@@ -630,7 +628,7 @@ task Character (A, u, fx, shots) {
             }
         }
         "gambler" => do {
-            val tk = [ t=0 ]
+            pin tk = [ t=0 ]
             loop {
                 await Every(u, 2, tk)
                 spawn @acts Gamble(A, u, fx)
@@ -640,7 +638,7 @@ task Character (A, u, fx, shots) {
             await 8s
             play(stormweaver1, [pitch=rfloat(0.95, 1.05), volume=0.5])
             loop _, o in A.units {
-                emit @:global :Infuse [ to=o, d=4 ]
+                send(o, :Infuse [ to=o, d=4 ])
             }
         }
         "chronomancer" => do {
@@ -663,7 +661,7 @@ task Character (A, u, fx, shots) {
         }
         "priest" => do {
             if u.level == 3 {
-                val us = []
+                pin us = []
                 loop _, o in A.units {
                     set us@+ = o
                 }
@@ -882,7 +880,7 @@ task Upgrades (A, u, fx, shots) {
         loop _, t in A.turrets {
             spawn @fx HitCircle(u.x, u.y, [rs=6, color=orange@0, duration=0.1])
             spawn @fx LightningLine(u, t, orange@0, fx)
-            emit @:global :Upgrade [ to=t ]
+            send(t, :Upgrade [ to=t ])
         }
     }
 }
@@ -956,7 +954,7 @@ task Bless (A, u, fx) {
 ;; as soon as no enemy is on it (tried every 0.1s).
 task Ward (A, u, d, fx) {
     await(d * 1s)
-    val us = []
+    pin us = []
     loop _, o in A.units {
         set us@+ = o
     }
@@ -1011,7 +1009,7 @@ task HealAt (A, x, y, fx, extra) {
 }
 
 ;; The characters that launch projectiles (`launches_projectiles`).
-val PROJECTILE_CHARACTERS = ["vagrant", "archer", "scout", "outlaw", "blade", "wizard", "cannoneer",
+pin PROJECTILE_CHARACTERS = ["vagrant", "archer", "scout", "outlaw", "blade", "wizard", "cannoneer",
     "dual_gunner", "hunter", "spellblade", "engineer", "corruptor", "beastmaster", "jester", "assassin",
     "barrager", "arcanist", "illusionist", "artificer", "miner", "thief", "sentry"]
 
@@ -1146,7 +1144,7 @@ func unit_buffs (A, u) {
             set o.ouroboros_def_m = d
         }
     }
-    val m = \(k) { u@(k) || 1 }
+    pin m = \(k) { u@(k) || 1 }
     buffs_reset(u)
     set u.buff_def_a = u.warrior_def_a || 0
     set u.buff_aspd_m = m("chronomancer_aspd_m")*m("vagrant_aspd_m")*m("outlaw_aspd_m")*m("fairy_aspd_m")*

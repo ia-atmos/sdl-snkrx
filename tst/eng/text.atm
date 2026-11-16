@@ -4,9 +4,9 @@ include "../../eng/eng.atm"
 
 val main = eng.canvas(true, true)
 eng.background(hex("#303030"))
-val fat   = font("FatPixelFont", 8)
-val pixul = font("PixulBrush", 8)
-val icon  = image("warrior")
+pin fat   = font("FatPixelFont", 8)
+pin pixul = font("PixulBrush", 8)
+pin icon  = image("warrior")
 print(fat.h, pixul.h, text_width(fat, "arena run"), text_width(pixul, "arena run"))
 print(icon.w, icon.h)
 

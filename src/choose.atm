@@ -5,10 +5,10 @@
 ;; and under the mouse what it does. A click (or its number) emits
 ;; `:Passive.pick [i]` to the screen.
 task PassiveCard (screen, i, x, y, passive) {
-    val s = spring(1)
+    pin s = spring(1)
     spring_pull(s, 0.2, 200, 10)
     spawn UISprings(s)
-    val name = text([ [text="[fg, wavy_mid]" ++ passive_names@(passive), font=pixul_font, alignment=:center] ])
+    pin name = text([ [text="[fg, wavy_mid]" ++ passive_names@(passive), font=pixul_font, alignment=:center] ])
     spawn {
         loop on :draw {
             eng.push(x, y, 0, s.x)
@@ -17,7 +17,7 @@ task PassiveCard (screen, i, x, y, passive) {
             eng.pop()
         }
     }
-    val inside = func () {
+    pin inside = func () {
         val mx, my = eng.mouse()
         (mx >= x - 35) && (mx <= x + 35) && (my >= y - 50) && (my <= y + 50)
     }
@@ -70,15 +70,18 @@ task ChoosePassive (A, ui) {
             set free = true
         }
     }
-    var cards = []
+    pin cards = []
     val me = task
-    spawn @ui ShopButton(me, :reroll, W - 40, H - 40, \{
+    ;; the button and its look (a closure of `free`) are of this task, which
+    ;; lasts until the next screen (the transition is its last step)
+    pin bs = tasks()
+    spawn @bs ShopButton(me, :reroll, W - 40, H - 40, \{
         [ w=60, h=16, out="[bg10]reroll: [yellow]" ++ (if free => "0" => "5"),
           over="[fgm5]reroll: " ++ (if free => "0" => "5"), color=bg@(-2) ] })
     loop {
         val picked = do {
             pin cs = tasks()
-            set cards = []
+            vector.clear(cards)
             val w = 4*70 + 3*20
             loop i in 4 {
                 if #run.pool > 0 {
@@ -133,4 +136,5 @@ task ChoosePassive (A, ui) {
     ;; the global time comes back in 0.25s before the transition (the main
     ;; group stays stopped, as `main_slow_amount`)
     await WaitReal(0.25)
+    await ClearGo(A)
 }

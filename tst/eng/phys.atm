@@ -8,11 +8,11 @@ pin w = phys_world(32, [:player, :enemy, :projectile])
 phys_disable(w, :projectile, :enemy)
 phys_trigger(w, :projectile, :enemy)
 
-val f = \(v) { string.format("%.1f", v) }
+pin f = \(v) { string.format("%.1f", v) }
 
 task Ball (name, x, y, vx, tag, rest) {
     set pub = [ name=name ]
-    val b = body(w, pub, :dynamic, x, y, tag, [:circle, 4])
+    val b = body(w, pub, :dynamic, x, y, tag, [:circle, 4]).b
     if rest {
         body_restitution(b, rest)
     }
@@ -42,7 +42,7 @@ task Ball (name, x, y, vx, tag, rest) {
 
 task Wall (x, y, w2, h2) {
     set pub = [ name=:wall ]
-    val b = body(w, pub, :static, x, y, :solid, [:polygon, [-w2,-h2, w2,-h2, w2,h2, -w2,h2]])
+    val b = body(w, pub, :static, x, y, :solid, [:polygon, [-w2,-h2, w2,-h2, w2,h2, -w2,h2]]).b
     defer {
         body_free(w, b)
     }

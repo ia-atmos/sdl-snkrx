@@ -10,10 +10,10 @@ spawn Input()
 
 set STATE.ng = 1
 set STATE.ng_max = 1
-val run = [ level=25, loop=0, gold=10, passives=[], pool=passive_pool(), shop_level=1, shop_xp=0,
+pin run = [ level=25, loop=0, gold=10, passives=[], pool=passive_pool(), shop_level=1, shop_xp=0,
             units=[ [character="swordsman", level=2, reserve=[0, 0]], [character="barbarian", level=2, reserve=[0, 0]],
                     [character="juggernaut", level=2, reserve=[0, 0]] ] ]
-val A = new_arena(25)
+pin A = new_arena(25)
 set A.run = run
 spawn Arena(A, [ [100, 100, 1] ])
 await :goto

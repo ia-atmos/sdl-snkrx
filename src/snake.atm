@@ -21,12 +21,23 @@ func lerp_angle_dt (f, dt, src, dst) {
     lerp_angle(1 - math.pow(f, dt), src, dst)
 }
 
-;; Emits a hit, a push, or a slow motion to the whole program.
+;; Emits an event about `to` to the arena of `to` (`to.at`, set by `body`),
+;; or to the program when it has none: an event that carries objects of an
+;; arena can only go to the arena, whose block owns them.
+func send (to, ev) {
+    if to && to.at {
+        emit @(to.at) (ev)
+    } else {
+        emit @:global (ev)
+    }
+}
+
+;; Emits a hit, a push, or a slow motion.
 func hit (to, dmg, o) {
-    emit @:global :Hit ([ to=to, dmg=dmg ] ++ (o || []))
+    send(to, :Hit ([ to=to, dmg=dmg ] ++ (o || [])))
 }
 func push (to, f, r, inv) {
-    emit @:global :Push [ to=to, f=f, r=r, inv=inv ]
+    send(to, :Push [ to=to, f=f, r=r, inv=inv ])
 }
 func slow (amount, duration) {
     emit @:global :Slow [ amount=amount || 0.5, duration=duration || 0.5 ]
@@ -35,25 +46,25 @@ func slow (amount, duration) {
 ;; As `Seeker:slow(amount, duration)`: the enemy moves at `amount` of its
 ;; speed for a while (a new slow restarts it).
 func slow_enemy (to, amount, duration) {
-    emit @:global :Slowed [ to=to, amount=amount, duration=duration ]
+    send(to, :Slowed [ to=to, amount=amount, duration=duration ])
 }
 
 ;; As `Seeker:apply_dot(dmg, duration, color)`: `dmg` over time, a
 ;; quarter every 0.25s.
 func dot (to, dmg, duration, color) {
-    emit @:global :Dot [ to=to, dmg=dmg, duration=duration, color=color ]
+    send(to, :Dot [ to=to, dmg=dmg, duration=duration, color=color ])
 }
 
 ;; As `Seeker:curse(kind, duration, a1, a2, a3)`.
 func curse (to, kind, duration, a1, a2, a3) {
-    emit @:global :Curse [ to=to, kind=kind, duration=duration, a1=a1, a2=a2, a3=a3 ]
+    send(to, :Curse [ to=to, kind=kind, duration=duration, a1=a1, a2=a2, a3=a3 ])
 }
 
 ;; A stun, as the barbarian and the stunning strike: slowed to 0.1, no
 ;; attacks, and twice the damage, for `d` seconds.
 func stun (to, d) {
     slow_enemy(to, 0.1, d)
-    emit @:global :Stun [ to=to, d=d ]
+    send(to, :Stun [ to=to, d=d ])
 }
 
 ;; The slow motion of the original (`slow(amount, duration)` in
@@ -65,7 +76,7 @@ task SlowMotion () {
         set e = par :any {
             await :Slow
         } with {
-            val st = [ v=e.amount ]
+            pin st = [ v=e.amount ]
             eng.slow(st.v)
             spawn {
                 loop on :tick {
@@ -360,7 +371,7 @@ task Unit (A, u, fx, shots) {
                         ;; toward the mouse: the side of the mouse, by the
                         ;; perpendicular of the direction, kept for 64 ticks
                         ;; (`mouse_control_v_buffer`, read by the ouroboros)
-                        val m = cam_mouse()
+                        pin m = cam_mouse()
                         val a = math.atan2(m.y - u.y, m.x - u.x)
                         val v = -math.sin(u.r)*math.cos(a) + math.cos(u.r)*math.sin(a)
                         set u.r += sign(v)*1.66*math.pi*dt
@@ -435,7 +446,7 @@ task UnitDeathPassives (A, u, fx, shots) {
     if (#A.units == 1) && (A.units@0).last_stand {
         play(heal1, [pitch=rfloat(0.95, 1.05), volume=0.5])
         play(buff1, [pitch=rfloat(0.9, 1.1), volume=0.5])
-        emit @:global :Heal [ to=A.units@0, amount=10000 ]
+        send(A.units@0, :Heal [ to=A.units@0, amount=10000 ])
     }
     if u.kinetic_bomb {
         play(elementor1, [pitch=rfloat(0.9, 1.1), volume=0.5])
@@ -495,13 +506,16 @@ func snake_place (A, u) {
 ;; one becomes the leader (`:Snake.lead`), with a new path.
 func snake_remove (A, u) {
     val was_leader = A.units@0 == u
-    val us = []
-    loop _, o in A.units {
-        if o != u {
-            set us@+ = o
+    set A.units = do {
+        pin us = []
+        loop _, o in A.units {
+            if o != u {
+                set us@+ = o
+            }
         }
+        us
     }
-    set A.units = us
+    val us = A.units
     loop i, o in us {
         set o.index = i
     }
@@ -509,7 +523,7 @@ func snake_remove (A, u) {
         #us == 0 => emit @:global :Arena.died
         was_leader => {
             set A.path = []
-            emit @:global :Snake.lead [ u=us@0 ]
+            send(us@0, :Snake.lead [ u=us@0 ])
         }
     }
 }

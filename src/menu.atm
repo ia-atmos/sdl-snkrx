@@ -18,10 +18,10 @@ func rect_vertices (x1, y1, x2, y2) {
 val modal_transparent = rgba(0.1, 0.1, 0.1, 0.6)
 
 task Menu () {
-    val title = text([ [text="[wavy_mid, fg]SNKRX", font=fat_font, alignment=:center] ])
+    pin title = text([ [text="[wavy_mid, fg]SNKRX", font=fat_font, alignment=:center] ])
 
     ;; the arena, with a snake that runs by itself, as the original's
-    val A = new_arena(1, true)
+    pin A = new_arena(1, true)
     set A.start = [
         x = W/2 + rfloat(-48, 48),
         y = H/2 + 16 + rfloat(-48, 48),

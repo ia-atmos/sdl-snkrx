@@ -11,11 +11,12 @@
 ;; As `LightningLine`: a jagged line from one point to another, which
 ;; thins out in 0.1s.
 task LightningLine (src, dst, color, fx) {
-    var lines = [ [src.x, src.y, dst.x, dst.y] ]
+    pin ls = [ lines=[ [src.x, src.y, dst.x, dst.y] ] ]
     var off = 8
     loop _ in 3 {
-        val next = []
-        loop _, l in lines {
+        set ls.lines = do {
+          pin next = []
+          loop _, l in ls.lines {
             val x1, y1, x2, y2 = l@0, l@1, l@2, l@3
             val px, py = vnormalize(x2 - x1, y2 - y1)
             val k = rfloat(-off, off)
@@ -23,16 +24,17 @@ task LightningLine (src, dst, color, fx) {
             val my = (y1 + y2)/2 + px*k
             set next@+ = [x1, y1, mx, my]
             set next@+ = [mx, my, x2, y2]
+          }
+          next
         }
-        set lines = next
         set off = off/2
     }
-    val pts = []
-    loop _, l in lines {
+    pin pts = []
+    loop _, l in ls.lines {
         set pts@+ = l@0
         set pts@+ = l@1
     }
-    val st = [ w=3 ]
+    pin st = [ w=3 ]
     spawn @fx HitCircle(src.x, src.y, [rs=6, color=fg@0, duration=0.1])
     loop _ in 2 {
         spawn @fx HitParticle(src.x, src.y, [color=color])
@@ -102,8 +104,8 @@ task EnemyProjectile (A, p, fx) {
 ;; As `ExploderMine`: a mine that ticks three times, 0.8s apart, and
 ;; bursts into projectiles.
 task ExploderMine (A, x, y, src, fx, shots) {
-    val s = spring(1)
-    val h = hfx(1)
+    pin s = spring(1)
+    pin h = hfx(1)
     spawn Springs(s, h.s)
     spawn {
         loop on :draw {
@@ -157,7 +159,7 @@ task SpeedBoosts (e) {
 
 ;; Boosts the seekers within 128 of `e` (up to `max`), with lines.
 task BoostAround (A, e, max, duration, fx) {
-    val es = []
+    pin es = []
     loop _, o in enemies_in_circle(A, e.x, e.y, 128) {
         if (o != e) && (#es < (max || 1000)) {
             set es@+ = o
@@ -168,7 +170,7 @@ task BoostAround (A, e, max, duration, fx) {
         spawn @fx HitCircle(e.x, e.y, [rs=6, color=green@0, duration=0.1])
         loop _, o in es {
             spawn @fx LightningLine(e, o, green@0, fx)
-            emit @:global :SpeedBoost [ to=o, duration=duration ]
+            send(o, :SpeedBoost [ to=o, duration=duration ])
         }
     }
 }
@@ -210,7 +212,7 @@ task EliteAttack (A, e, fx, shots) {
         "headbutter" => {
             val o_r, o_g, o_b = comps(orange@0)
             val f_r, f_g, f_b = comps(fg@0)
-            val c = [ r=o_r, g=o_g, b=o_b ]
+            pin c = [ r=o_r, g=o_g, b=o_b ]
             spawn {
                 loop on :clock {
                     set e.color = rgba(c.r, c.g, c.b)
@@ -315,7 +317,7 @@ task BossAttack (A, e, fx, shots) {
         }
         if !(e.silenced || e.stunned) {
             val k = if e.boss == "randomizer" => rtable(["explode", "swarm", "force", "speed_boost"]) => e.boss
-            val near = enemies_in_circle(A, e.x, e.y, 128)
+            pin near = enemies_in_circle(A, e.x, e.y, 128)
             match k {
                 "speed_booster" => spawn @fxs BoostAround(A, e, 4, 3 + e.level*0.015 + (A.ng || 0)*0.1, fx)
                 "speed_boost" => spawn @fxs BoostAround(A, e, nil, 3 + e.level*0.015 + (A.ng || 0)*0.1, fx)
@@ -332,7 +334,7 @@ task BossAttack (A, e, fx, shots) {
 
 ;; The seekers other than `e`.
 func others (A, e) {
-    val out = []
+    pin out = []
     loop _, o in A.enemies {
         if (o != e) && (o.kind == :enemy) {
             set out@+ = o
@@ -344,7 +346,7 @@ func others (A, e) {
 ;; A boss kills a random seeker of `es`, which turns into critters (4 to
 ;; 6), a mine, or a burst of projectiles.
 task Sacrifice (A, e, es, what, fx, shots) {
-    val ss = []
+    pin ss = []
     loop _, o in es {
         if (o != e) && (o.kind == :enemy) {
             set ss@+ = o
@@ -383,7 +385,7 @@ task Sacrifice (A, e, es, what, fx, shots) {
 
 ;; The force of the randomizer: the seekers within 64 thrown at the leader.
 task ForceAround (A, e, fx) {
-    val es = enemies_in_circle(A, e.x, e.y, 64)
+    pin es = enemies_in_circle(A, e.x, e.y, 64)
     if #es > 0 {
         play(wizard1, [pitch=rfloat(0.95, 1.05), volume=0.5])
         spawn @fx HitCircle(e.x, e.y, [rs=6, color=yellow@0, duration=0.1])
@@ -423,7 +425,7 @@ task ForcerPull (A, e, fx) {
     }
     val px = x + rfloat(-16, 16)
     val py = y + rfloat(-16, 16)
-    val st = [ prs=0, vr=0 ]
+    pin st = [ prs=0, vr=0 ]
     val dvr = rfloat(-math.pi/4, math.pi/4)
     val faint = alpha(yellow@0, 0.08)
     var shown = true
@@ -482,24 +484,25 @@ task ForcerPull (A, e, fx) {
 ;; seeker does not hit it in its first 0.5s.
 task EnemyCritter (A, x, y, r, v, dmg, from, fx) {
     trace("add", string.format("EnemyCritter %.1f %.1f", x, y))
-    val c = [ kind=:enemy_critter, w=7, h=4, x=x, y=y, r=r, stats=:critter, classes=[:enemy_critter],
-              color=purple@0, hit=hfx(1), hp_shown=0 ]
+    val c = vector.insert(A.enemies, [ kind=:enemy_critter, w=7, h=4, x=x, y=y, r=r, stats=:critter, classes=[:enemy_critter],
+              color=purple@0, hit=hfx(1), hp_shown=0 ])
     unit_stats(c, true, A.ng)
     set c.dmg = dmg
     body(A.w, c, :dynamic, x, y, :enemy_projectile, [:rect, 7, 4])
     body_restitution(c.b, 0.5)
-    val st = steerable(c.b, c.v, 400, math.pi, 1)
-    set c.st = st
-    set A.enemies@+ = c
+    set c.st = steerable(c.b, c.v, 400, math.pi, 1)
+    val st = c.st
     defer {
         body_free(A.w, c.b)
-        val es = []
-        loop _, o in A.enemies {
-            if o != c {
-                set es@+ = o
+        set A.enemies = do {
+            pin es = []
+            loop _, o in A.enemies {
+                if o != c {
+                    set es@+ = o
+                }
             }
+            es
         }
-        set A.enemies = es
     }
     spawn Springs(c.hit.s)
     pin fxs = tasks()
@@ -536,7 +539,7 @@ task EnemyCritter (A, x, y, r, v, dmg, from, fx) {
         val t = await :trigger.enter until (it.b == c.b) && (it.other.kind == :player)
         hit(t.other, c.dmg, [from_enemy=true])
     } with {
-        var p = [ f=v, r=r ]
+        pin p = [ f=v, r=r ]
         loop {
             loop {
                 body_set(c.b, :impulse, p.f*math.cos(p.r), p.f*math.sin(p.r))
@@ -544,7 +547,7 @@ task EnemyCritter (A, x, y, r, v, dmg, from, fx) {
                     rtable([rfloat(-12*math.pi, -4*math.pi), rfloat(4*math.pi, 12*math.pi)]))
                 body_set(c.b, :damping, 1.5)
                 body_set(c.b, :angular_damping, 1.5)
-                set p = par :any {
+                val e = par :any {
                     loop on :clock {
                         set c.x, c.y = body_pos(c.b)
                         set c.r = body_angle(c.b)
@@ -555,11 +558,13 @@ task EnemyCritter (A, x, y, r, v, dmg, from, fx) {
                 } with {
                     await :Push until it.to == c
                 }
-                until !p
+                until !e
+                set p.f = e.f
+                set p.r = e.r
             }
             body_set(c.b, :damping, 0)
             body_set(c.b, :angular_damping, 0)
-            set p = par :any {
+            val e = par :any {
                 loop on :clock {
                     set c.x, c.y = body_pos(c.b)
                     set c.r = body_angle(c.b)
@@ -578,6 +583,8 @@ task EnemyCritter (A, x, y, r, v, dmg, from, fx) {
             } with {
                 await :Push until it.to == c
             }
+            set p.f = e.f
+            set p.r = e.r
         }
     }
     loop _ in rint(2, 3) {

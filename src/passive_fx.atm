@@ -18,7 +18,7 @@ func passive_level (A, name) {
 
 ;; The mages of the units.
 func mages (A) {
-    val out = []
+    pin out = []
     loop _, u in A.units {
         if has_class(u, "mage") {
             set out@+ = u
@@ -35,7 +35,7 @@ task Passives (A, fx, shots) {
     await 100ms
     val awakening = passive_level(A, "awakening")
     if awakening {
-        val ms = mages(A)
+        pin ms = mages(A)
         if #ms > 0 {
             var m = rtable(ms)
             var runs = 0

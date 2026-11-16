@@ -5,13 +5,13 @@ spawn Background()
 spawn Camera()
 spawn SlowMotion()
 
-val P = \(n, l) { [ passive=n, level=l, xp=0 ] }
-val run = [ level=2, loop=0, gold=50, units=[
+pin P = \(n, l) { [ passive=n, level=l, xp=0 ] }
+pin run = [ level=2, loop=0, gold=50, units=[
     ["vagrant", 1], ["swordsman", 1], ["wizard", 1], ["squire", 1], ["archer", 1], ["cleric", 1],
 ], passives=[ P("centipede", 3), P("amplify", 2), P("ballista", 1), P("magnify", 3), P("speed_3", 1),
     P("damage_4", 1), P("defensive_stance", 2), P("offensive_stance", 2), P("reinforce", 1),
     P("unwavering_stance", 3), P("chronomancy", 2) ], pool=[] ]
-val A = new_arena(2)
+pin A = new_arena(2)
 set A.run = run
 spawn Arena(A)
 loop _ in 30 {

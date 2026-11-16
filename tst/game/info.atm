@@ -5,7 +5,7 @@
 include "../../src/game.atm"
 spawn Background()
 spawn Input()
-val run = [ level=2, loop=0, gold=2, shop_level=1, shop_xp=0,
+pin run = [ level=2, loop=0, gold=2, shop_level=1, shop_xp=0,
             units=[ [character="swordsman", level=2, reserve=[1, 0]], [character="archer", level=1, reserve=[0, 0]] ],
             passives=[ [passive="amplify", level=1, xp=0] ] ]
 spawn {

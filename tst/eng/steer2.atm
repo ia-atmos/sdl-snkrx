@@ -8,19 +8,18 @@ include "../../eng/steer.atm"
 
 pin w = phys_world(32, [:enemy])
 phys_disable(w, :enemy, :enemy)
-val f = \(v) { string.format("%.1f", v) }
+pin f = \(v) { string.format("%.1f", v) }
 
-val rs = []
-val ss = []
+pin rs = []
+pin ss = []
 loop i in 3 {
-    val r = []
-    body(w, r, :dynamic, 100 + i, 100, :enemy, [:rect, 14, 6])
+    val r = body(w, [], :dynamic, 100 + i, 100, :enemy, [:rect, 14, 6])
     set rs@+ = r
     set ss@+ = steerable(r.b, 100, 2000, 2*math.pi, 2)
 }
-val wr = []
+pin wr = []
 body(w, wr, :dynamic, 240, 200, :enemy, [:rect, 14, 6])
-val ws = steerable(wr.b, 50, 1000, 2*math.pi, 2)
+pin ws = steerable(wr.b, 50, 1000, 2*math.pi, 2)
 body_set(wr.b, :velocity, 30, 0)    ;; a heading to start from
 
 loop us on :clock {
@@ -36,7 +35,7 @@ loop us on :clock {
     wander(ws, 50, 100, 20)
     phys_step(w, us/1000000)
     if eng.tick() % 60 == 0 {
-        val out = [eng.tick()]
+        pin out = [eng.tick()]
         loop _, r in rs {
             set out@+ = f(r.x) ++ "," ++ f(r.y)
         }

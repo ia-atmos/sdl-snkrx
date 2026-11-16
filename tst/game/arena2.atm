@@ -7,8 +7,8 @@ spawn Camera()
 spawn Input()
 spawn SlowMotion()
 
-val A = new_arena(1)
-val es = []
+pin A = new_arena(1)
+pin es = []
 loop i in 12 {
     set es@+ = [100 + 25*i, 80 + 10*(i%5), 5]
 }

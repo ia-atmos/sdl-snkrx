@@ -14,7 +14,7 @@
 ;; (see `Cbyc`, `NudgeDown`).
 
 ;; The colors of the tags, by name.
-val TAG_COLORS = [
+pin TAG_COLORS = [
     red=red@0, orange=orange@0, yellow=yellow@0, yellow2=yellow2@0,
     green=green@0, purple=purple@0, blue=blue@0, blue2=blue2@0,
     bg=bg@0, bg3=bg@3, bg10=bg@10, bgm2=bg@(-2), light_bg=bg@5,
@@ -27,7 +27,7 @@ val TAG_COLORS = [
 ]
 
 ;; The waves of the tags, by name: amplitude and frequency.
-val TAG_WAVES = [
+pin TAG_WAVES = [
     wavy       = [2,    4],
     wavy_mid   = [0.75, 3],
     wavy_mid2  = [0.5,  3],
@@ -36,8 +36,8 @@ val TAG_WAVES = [
 
 ;; The characters of a line, each with its tags, as `Text:parse`.
 func text_parse (s) {
-    val cs = []
-    var tags = []
+    pin cs = []
+    pin st = [ tags=[] ]        ;; the tags of the characters that follow
     var i = 0
     val n = #s
     loop {
@@ -45,26 +45,29 @@ func text_parse (s) {
         val c = string.sub(s, i, i)
         if c == "[" {
             val j = string.find(s, "]", i) --> assert
-            set tags = []
+            set st.tags = []
             loop _, tag in string.split(string.sub(s, i+1, j-1), ",") {
-                val t = string.split(tag)
+                pin t = string.split(tag)
                 if #t > 0 {
-                    set tags@+ = t@0
+                    set st.tags@+ = t@0
                 }
             }
             set i = j + 1
         } else {
-            set cs@+ = [ c=c, tags=tags ]
+            set cs@+ = [ c=c, tags=st.tags ]
             set i += 1
         }
     }
     cs
 }
 
-;; A text of lines, laid out as `Text:format_text`.
+;; A text of lines, laid out as `Text:format_text`. The text has copies
+;; of the lines: they may come from anywhere (an event, a table of the
+;; caller), and the text may go further than they could.
 func text (lines) {
-    val t = :Text [ lines=lines, w=0, h=0 ]
-    loop _, line in lines {
+    pin t = :Text [ lines=[], w=0, h=0 ]
+    loop _, l in lines {
+        val line = vector.insert(t.lines, X.copy(l))
         set line.chars = text_parse(line.text)
         set line.raw = vector.join(loop_chars(line.chars))
     }
@@ -73,7 +76,7 @@ func text (lines) {
 }
 
 func loop_chars (cs) {
-    val out = []
+    pin out = []
     loop _, c in cs {
         set out@+ = c.c
     }
@@ -152,7 +155,7 @@ func text_draw (t, x, y, r, sx, sy) {
 ;; As the tag `nudge_down` of the original: its characters start 4 pixels
 ;; up and come down in 0.1s.
 task NudgeDown (t) {
-    val cs = []
+    pin cs = []
     loop _, line in t.lines {
         loop _, c in line.chars {
             if X.xin("nudge_down", c.tags) {
@@ -160,7 +163,7 @@ task NudgeDown (t) {
             }
         }
     }
-    val st = [ oy=-4 ]
+    pin st = [ oy=-4 ]
     par :any {
         await Tween(0.1, st, [oy=0], linear)
     } with {

@@ -14,8 +14,8 @@
 ;; tutorial and its button "?".
 
 ;; The images of the classes, by name.
-val CLASS_IMAGES = do {
-    val t = []
+pin CLASS_IMAGES = do {
+    pin t = []
     loop k, _ in CLASS_SETS {
         set t@(k) = image(k)
     }
@@ -32,7 +32,7 @@ func shop_max_xp (level) {
 }
 
 ;; A text, made once for each string.
-val SHOP_TEXTS = []
+pin SHOP_TEXTS = []
 func shop_text (s) {
     if !SHOP_TEXTS@(s) {
         set SHOP_TEXTS@(s) = text([ [text=s, font=pixul_font, alignment=:center] ])
@@ -49,11 +49,14 @@ func shop_text (s) {
 ;; With `info`, a text shows while the mouse is over it, made again when
 ;; a click changes it (`LevelButton:create_info_text`).
 task ShopButton (owner, id, x, y, look, info) {
-    val s = spring(1)
+    val s = shared_spring()     ;; it goes in the clicks, to the owner
+    defer {
+        shared_spring_free(s)
+    }
     set pub = [ spring=s ]
     spawn UISprings(s)
-    val draw = func (over) {
-        val l = look()
+    pin draw = func (over) {
+        pin l = look()
         eng.push(x, y, 0, s.x)
         eng.rect(x, y, l.w, l.h, 4, 4, if over => fg@0 => l.color)
         text_draw(shop_text(if over => l.over => l.out), x, y + 1)
@@ -66,8 +69,8 @@ task ShopButton (owner, id, x, y, look, info) {
         }
         eng.pop()
     }
-    val inside = func () {
-        val l = look()
+    pin inside = func () {
+        pin l = look()
         val mx, my = eng.mouse()
         (mx >= x - l.w/2) && (mx <= x + l.w/2) && (my >= y - l.h/2) && (my <= y + l.h/2)
     }
@@ -141,7 +144,7 @@ task ClassIcon (x, y, class, units, next, s, party, tut) {
     spring_pull(s, 0.2, 200, 10)
     spawn UISprings(s)
     val sets = CLASS_SETS@(class)
-    val pips = class_pips(sets)
+    pin pips = class_pips(sets)
     var flash = false
     spawn {
         loop {
@@ -149,7 +152,7 @@ task ClassIcon (x, y, class, units, next, s, party, tut) {
             set flash = !flash
         }
     }
-    val inside = func () {
+    pin inside = func () {
         val mx, my = eng.mouse()
         (mx >= x - 10) && (mx <= x + 10) && (my >= y + 11 - 20) && (my <= y + 11 + 20)
     }
@@ -240,7 +243,7 @@ func owned_marks (character, units) {
 func card_classes (x, y, character) {
     val cs = character_classes@(character)
     val dx = match #cs { 2 => -10 ; 3 => -20 ; else => 0 }
-    val out = []
+    pin out = []
     loop i, c in cs {
         set out@+ = [ c, x + dx + i*20, y + 6 ]
     }
@@ -252,16 +255,16 @@ func card_classes (x, y, character) {
 ;; card ends when the shop answers `:Shop.bought [i]` or rerolls, and
 ;; bounces when it answers `:Shop.denied [i]`.
 task ShopCard (shop, i, x, y, character, units) {
-    val s = spring(1)
-    val is = spring(1)          ;; of the icon
+    pin s = spring(1)
+    pin is = spring(1)          ;; of the icon
     spring_pull(s, 0.2, 200, 10)
     spawn UISprings(s, is)
     val cost = character_tiers@(character)
     val name = shop_text("[" ++ character_color_strings@(character) ++ "]" ++ string.lower(character_names@(character)))
     val ramp = RAMPS@(character_color_strings@(character))
     val color = character_colors@(character)
-    val cs = []
-    val p = [ sx=1 ]            ;; the pulse while selected
+    pin cs = []
+    pin p = [ sx=1 ]            ;; the pulse while selected
     var selected = false
     spawn {
         loop on :draw {
@@ -284,8 +287,7 @@ task ShopCard (shop, i, x, y, character, units) {
     ;; `effects` of the original, over `main`)
     pin icons = tasks()
     loop _, ci in card_classes(x, y, character) {
-        val sp = spring(1)
-        set cs@+ = sp
+        val sp = vector.insert(cs, spring(1))
         spawn @icons ClassIcon(ci@1, ci@2, ci@0, units, character, sp)
     }
     spawn {
@@ -297,12 +299,12 @@ task ShopCard (shop, i, x, y, character, units) {
             }
         }
     }
-    val inside = func () {
+    pin inside = func () {
         val mx, my = eng.mouse()
         (mx >= x - 40) && (mx <= x + 40) && (my >= y - 45) && (my <= y + 45)
     }
     ;; the icon of the character (`CharacterIcon`, 40x20): its text
-    val inside_icon = func () {
+    pin inside_icon = func () {
         val mx, my = eng.mouse()
         (mx >= x - 20) && (mx <= x + 20) && (my >= y - 26 - 10) && (my <= y - 26 + 10)
     }
@@ -395,13 +397,13 @@ func sale_price (character, level, reserve) {
 ;; at the height of the mouse (`BuyScreen:draw`).
 task CharacterPart (shop, row, x, u, copy, sc) {
     val c = unit_character(u)
-    val s = spring(1)
+    pin s = spring(1)
     spring_pull(s, 0.2, 200, 10)
     spawn UISprings(s)
     val level = copy || unit_level(u)
     val ramp = RAMPS@(character_color_strings@(c))
     var lit = false
-    val y = func () {
+    pin y = func () {
         40 + row.i*19
     }
     spawn {
@@ -430,7 +432,7 @@ task CharacterPart (shop, row, x, u, copy, sc) {
             }
         }
     }
-    val inside = func () {
+    pin inside = func () {
         val mx, my = eng.mouse()
         val h = 10*(sc || 1)
         (mx >= x - h) && (mx <= x + h) && (my >= y() - h) && (my <= y() + h)
@@ -501,10 +503,9 @@ task CharacterPart (shop, row, x, u, copy, sc) {
 ;; the squares follow, without being made again.
 task Party (shop, run, fx) {
     pin ps = tasks()
-    val rows = []
+    pin rows = []
     loop i, u in run.units {
-        val row = [ i=i, n=#run.units, grabbed=false ]
-        set rows@+ = row
+        val row = vector.insert(rows, [ i=i, n=#run.units, grabbed=false ])
         val y = 40 + i*19
         val x = W - 30
         spawn @ps CharacterPart(shop, row, x, u)
@@ -522,7 +523,7 @@ task Party (shop, run, fx) {
             set u.spawn_effect = false
         }
     }
-    val cls = classes_of(run.units)
+    pin cls = classes_of(run.units)
     val w = if #cls <= 6 => 2 => 3
     loop i, c in cls {
         spawn @ps ClassIcon((if #cls <= 6 => 319 => 308) + (i % w)*20, 45 + (i // w)*56, c, run.units, nil, spring(1), true)
@@ -546,7 +547,10 @@ task Party (shop, run, fx) {
 ;; experience change. Out of the shop (`shop` is nil), it is smaller (`sc`,
 ;; in a card of 30x45), with no experience, and it is not clicked.
 task ItemCard (shop, i, x, y, p, sc) {
-    val s = spring(1)
+    val s = shared_spring()     ;; it goes in `:Shop.item_up`, to the shop
+    defer {
+        shared_spring_free(s)
+    }
     spawn UISprings(s)
     val w = if shop => 40 => 30
     val h = if shop => 50 => 45
@@ -574,7 +578,7 @@ task ItemCard (shop, i, x, y, p, sc) {
             eng.pop()
         }
     }
-    val inside = func () {
+    pin inside = func () {
         val mx, my = eng.mouse()
         (mx >= x - w/2) && (mx <= x + w/2) && (my >= y - h/2) && (my <= y + h/2)
     }
@@ -646,9 +650,9 @@ func item_max_xp (level) {
 ;; not all of them without an attack (`set_cards`).
 func roll_cards (run) {
     val odds = level_to_shop_odds@(run.shop_level)
-    var cs = nil
+    pin cs = []
     loop {
-        set cs = []
+        vector.clear(cs)
         loop _ in 3 {
             val tier = rweighted(odds) + 1
             set cs@+ = rtable(tier_to_characters@(tier))
@@ -760,9 +764,9 @@ task ShopMain (run, shop) {
     pin fx = tasks()
 
     ;; the texts
-    val gold_text = [ t=shop_text("[wavy_mid, fg]shop [fg]- gold: [yellow]" ++ tostring(run.gold)) ]
-    val party_text = [ t=nil ]
-    val set_party_text = func () {
+    pin gold_text = [ t=shop_text("[wavy_mid, fg]shop [fg]- gold: [yellow]" ++ tostring(run.gold)) ]
+    pin party_text = [ t=nil ]
+    pin set_party_text = func () {
         set party_text.t = shop_text("[wavy_mid, fg]party " ++ tostring(#run.units) ++ "/" ++ tostring(max_units(run)))
     }
     set_party_text()
@@ -793,11 +797,11 @@ task ShopMain (run, shop) {
 
     ;; the cards: the locked ones of the last visit, or new ones (the
     ;; original rolls them in either case)
-    val rolled = roll_cards(run)
+    pin rolled = roll_cards(run)
     if !run.locked || !run.cards {
-        set run.cards = rolled
+        set run.cards = [] ++ rolled
     }
-    val cards_at = [60, 140, 220]
+    pin cards_at = [60, 140, 220]
     spawn {
         loop {
             do {
@@ -862,20 +866,20 @@ task ShopMain (run, shop) {
     spawn @ms Messages(:reroll, W/2, H/2 + 10)
     spawn @ms Messages(:level, W/2, H/2 + 30)
     spawn @ms Messages(:item, W/2, H/2 + 30)
-    val gold_short = info_line("[fg]not enough gold")
+    pin gold_short = info_line("[fg]not enough gold")
 
     run_save(run)
     spawn Pause(:shop, run)
-    val coins = func () {
+    pin coins = func () {
         play(rtable([coins1, coins2, coins3]), [pitch=rfloat(0.95, 1.05), volume=0.5])
     }
-    val error = func (s) {
+    pin error = func (s) {
         play(error1, [pitch=rfloat(0.95, 1.05), volume=0.5])
         if s {
             spring_pull(s, 0.2, 200, 10)
         }
     }
-    val switch = func (s) {
+    pin switch = func (s) {
         play(ui_switch2, [pitch=rfloat(0.95, 1.05), volume=0.5])
         if s {
             spring_pull(s, 0.2, 200, 10)

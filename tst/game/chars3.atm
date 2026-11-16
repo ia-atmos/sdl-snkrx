@@ -5,7 +5,7 @@ spawn Background()
 spawn Camera()
 spawn SlowMotion()
 
-val run = [ level=3, loop=0, gold=20, units=[
+pin run = [ level=3, loop=0, gold=20, units=[
     ["elementor", 3], ["psychic", 3], ["barbarian", 3], ["juggernaut", 3], ["highlander", 3],
     ["launcher", 3], ["jester", 3], ["bane", 3], ["infestor", 3], ["usurer", 3], ["silencer", 3],
     ["witch", 3], ["plague_doctor", 3], ["cryomancer", 3], ["pyromancer", 3], ["psykino", 3],
@@ -13,7 +13,7 @@ val run = [ level=3, loop=0, gold=20, units=[
     ["gambler", 3], ["stormweaver", 3], ["chronomancer", 3], ["fairy", 3], ["warden", 3],
     ["priest", 3], ["flagellant", 3], ["psykeeper", 3],
 ] ]
-val A = new_arena(3)
+pin A = new_arena(3)
 set A.run = run
 spawn Arena(A)
 await(false)

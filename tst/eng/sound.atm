@@ -4,7 +4,7 @@
 
 include "../../eng/eng.atm"
 
-val s = sound("Click.ogg")
+pin s = sound("Click.ogg")
 print(string.format("%.3f", sound_len(s)))
 val a = play(s)
 val b = play(s, [pitch=1.5, volume=0.5])

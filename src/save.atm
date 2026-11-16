@@ -31,11 +31,13 @@ func load_lines (name) {
     if !s {
         return nil
     }
-    val out = []
+    pin out = []
     loop _, l in string.split(s, "\n") {
-        val ws = string.split(l)
-        if #ws > 0 {
-            set out@+ = ws
+        ;; the words of the line, in `out` (a value pinned in this loop could
+        ;; not go there), unless there are none
+        val ws = vector.insert(out, string.split(l))
+        if #ws == 0 {
+            vector.remove(out, #out - 1)
         }
     }
     out
@@ -58,7 +60,7 @@ func state_save () {
 }
 
 func achievement_lines () {
-    val ls = []
+    pin ls = []
     loop _, a in ACHIEVEMENTS {
         if STATE.achievements@(a) {
             set ls@+ = "achievement_" ++ a ++ " true"
@@ -108,7 +110,7 @@ func run_save (run) {
     if !SAVE_DIR {
         return nil
     }
-    val ls = [
+    pin ls = [
         "level " ++ tostring(run.level),
         "loop " ++ tostring(run.loop),
         "gold " ++ tostring(run.gold),
@@ -116,7 +118,7 @@ func run_save (run) {
         "time " ++ tostring(run.time || 0),
     ]
     if run.locked && run.cards {
-        val cs = []
+        pin cs = []
         loop i in 3 {
             set cs@+ = run.cards@(i) || "-"
         }
@@ -139,11 +141,11 @@ func run_clear () {
 
 ;; The run saved, or nil.
 func run_load () {
-    val ls = load_lines("run.txt")
+    pin ls = load_lines("run.txt")
     if !ls || (#ls == 0) {
         return nil
     }
-    val run = [ level=1, loop=0, gold=3, units=[], passives=[], pool=[], shop_level=1, shop_xp=0 ]
+    pin run = [ level=1, loop=0, gold=3, units=[], passives=[], pool=[], shop_level=1, shop_xp=0 ]
     loop _, w in ls {
         match w@0 {
             "level" => set run.level = tonumber(w@1)

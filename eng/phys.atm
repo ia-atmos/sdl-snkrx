@@ -28,7 +28,7 @@
 ;; category each, plus the tag :solid, as the original.
 func phys_world (meter, tags) {
     `pw_world(eg_dbl($meter));`
-    val w = :World [ tags=[], objs=[] ]
+    pin w = :World [ tags=[], objs=[] ]
     var i = 0
     loop _, t in tags ++ [:solid] {
         if !w.tags@(t) {
@@ -59,7 +59,9 @@ func phys_trigger (w, t1, t2) {
 ;; [:rect, w, h], or [:polygon, [x1,y1,...]] (points relative to x,y).
 ;; `type` is :static, :kinematic, or :dynamic. `rec` is the public
 ;; record of the body, which other bodies receive in their events; its
-;; field `b` is set to the body.
+;; field `b` is set to the body. The world keeps the record, which may
+;; come fresh (it is then owned by the world, with the block of `w`), and
+;; returns it.
 func body (w, rec, type, x, y, tag, shape) {
     val t = w.tags@(tag)
     val k = match type { :static => 0 ; :kinematic => 1 ; else => 2 }
@@ -78,7 +80,7 @@ func body (w, rec, type, x, y, tag, shape) {
             `pw_rect(eg_int($b), eg_dbl($bw), eg_dbl($bh), (uint64_t)a_dbl($cat), (uint64_t)(int64_t)a_dbl($mask), a_truthy($sen));`
         }
         :polygon => do {
-            val pts = shape@1
+            pin pts = shape@1
             ```
             {
                 double xs[8], ys[8];
@@ -98,7 +100,8 @@ func body (w, rec, type, x, y, tag, shape) {
     set rec.b = b
     set rec.tag = tag
     set w.objs@(b) = rec
-    b
+    set w.objs@(b).at = w.at    ;; the task of the arena, if any (`send`)
+    w.objs@(b)
 }
 
 ;; Destroys a body, as `destroy` of the mixin.
@@ -142,13 +145,13 @@ func body_friction (b, v) {
 ;; events to the tasks of the bodies.
 func phys_step (w, dt) {
     `pw_step(eg_dbl($dt));`
-    val names = [:collision.enter, :collision.exit, :trigger.enter, :trigger.exit]
+    pin names = [:collision.enter, :collision.exit, :trigger.enter, :trigger.exit]
     loop k in 4 {
         val n = `:number PW_EV_N[eg_int($k)]`
         loop i in n {
             val a = `:number PW_EV_A[eg_int($k)][eg_int($i)]`
             val b = `:number PW_EV_B[eg_int($k)][eg_int($i)]`
-            val e = if k == 0 => [
+            pin e = if k == 0 => [
                 nx = `:number.float PW_EV_NX[eg_int($i)]`,
                 ny = `:number.float PW_EV_NY[eg_int($i)]`,
                 x  = `:number.float PW_EV_PX[eg_int($i)]`,

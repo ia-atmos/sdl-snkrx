@@ -28,7 +28,7 @@ func to_rgb (h, s, l) {
         val v = clamp(l, 0, 1)
         return v, v, v
     }
-    val to = func (p, q, t0) {
+    pin to = func (p, q, t0) {
         val t = ifs {
             t0 < 0 => t0 + 1
             t0 > 1 => t0 - 1
@@ -62,26 +62,26 @@ func alpha (c, a) {
 
 ;; The ramp of a color, as `ColorRamp(color, 0.025)`.
 func ramp (c) {
-    val t = []
+    pin t = []
     loop i in (-10, 10) {
         set t@(i) = if i == 0 => c => lighten(c, i*0.025)
     }
     t
 }
 
-val white   = ramp(rgba(1, 1, 1, 1))
-val black   = ramp(rgba(0, 0, 0, 1))
-val bg      = ramp(hex("#303030"))
-val fg      = ramp(hex("#dadada"))
-val fg_alt  = ramp(hex("#b0a89f"))
-val yellow  = ramp(hex("#facf00"))
-val orange  = ramp(hex("#f07021"))
-val blue    = ramp(hex("#019bd6"))
-val green   = ramp(hex("#8bbf40"))
-val red     = ramp(hex("#e91d39"))
-val purple  = ramp(hex("#8e559e"))
-val blue2   = ramp(hex("#4778ba"))
-val yellow2 = ramp(hex("#f59f10"))
+pin white   = ramp(rgba(1, 1, 1, 1))
+pin black   = ramp(rgba(0, 0, 0, 1))
+pin bg      = ramp(hex("#303030"))
+pin fg      = ramp(hex("#dadada"))
+pin fg_alt  = ramp(hex("#b0a89f"))
+pin yellow  = ramp(hex("#facf00"))
+pin orange  = ramp(hex("#f07021"))
+pin blue    = ramp(hex("#019bd6"))
+pin green   = ramp(hex("#8bbf40"))
+pin red     = ramp(hex("#e91d39"))
+pin purple  = ramp(hex("#8e559e"))
+pin blue2   = ramp(hex("#4778ba"))
+pin yellow2 = ramp(hex("#f59f10"))
 
 val bg_off = rgba(46/255, 46/255, 46/255, 1)
 val invisible = rgba(1, 1, 1, 0)

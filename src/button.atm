@@ -14,20 +14,23 @@ task Button (owner, id, x, y, label, opts) {
     val bg_color = opts && opts.bg_color || bg
     val w = opts && opts.w || (text_width(pixul_font, label) + 8)
     val h = pixul_font.h + 4
-    val s = spring(1)
+    val s = shared_spring()     ;; it goes in the clicks, to the owner
+    defer {
+        shared_spring_free(s)
+    }
     set pub = [ spring=s ]
     spawn UISprings(s)
 
     ;; the two looks of the button, out and over
-    val t_out  = text([ [text="[" ++ fg_color ++ "]" ++ label, font=pixul_font, alignment=:center] ])
-    val t_over = text([ [text="[fgm5]" ++ label, font=pixul_font, alignment=:center] ])
-    val draw = func (color, t) {
+    pin t_out  = text([ [text="[" ++ fg_color ++ "]" ++ label, font=pixul_font, alignment=:center] ])
+    pin t_over = text([ [text="[fgm5]" ++ label, font=pixul_font, alignment=:center] ])
+    pin draw = func (color, t) {
         eng.push(x, y, 0, s.x)
         eng.rect(x, y, w, h, 4, 4, color)
         text_draw(t, x, y + (if opts && opts.dy => opts.dy => 1), 0, 1, 1)
         eng.pop()
     }
-    val inside = func () {
+    pin inside = func () {
         val mx, my = eng.mouse()
         (mx >= x - w/2) && (mx <= x + w/2) && (my >= y - h/2) && (my <= y + h/2)
     }

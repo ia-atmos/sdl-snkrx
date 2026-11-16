@@ -10,14 +10,14 @@
 ;; then the end.
 
 ;; The number of waves and the chance of distributed enemies, by level.
-val LEVEL_MAX_WAVES = [
+pin LEVEL_MAX_WAVES = [
     2, 3, 4,
     3, 4, 4, 5,
     5, 5, 5, 5, 7,
     6, 6, 7, 7, 8, 10,
     8, 8, 10, 12, 14, 16, 25,
 ]
-val LEVEL_DISTRIBUTED = [
+pin LEVEL_DISTRIBUTED = [
     0, 5, 10,
     10, 15, 15, 20,
     20, 20, 20, 20, 25,
@@ -54,7 +54,7 @@ task Quiet (A, foes, spawns) {
 ;; 1.125s later. It lasts as the flag of the original, which counts 0.1s
 ;; per enemy, and more.
 task WaveGroup (A, n, foes, fx, shots) {
-    val ps = [
+    pin ps = [
         [x=A.x1 + 32, y=H/2], [x=W/2, y=H/2], [x=A.x2 - 32, y=H/2],
     ]
     val p = rtable(ps)
@@ -137,8 +137,10 @@ task BossWaves (A, foes, spawns, fx, shots) {
     play(spawn1, [pitch=rfloat(0.8, 1.2), volume=0.15])
     spawn @fx SpawnMarker(W/2, H/2)
     await 1125ms
-    val boss = [ x=W/2, y=H/2, level=A.level, boss=level_to_boss@(A.level) ]
-    spawn @foes Seeker(A, boss, fx, shots)
+    spawn @foes Seeker(A, [ x=W/2, y=H/2, level=A.level, boss=level_to_boss@(A.level) ], fx, shots)
+    ;; its record, owned by the world: the seeker adds it to the enemies
+    ;; before it first awaits
+    val boss = A.enemies@(#A.enemies - 1)
     val n = 8 + math.floor(A.level/2)
     loop {
         ;; only the boss left, or nobody, and no spawning
@@ -245,10 +247,16 @@ task CharacterHP (A, u, x, y) {
 
 ;;; TEXTS ;;;
 
-;; A text at a place, with a spring, as `Text2`.
-task Text2 (x, y, t, sx, sy) {
-    val s = spring(1)
-    set pub = [ t=t, spring=s ]
+;; A text at a place, with a spring, as `Text2`. With `cbyc`, its
+;; characters show one by one (`Cbyc`), as the tags `cbyc` of the original.
+task Text2 (x, y, t, sx, sy, cbyc) {
+    set pub = [ t=t, spring=spring(1) ]
+    val s = pub.spring
+    spawn {
+        if cbyc {
+            await Cbyc(pub.t, cbyc)
+        }
+    }
     spawn UISprings(s)
     loop on :draw {
         text_draw(t, x, y, 0, s.x*(sx || 1), s.x*(sy || sx || 1))
@@ -287,7 +295,7 @@ func gold_lines (A, step) {
     val g = "gold gained: " ++ tostring(if step >= 0 => A.gold_gained => 0) ++ " + " ++ tostring(if step >= 0 => A.gold_picked_up => 0)
     val i = "interest: " ++ tostring(if step >= 1 => A.interest => 0)
     val t = "total: " ++ tostring(if step >= 2 => (A.gold_gained + A.interest + A.gold_picked_up) => 0)
-    val tag = \(k) { if k == step => "[nudge_down, bg]" => "[wavy_lower, bg]" }
+    pin tag = \(k) { if k == step => "[nudge_down, bg]" => "[wavy_lower, bg]" }
     [
         [text=tag(0) ++ g, font=pixul_font, alignment=:center, height_multiplier=1.5],
         [text=tag(1) ++ i, font=pixul_font, alignment=:center, height_multiplier=1.5],
@@ -300,7 +308,7 @@ func gold_lines (A, step) {
 ;; The tween of the slow motion to 0, in real time, as the original
 ;; tweens `main_slow_amount` (here the slow motion is global).
 task SlowDown (dur) {
-    val st = [ v=1 ]
+    pin st = [ v=1 ]
     spawn {
         loop on :tick {
             eng.slow(st.v)
@@ -343,7 +351,7 @@ task Clear (A, ui) {
     val choose = A.run && A.run.pool && (((A.level - 25*A.loop) % 3) == 0) && (#A.run.passives < 8)
     do {
         pin cl = tasks()
-        val t = text([ [text="[wavy_mid]arena clear!", font=fat_font, alignment=:center] ])
+        pin t = text([ [text="[wavy_mid]arena clear!", font=fat_font, alignment=:center] ])
         spawn @cl Text2(W/2, H/2 - 48, t)
         spawn @cl Cbyc(t, :cbyc)
         await WaitReal(3)
@@ -351,8 +359,7 @@ task Clear (A, ui) {
             await ClearGo(A)
         }
     }
-    await ChoosePassive(A, ui)
-    await ClearGo(A)
+    await ChoosePassive(A, ui)      ;; and the transition
 }
 
 ;; The end of the last level of a loop, as the branch of `Arena:quit` for
@@ -371,9 +378,10 @@ task Won (A, ui) {
     win_achievements(A)
     spawn @ui Modal()
     spawn @ui TweenReal(4, CAM, [x=W/2, y=H/2, r=0], linear)
-    val t = text([ [text="[wavy_mid, cbyc2]congratulations!", font=fat_font, alignment=:center] ])
-    spawn @ui Text2(W/2 + 40, H/2 - 69, t)
-    spawn @ui Cbyc(t, :cbyc2)
+    ;; the text is the Text2's: it lives in the pool of the arena, longer
+    ;; than this task
+    spawn @ui Text2(W/2 + 40, H/2 - 69, text([ [text="[wavy_mid, cbyc2]congratulations!", font=fat_font, alignment=:center] ]),
+                    nil, nil, :cbyc2)
     await WaitReal(2.5)
     spawn @ui Build(A.run, 20)
     val last = STATE.ng == 6
@@ -400,7 +408,7 @@ task Won (A, ui) {
         spawn @ui Text2(W - 200, H - 44, text([ [text="[bg10]continue run (+difficulty, +1 max snake size):", font=pixul_font, alignment=:center] ]))
         spawn @ui Text2(W - 187, H - 20, text([ [text="[bg10]new run (+difficulty, +1 max snake size):", font=pixul_font, alignment=:center] ]))
     }
-    spawn @ui WinButtons(task, last)
+    spawn @ui WinButtons(last)
     val e = await :Won.pick
     play(ui_switch2, [pitch=rfloat(0.95, 1.05), volume=0.5])
     if e.id == :restart {
@@ -455,7 +463,9 @@ task ClearGo (A) {
     val l = A.units@0
     play(ui_transition2, [pitch=rfloat(0.95, 1.05), volume=0.5])
     emit @:global :goto [ screen=:buy_screen, x=l && l.x || (W/2), y=l && l.y || (H/2),
-                          color=fg@0, lines=gold_lines(A, -1), counting=A ]
+                          color=fg@0, lines=gold_lines(A, -1),
+                          ;; the numbers, not the arena: the transition outlives it
+                          counting=[ gold_gained=A.gold_gained, gold_picked_up=A.gold_picked_up, interest=A.interest ] ]
     await(false)
 }
 
@@ -467,16 +477,16 @@ task Died (A, ui) {
     eng.cursor(true)
     run_clear()                 ;; as `system.save_run()` in `Arena:die`
     spawn @ui Modal()
-    val t = text([ [text="[wavy_mid]you died...", font=fat_font, alignment=:center, height_multiplier=1.25] ])
-    spawn @ui Text2(W/2, H/2 - 32, t)
-    spawn @ui Cbyc(t, :cbyc)
+    spawn @ui Text2(W/2, H/2 - 32, text([ [text="[wavy_mid]you died...", font=fat_font, alignment=:center, height_multiplier=1.25] ]),
+                    nil, nil, :cbyc)
     spawn SlowDown(2)
     spawn @ui TweenReal(2, CAM, [x=W/2, y=H/2, r=0], linear)
     await WaitReal(2)
     spawn @ui Build(A.run, 30)
     spawn @ui Text2(W/2, H/2,
         text([ [text="[wavy_mid, fg]level reached: [wavy_mid, yellow]" ++ tostring(A.level), font=fat_font, alignment=:center] ]), 0.7, 0.7)
-    spawn @ui Button(task, :restart, W/2, H/2 + 24, "restart run (r)")
+    pin bs = tasks()            ;; this task lasts until the next screen
+    spawn @bs Button(task, :restart, W/2, H/2 + 24, "restart run (r)")
     par :any {
         await :Button.click until it.id == :restart
     } with {

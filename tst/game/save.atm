@@ -1,12 +1,12 @@
 ;; The save of a run: a run in the shop is saved, and "arena run" in the
 ;; menu continues it (as `system.save_run` and `load_run`).
 include "../../src/game.atm"
-val run = [ level=4, loop=0, gold=17, units=[ [character="vagrant", level=2, reserve=[1, 0]],
+pin run = [ level=4, loop=0, gold=17, units=[ [character="vagrant", level=2, reserve=[1, 0]],
             [character="archer", level=1, reserve=[0, 0]] ],
             passives=[ [passive="centipede", level=2, xp=1] ], pool=["amplify", "ballista"],
             shop_level=2, shop_xp=1, locked=true, cards=["scout", false, "wizard"] ]
 run_save(run)
-val r = run_load()
+pin r = run_load()
 print(r.level, r.loop, r.gold, r.shop_level, r.shop_xp, r.locked, r.cards@0, r.cards@1, r.cards@2)
 loop _, u in r.units {
     print(u.character, u.level, u.reserve@0, u.reserve@1)

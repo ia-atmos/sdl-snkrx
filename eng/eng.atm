@@ -26,7 +26,7 @@
 val W = 480
 val H = 270
 
-val eng = [
+pin eng = [
     ;; canvases: eng.canvas(screen, shadow) creates one, eng.target(c)
     ;; selects where the shapes go, eng.canvas_draw(c, x, y, color)
     ;; draws an earlier canvas into the current one
@@ -90,7 +90,7 @@ val eng = [
     ;; triangle_equilateral: of side w, centered at (x, y), pointing right
     triangle_equilateral = func (x, y, w, color, lw) {
         val h = math.sqrt(w*w - (w/2)*(w/2))
-        val pts = [x + h/2, y, x - h/2, y - w/2, x - h/2, y + w/2]
+        pin pts = [x + h/2, y, x - h/2, y - w/2, x - h/2, y + w/2]
         `eg_polygon($pts, eg_color($color), eg_dbl($lw));`
     },
     polyline = func (pts, color, lw) {
@@ -142,7 +142,7 @@ val eng = [
 
 ;; A color from components in [0,1], as `Color(r,g,b,a)` of the original.
 func rgba (r, g, b, a) {
-    val f = \(v) { math.floor(math.max(0, math.min(1, v)) * 255 + 0.5) }
+    pin f = \(v) { math.floor(math.max(0, math.min(1, v)) * 255 + 0.5) }
     (f(r) << 24) | (f(g) << 16) | (f(b) << 8) | f(if a == nil => 1 => a)
 }
 
@@ -207,7 +207,7 @@ func draw_image (img, x, y, r, sx, sy, color) {
 
 ;; The volumes of the tags of sounds of the original (`sfx`, `music`),
 ;; which multiply the volume of each instance.
-val VOLUME = [ sfx=0.5, music=0.5 ]
+pin VOLUME = [ sfx=0.5, music=0.5 ]
 
 ;; A sound of the original by file name, with its tag, as `Sound(...)`.
 func sound (file, tag) {

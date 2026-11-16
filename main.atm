@@ -10,7 +10,7 @@ func new_run () {
 
 ;; The arena of the level of the run.
 task Play (run) {
-    val A = new_arena(run.level)
+    pin A = new_arena(run.level)
     set A.run = run
     await Arena(A)
 }
@@ -19,7 +19,7 @@ task Play (run) {
 ;; the five, louder in the menu and the arena (0.5, in 2s) than in the
 ;; shop (0.2, in 1s), and another one when it ends. A restart stops it.
 task Music () {
-    val st = [ v=0.5 ]
+    pin st = [ v=0.5 ]
     spawn {
         var e = await :Music
         loop {
@@ -60,12 +60,12 @@ par {
     ;; the screens: each one runs until it asks for the next one, and the
     ;; transition covers it
     state_load()
-    var run = new_run()
-    var screen = [ Menu, nil, "mainmenu" ]
+    ;; the run, and the next screen: [task, argument, name]
+    pin g = [ run=new_run(), screen=[ Menu, nil, "mainmenu" ] ]
     loop {
         val next = do {
-            trace("go", screen@2)
-            pin s = spawn (screen@0)(screen@1)
+            trace("go", g.screen@2)
+            pin s = spawn (g.screen@0)(g.screen@1)
             val e = await <:goto || s>
             if (e == :quit) || ((e ?? :goto) && (e.screen == :quit)) {
                 break
@@ -82,30 +82,30 @@ par {
             }
             else => emit @:global :Music [ v=0.5, d=2 ]
         }
-        set screen = match next.screen {
+        set g.screen = match next.screen {
             :buy_screen => do {
                 if next.counting {
                     ;; the shop gains experience after each even level
                     ;; (`Arena:transition`)
-                    if ((run.level % 2) == 0) && (run.shop_level < 5) {
-                        set run.shop_xp += 1
-                        if run.shop_xp >= shop_max_xp(run.shop_level) {
-                            set run.shop_xp = 0
-                            set run.shop_level += 1
+                    if ((g.run.level % 2) == 0) && (g.run.shop_level < 5) {
+                        set g.run.shop_xp += 1
+                        if g.run.shop_xp >= shop_max_xp(g.run.shop_level) {
+                            set g.run.shop_xp = 0
+                            set g.run.shop_level += 1
                         }
                     }
-                    set run.level += 1
+                    set g.run.level += 1
                 } else {
                     ;; "arena run": the run saved, if any (`system.load_run`)
-                    set run = run_load() || run
+                    set g.run = run_load() || g.run
                 }
-                [ Shop, run, "buy_screen" ]
+                [ Shop, g.run, "buy_screen" ]
             }
-            :arena => [ Play, run, "arena" ]
+            :arena => [ Play, g.run, "arena" ]
             :restart => do {
                 run_clear()
-                set run = new_run()
-                [ Shop, run, "buy_screen" ]
+                set g.run = new_run()
+                [ Shop, g.run, "buy_screen" ]
             }
             else => [ Menu, nil, "mainmenu" ]
         }

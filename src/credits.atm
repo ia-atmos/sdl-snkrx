@@ -13,7 +13,7 @@ func url_click (e, url) {
 
 ;; The names of the credits: [x, y, text, color, url] of a button, or
 ;; [x, y, text] of a title.
-val CREDITS = [
+pin CREDITS = [
     [60, 20, "[bg10]main dev: "],
     [117, 20, "a327ex", :bg, "https://store.steampowered.com/dev/a327ex/"],
     [60, 50, "[bg10]mobile: "],
@@ -67,10 +67,10 @@ task Credits () {
         }
     }
     pin ps = tasks()
-    val urls = []
+    pin urls = []
     loop i, c in CREDITS {
         if c@4 {
-            val cs = button_colors(c@3)
+            pin cs = button_colors(c@3)
             set urls@(i) = c@4
             spawn @ps Button(task, i, c@0, c@1, c@2, [ fg_color=cs@0, bg_color=cs@1 ])
         } else {
@@ -90,14 +90,16 @@ task Credits () {
 
 ;; The buttons of the win (`Arena:quit`): "loop", "restart" (or not, after
 ;; the last new game plus), "credits", and the pages; the choice of loop or
-;; restart goes to `won` (`:Won.pick [id]`). While the credits are open,
+;; restart is emitted to the program (`:Won.pick [id]`, which `Won`
+;; awaits: these buttons outlive it, in the pool of the arena, and cannot
+;; hold it). While the credits are open,
 ;; the buttons below stop (`in_credits`), as the shop under its tutorial.
-task WinButtons (won, last) {
+task WinButtons (last) {
     par {
         toggle on :Win.on with :draw {
             pin bs = tasks()
             val me = task
-            val follow = [ fg_color="greenm5", bg_color=green, w=text_width(pixul_font, "follow me on steam!") + 12, pull=0.05, dy=0 ]
+            pin follow = [ fg_color="greenm5", bg_color=green, w=text_width(pixul_font, "follow me on steam!") + 12, pull=0.05, dy=0 ]
             if last {
                 spawn @bs Button(me, :follow, W/2 + 40, H/2 + 58, "follow me on steam!", follow)
                 spawn @bs Button(me, :credits, W - 40, H - 44, "credits")
@@ -118,7 +120,7 @@ task WinButtons (won, last) {
                     :nimble => url_click(e, "https://store.steampowered.com/app/259780/Nimble_Quest/")
                     :underlords => url_click(e, "https://store.steampowered.com/app/1046930/Dota_Underlords/")
                     :credits => emit @me :Credits.open
-                    else => emit @won :Won.pick [ id=e.id ]
+                    else => emit @:global :Won.pick [ id=e.id ]
                 }
             }
         }
