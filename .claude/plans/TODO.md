@@ -10,7 +10,7 @@ session, `session#N` (this session: `sdl-snxkx`, for the repository
 | # | Title | Kind | State |
 |---|-------|------|-------|
 | #1 | Second migration to the rules of `pin` | decision | waits for the author |
-| #2 | A context table owned by the arena (experiment of `atmos-pin`) | decision | waits for the author |
+| #2 | Contacts sent only to their two tasks, with `set :out` | decision | waits for the author and for `set :out` on main |
 | #3 | Finding 8: step the physics once per frame | decision | waits for the author |
 | #4 | Relax exactness for expressiveness | decision | waits for the author |
 | #5 | A clock per task or pool | remark | answered; not needed by the port |
@@ -34,11 +34,21 @@ Also `X.xin` is now `X.in`. Recommended: yes, now, outputs identical, at
 `8c9453c` or later, with the time of the frame loop measured; report to
 `atmos-pin`.
 
-**#2 A context table owned by the arena.** The world, a map body ->
-task, and the springs in a table pinned in the block of the task
-`Arena`, so a contact is emitted only to its two tasks (finding 2),
-and `send` and `SHARED_SPRINGS` may go. On a branch, not merged
-without the author; report to `atmos-pin`. Recommended: yes, after #1.
+**#2 Contacts sent only to their two tasks.** Answered by `atmos-pin`
+(2026-11-19, tested on `ia-atmos/lang` branch `pin` `4199167`): the
+new `set :out place = value` lets a table owned outside the task
+`Arena` (the world `A.w`, made by the caller) refer to tasks of a pool
+inside it; the place goes back to nil at the end of the block where it
+is written. So each body task writes `set :out A.w.tasks@(b) = task`
+in its own body, `phys_step` emits `emit @(A.w.tasks@(b))` to the two
+tasks only, the world stays where it is, and the 21 filters
+`until it.b == c.b` go. `SHARED_SPRINGS` goes too: a child writes
+`set :out w.springs@(b) = spring` into a table its owner gave it.
+`send` stays (a targeted emit is already the direct form). The context
+table pinned in the arena's block is not needed. Waits for: `set :out`
+on main (`atmos-lang#81`, the author's word), and #1 first.
+Recommended: yes, on a branch, with identical outputs, the cost of
+contacts measured in the stress benchmark; report to `atmos-pin`.
 
 **#3 Finding 8** (`doc/compiler.md`): a timer splits the time of a
 tick, so the physics and the movements may take two steps in a tick;
