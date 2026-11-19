@@ -10,7 +10,7 @@ session, `session#N` (this session: `sdl-snxkx`, for the repository
 | # | Title | Kind | State |
 |---|-------|------|-------|
 | #1 | Second migration to the rules of `pin` | decision | waits for the author |
-| #2 | Contacts sent only to their two tasks, with `set :out` | decision | waits for the author and for `set :out` on main |
+| #2 | Contacts sent only to their two tasks, with `set :out` | decision | waits for the author (after #1) |
 | #3 | Finding 8: step the physics once per frame | decision | waits for the author |
 | #4 | Relax exactness for expressiveness | decision | waits for the author |
 | #5 | A clock per task or pool | remark | answered; not needed by the port |
@@ -31,7 +31,8 @@ a compile pass gives 35 warnings `pinned value given away by its block
 (expected 'val')` and one `pin var` (`src/classes.atm:71`); on
 `a4c465a` 26 tests failed at `eng/phys.atm:83` and `src/shop.atm:143`.
 Also `X.xin` is now `X.in`. Recommended: yes, now, outputs identical, at
-`8c9453c` or later, with the time of the frame loop measured; report to
+`8361f88` or later (which also raises `invalid access : finalized` on
+finalized data: report any to `atmos-pin`), with the time of the frame loop measured; report to
 `atmos-pin`.
 
 **#2 Contacts sent only to their two tasks.** Answered by `atmos-pin`
@@ -45,8 +46,8 @@ tasks only, the world stays where it is, and the 21 filters
 `until it.b == c.b` go. `SHARED_SPRINGS` goes too: a child writes
 `set :out w.springs@(b) = spring` into a table its owner gave it.
 `send` stays (a targeted emit is already the direct form). The context
-table pinned in the arena's block is not needed. Waits for: `set :out`
-on main (`atmos-lang#81`, the author's word), and #1 first.
+table pinned in the arena's block is not needed. `set :out` is on main since
+`8361f88` (`atmos-lang#81`); #1 comes first.
 Recommended: yes, on a branch, with identical outputs, the cost of
 contacts measured in the stress benchmark; report to `atmos-pin`.
 
