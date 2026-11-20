@@ -10,7 +10,7 @@ session, `session#N` (this session: `sdl-snxkx`, for the repository
 | # | Title | Kind | State |
 |---|-------|------|-------|
 | #1 | Second migration to the rules of `pin` | decision | done at `c4e99c4`, by the session, to be confirmed |
-| #2 | Contacts sent only to their two tasks, with `set :out` | decision | waits for the author (after #1) |
+| #2 | Contacts sent only to their two tasks, with `set :out` | decision | done on the branch `contacts`, not merged: waits for the author |
 | #3 | Finding 8: step the physics once per frame | decision | waits for the author |
 | #4 | Relax exactness for expressiveness | decision | waits for the author |
 | #5 | A clock per task or pool | remark | answered; not needed by the port |
@@ -35,21 +35,17 @@ one workaround of the first migration gone (`X.copy` in `Attack`). The
 of the stress takes about 12% more (3.60 s to 4.04 s, medians of 5);
 `doc/compiler.md`, 10. Reported to `atmos-pin`.
 
-**#2 Contacts sent only to their two tasks.** Answered by `atmos-pin`
-(2026-11-19, tested on `ia-atmos/lang` branch `pin` `4199167`): the
-new `set :out place = value` lets a table owned outside the task
-`Arena` (the world `A.w`, made by the caller) refer to tasks of a pool
-inside it; the place goes back to nil at the end of the block where it
-is written. So each body task writes `set :out A.w.tasks@(b) = task`
-in its own body, `phys_step` emits `emit @(A.w.tasks@(b))` to the two
-tasks only, the world stays where it is, and the 21 filters
-`until it.b == c.b` go. `SHARED_SPRINGS` goes too: a child writes
-`set :out w.springs@(b) = spring` into a table its owner gave it.
-`send` stays (a targeted emit is already the direct form). The context
-table pinned in the arena's block is not needed. `set :out` is on main since
-`8361f88` (`atmos-lang#81`); #1 comes first.
-Recommended: yes, on a branch, with identical outputs, the cost of
-contacts measured in the stress benchmark; report to `atmos-pin`.
+**#2 Contacts sent only to their two tasks.** Done on the branch
+`contacts` (`cd9689a`, `dc0e805`), not merged (asked by `atmos-pin`:
+not without the author). Each task of a body writes
+`set :out A.w.objs@(b).task = task`; `phys_step` emits each contact to
+that task only. The 40 tests are identical. The logic of the stress
+takes 3.27 s against 4.04 s (medians of seven), the whole run 119
+against 113 ticks per second. The filters `until it.b == ...` stay
+(an emit to a task reaches its subtree), and `SHARED_SPRINGS` stays (a
+`set :out` cannot be conditional, and the owners are many); details in
+`doc/compiler.md`, 2, on the branch. Reported to `atmos-pin`.
+Recommended: merge.
 
 **#3 Finding 8** (`doc/compiler.md`): a timer splits the time of a
 tick, so the physics and the movements may take two steps in a tick;
