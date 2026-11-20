@@ -116,15 +116,19 @@ separation in LuaJIT.
 
 ## Size of the code
 
-Lines of code (no blanks, no comments) and tokens (`tools/count.py`):
+Lines of code (no blanks, no comments) and tokens, with
+`tools/count.py`, the same count as `case-study.md`: the port at
+`7639dd3`, the original at `6b93a64` as committed (its files without the
+patch of the benchmark).
 
 | | lines | tokens |
 |-|------:|-------:|
-| original, the game (`main`, `arena`, `buy_screen`, `enemies`, `player`, `objects`, `shared`, `mainmenu`, `media`) | 10374 | 134786 |
-| original, its engine (`engine/`, without `engine/external`) | 4433 | 40853 |
-| port, the game (`src/`, `main.atm`) | 4755 | 43606 |
-| port, its engine (`eng/`, Atmos and C) | 2080 | 18476 |
+| original, the game (`main`, `arena`, `buy_screen`, `enemies`, `player`, `objects`, `shared`, `mainmenu`, `media`, `conf`) | 10381 | 134827 |
+| original, its engine (`engine/`, without `engine/external`) | 4428 | 40796 |
+| port, the game (`src/`, `main.atm`) | 9455 | 91671 |
+| port, its engine (`eng/`, Atmos and C) | 2209 | 19370 |
 
-The port covers a part of the game (S0 to S7 of the plan: ten of the
-characters, four elites and a boss, the levels, the shop, no passives
-or items), so the totals do not compare part for part.
+An earlier version of this table (`51627cd`, S7) gave 4755 lines and
+43606 tokens for the game of the port, which then had ten characters,
+four elites and a boss, the levels, and the shop, with no passives or
+items; and 10374 lines for the original, without `conf.lua`.

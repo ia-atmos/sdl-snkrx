@@ -22,6 +22,8 @@ session, `session#N` (this session: `sdl-snxkx`, for the repository
 | #11 | The S7 stress numbers are not to be compared | remark | reported, not acknowledged |
 | #12 | All features in, the first `pin` migration, F5, the student's trail | remark | reported, not acknowledged |
 | #13 | The time of the logic by compiler (`atmos-pin#14`) | work | done, sent to `atmos-pin` |
+| #14 | Widgets lend their springs with `set :out` (`pin-out`, `atmos-pin#16`) | remark | tried on the branch `contacts-pinout`, never to merge |
+| #15 | The counts of lines in `bench.md` and `case-study.md` (paper) | work | done |
 
 ## Items
 
@@ -101,4 +103,15 @@ student's port (`4445236`).
 10): no difference beyond the spread between `8c9453c`, `8361f88`,
 `c4e99c4` and the branch `pin`; most of the extra instructions are
 `a_unname_x`, from the loop variable of `separate` (`eng/steer.atm`).
+
+**#14** On `ia-atmos/lang` branch `pin-out` (`8eb364d`, a `set :out`
+lasts until its value ends), the branch `contacts-pinout` (`62b759e`)
+removes `SHARED_SPRINGS`: each widget lends its spring to a table of
+its owner, conditionally; 40 tests identical; no slowdown. Reported to
+`atmos-pin`; not to be merged.
+
+**#15** `bench.md` gave 4755 lines for the port (the count of S7,
+`51627cd`), `case-study.md` 8647 (S9). Both now give the count at
+`7639dd3` with `tools/count.py`: 9455 lines and 91671 tokens for the
+game, against 10381 and 134827 for the original (91% and 68%).
 
