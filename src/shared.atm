@@ -38,7 +38,7 @@ pin star_image = image("star")
 
 ;; Where the stars start: a column left of the screen and a row below.
 pin STAR_POSITIONS = do {
-    pin ps = []
+    val ps = []
     loop i in (-30, H+30) {
         if (i+30) % 15 == 0 {
             set ps@+ = [x=-40, y=i]

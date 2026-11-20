@@ -76,7 +76,7 @@ task Critter (A, x, y, r, v, dmg, parent, fx) {
     defer {
         body_free(A.w, c.b)
         set A.critters = do {
-            pin cs = []
+            val cs = []
             loop _, o in A.critters {
                 if o != c {
                     set cs@+ = o
@@ -393,7 +393,7 @@ task Turret (A, x, y, parent, fx, shots) {
     }
     defer {
         set A.turrets = do {
-            pin ts = []
+            val ts = []
             loop _, t in A.turrets {
                 if t != o {
                     set ts@+ = t

@@ -15,7 +15,7 @@
 
 ;; The images of the classes, by name.
 pin CLASS_IMAGES = do {
-    pin t = []
+    val t = []
     loop k, _ in CLASS_SETS {
         set t@(k) = image(k)
     }
@@ -243,7 +243,7 @@ func owned_marks (character, units) {
 func card_classes (x, y, character) {
     val cs = character_classes@(character)
     val dx = match #cs { 2 => -10 ; 3 => -20 ; else => 0 }
-    pin out = []
+    val out = []
     loop i, c in cs {
         set out@+ = [ c, x + dx + i*20, y + 6 ]
     }
@@ -426,7 +426,7 @@ task CharacterPart (shop, row, x, u, copy, sc) {
     }
     spawn {
         loop e on :Shop.highlight {
-            if X.xin(e.class, character_classes@(c)) {
+            if X.in(e.class, character_classes@(c)) {
                 set lit = e.on
                 spring_pull(s, if e.on => 0.2 => 0.05, 200, 10)
             }
@@ -554,7 +554,7 @@ task ItemCard (shop, i, x, y, p, sc) {
     spawn UISprings(s)
     val w = if shop => 40 => 30
     val h = if shop => 50 => 45
-    val fixed = X.xin(p.passive, unlevellable_items)
+    val fixed = X.in(p.passive, unlevellable_items)
     var selected = false
     spawn {
         loop on :draw {
@@ -650,7 +650,7 @@ func item_max_xp (level) {
 ;; not all of them without an attack (`set_cards`).
 func roll_cards (run) {
     val odds = level_to_shop_odds@(run.shop_level)
-    pin cs = []
+    val cs = []
     loop {
         vector.clear(cs)
         loop _ in 3 {
@@ -899,7 +899,7 @@ task ShopMain (run, shop) {
         }
         val buy = ifs {
             e ?? :Shop.buy => e.i
-            (e ?? :key.dn) && X.xin(e.name, ["1", "2", "3"]) => tonumber(e.name) - 1
+            (e ?? :key.dn) && X.in(e.name, ["1", "2", "3"]) => tonumber(e.name) - 1
             else => nil
         }
         val but = (e ?? :Button.click) && e.but || 1

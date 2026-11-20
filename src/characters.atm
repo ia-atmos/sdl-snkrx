@@ -126,13 +126,13 @@ task Barrage (A, u, r, n, o, fx, shots) {
 task Attack (A, u, size, mods, fx) {
     shake(2, 0.5)
     spawn @fx HfxUse(u.shoot, 0.25)
-    pin m = X.copy(mods || [])  ;; fresh or owned: a copy fits both
+    val m = mods || []          ;; fresh or owned: a name fits both now
     spawn @fx Area(A, [x=m.x || u.x, y=m.y || u.y, r=u.r, w=u.area_size_m*(size || 64), color=u.color,
                        dmg=u.area_dmg_m*u.dmg, character=u.character, level=u.level, parent=u,
                        stun=m.stun, juggernaut_push=m.juggernaut_push], fx)
     val c = u.character
     ifs {
-        X.xin(c, ["swordsman", "barbarian", "juggernaut", "highlander"]) =>
+        X.in(c, ["swordsman", "barbarian", "juggernaut", "highlander"]) =>
             play(rtable([swordsman1, swordsman2]), [pitch=rfloat(0.9, 1.1), volume=0.75])
         c == "elementor" => play(elementor1, [pitch=rfloat(0.9, 1.1), volume=0.5])
         c == "psychic" => play(psychic1, [pitch=rfloat(0.9, 1.1), volume=0.4])
@@ -158,7 +158,7 @@ task DotAttack (A, u, size, mods, fx, d) {
 ;; `table.first2(table.shuffle(...), n)`, `n` more with the cursers.
 func curse_targets (A, u, n) {
     pin es = enemies_in_circle(A, u.x, u.y, 128)
-    pin out = []
+    val out = []
     loop _ in math.min(n + (match A.cl.curser { 2 => 3 ; 1 => 1 ; else => 0 })
                          + (match u.malediction { 1 => 1 ; 2 => 3 ; 3 => 5 ; else => 0 }), #es) {
         set out@+ = rtable_remove(es)
@@ -925,7 +925,7 @@ func attacking_unit (A) {
     var u = rtable(A.units)
     var runs = 0
     loop {
-        while X.xin(u.character, non_attacking_characters) && (runs < 1000)
+        while X.in(u.character, non_attacking_characters) && (runs < 1000)
         set u = rtable(A.units)
         set runs += 1
     }
@@ -1093,7 +1093,7 @@ func unit_buffs (A, u) {
     if u.amplify {
         set u.amplify_area_dmg_m = lv(u.amplify, 1.2, 1.35, 1.5)
     }
-    if u.ballista && X.xin(u.character, PROJECTILE_CHARACTERS) {
+    if u.ballista && X.in(u.character, PROJECTILE_CHARACTERS) {
         set u.ballista_dmg_m = lv(u.ballista, 1.2, 1.35, 1.5)
     }
     if u.chronomancy && has_class(u, "mage") {

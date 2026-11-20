@@ -144,7 +144,7 @@ task Seeker (A, e, fx, shots) {
     defer {
         body_free(A.w, e.b)
         set A.enemies = do {
-            pin es = []
+            val es = []
             loop _, o in A.enemies {
                 if o != e {
                     set es@+ = o

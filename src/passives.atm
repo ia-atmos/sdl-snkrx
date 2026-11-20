@@ -26,7 +26,7 @@ pin PASSIVE_POOL = [
 ]
 
 func passive_pool () {
-    pin p = []
+    val p = []
     loop _, x in PASSIVE_POOL {
         set p@+ = x
     }
@@ -35,7 +35,7 @@ func passive_pool () {
 
 ;; The icons of the passives, by name.
 pin PASSIVE_IMAGES = do {
-    pin t = []
+    val t = []
     loop _, p in PASSIVE_POOL {
         set t@(p) = image(p)
     }

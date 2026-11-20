@@ -69,7 +69,7 @@ task Tutorial () {
         spawn @ps TutorialPart(W/2 + p@0, H/2 + p@1, "swordsman", p@2, list)
     }
     pin warriors = func (cs) {
-        pin us = []
+        val us = []
         loop _, c in cs {
             set us@+ = [ character=c ]
         }

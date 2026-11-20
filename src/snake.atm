@@ -501,7 +501,7 @@ func snake_place (A, u) {
 ;; one where the length of the path from the leader reaches 10.4 times the
 ;; place.
 func snake_places (A) {
-    pin out = []
+    val out = []
     val n = #A.units
     var k = 1
     var sum = 0
@@ -525,7 +525,7 @@ func snake_places (A) {
 func snake_remove (A, u) {
     val was_leader = A.units@0 == u
     set A.units = do {
-        pin us = []
+        val us = []
         loop _, o in A.units {
             if o != u {
                 set us@+ = o

@@ -19,7 +19,7 @@ func new_arena (level, menu) {
 ;; The physics world of the arena, with the tags and filters of the
 ;; original (`Arena:on_enter`).
 func arena_world () {
-    pin w = phys_world(32, [:player, :enemy, :projectile, :enemy_projectile, :force_field, :ghost])
+    val w = phys_world(32, [:player, :enemy, :projectile, :enemy_projectile, :force_field, :ghost])
     phys_disable(w, :player, :player)
     phys_disable(w, :player, :projectile)
     phys_disable(w, :player, :enemy_projectile)

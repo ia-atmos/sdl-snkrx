@@ -18,7 +18,7 @@ func passive_level (A, name) {
 
 ;; The mages of the units.
 func mages (A) {
-    pin out = []
+    val out = []
     loop _, u in A.units {
         if has_class(u, "mage") {
             set out@+ = u
@@ -40,7 +40,7 @@ task Passives (A, fx, shots) {
             var m = rtable(ms)
             var runs = 0
             loop {
-                while X.xin(m.character, non_attacking_characters) && (runs < 1000)
+                while X.in(m.character, non_attacking_characters) && (runs < 1000)
                 set m = rtable(ms)
                 set runs += 1
             }

@@ -15,7 +15,7 @@ task LightningLine (src, dst, color, fx) {
     var off = 8
     loop _ in 3 {
         set ls.lines = do {
-          pin next = []
+          val next = []
           loop _, l in ls.lines {
             val x1, y1, x2, y2 = l@0, l@1, l@2, l@3
             val px, py = vnormalize(x2 - x1, y2 - y1)
@@ -334,7 +334,7 @@ task BossAttack (A, e, fx, shots) {
 
 ;; The seekers other than `e`.
 func others (A, e) {
-    pin out = []
+    val out = []
     loop _, o in A.enemies {
         if (o != e) && (o.kind == :enemy) {
             set out@+ = o
@@ -495,7 +495,7 @@ task EnemyCritter (A, x, y, r, v, dmg, from, fx) {
     defer {
         body_free(A.w, c.b)
         set A.enemies = do {
-            pin es = []
+            val es = []
             loop _, o in A.enemies {
                 if o != c {
                     set es@+ = o

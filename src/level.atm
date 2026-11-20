@@ -145,10 +145,10 @@ task BossWaves (A, foes, spawns, fx, shots) {
     loop {
         ;; only the boss left, or nobody, and no spawning
         loop on :clock {
-            val alive = X.xin(boss, A.enemies)
+            val alive = X.in(boss, A.enemies)
             until (#spawns == 0) && ((alive && (#foes <= 1)) || (!alive && (#foes == 0)))
         }
-        until !X.xin(boss, A.enemies)
+        until !X.in(boss, A.enemies)
         trace("wave", "boss")
         spawn @fxs HfxUse(A.cond1, 0.25, 200, 10)
         spring_pull(A.cond2.s, 0.0625)

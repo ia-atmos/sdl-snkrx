@@ -28,7 +28,7 @@
 ;; category each, plus the tag :solid, as the original.
 func phys_world (meter, tags) {
     `pw_world(eg_dbl($meter));`
-    pin w = :World [ tags=[], objs=[] ]
+    val w = :World [ tags=[], objs=[] ]
     var i = 0
     loop _, t in tags ++ [:solid] {
         if !w.tags@(t) {
@@ -80,7 +80,7 @@ func body (w, rec, type, x, y, tag, shape) {
             `pw_rect(eg_int($b), eg_dbl($bw), eg_dbl($bh), (uint64_t)a_dbl($cat), (uint64_t)(int64_t)a_dbl($mask), a_truthy($sen));`
         }
         :polygon => do {
-            pin pts = shape@1
+            val pts = shape@1
             ```
             {
                 double xs[8], ys[8];

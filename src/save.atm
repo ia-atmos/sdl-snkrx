@@ -31,7 +31,7 @@ func load_lines (name) {
     if !s {
         return nil
     }
-    pin out = []
+    val out = []
     loop _, l in string.split(s, "\n") {
         ;; the words of the line, in `out` (a value pinned in this loop could
         ;; not go there), unless there are none
@@ -60,7 +60,7 @@ func state_save () {
 }
 
 func achievement_lines () {
-    pin ls = []
+    val ls = []
     loop _, a in ACHIEVEMENTS {
         if STATE.achievements@(a) {
             set ls@+ = "achievement_" ++ a ++ " true"
@@ -145,7 +145,7 @@ func run_load () {
     if !ls || (#ls == 0) {
         return nil
     }
-    pin run = [ level=1, loop=0, gold=3, units=[], passives=[], pool=[], shop_level=1, shop_xp=0 ]
+    val run = [ level=1, loop=0, gold=3, units=[], passives=[], pool=[], shop_level=1, shop_xp=0 ]
     loop _, w in ls {
         match w@0 {
             "level" => set run.level = tonumber(w@1)

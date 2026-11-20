@@ -11,7 +11,7 @@ pin order = func () {
     vector.join(loop_chars_of(run.units), " ")
 }
 func loop_chars_of (us) {
-    pin out = []
+    val out = []
     loop _, u in us {
         set out@+ = u.character
     }

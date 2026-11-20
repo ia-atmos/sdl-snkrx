@@ -8,7 +8,7 @@
 func rect_corners (x, y, w, h, r) {
     val c = math.cos(r || 0)
     val s = math.sin(r || 0)
-    pin out = []
+    val out = []
     loop _, p in [[-w/2, -h/2], [w/2, -h/2], [w/2, h/2], [-w/2, h/2]] {
         set out@+ = [ x + c*p@0 - s*p@1, y + s*p@0 + c*p@1 ]
     }
@@ -65,7 +65,7 @@ func circle_hits (cx, cy, rs, o) {
 
 ;; The enemies in a circle, as `get_objects_in_shape(Circle(...), enemies)`.
 func enemies_in_circle (A, x, y, rs) {
-    pin out = []
+    val out = []
     loop _, e in A.enemies {
         if circle_hits(x, y, rs, e) {
             set out@+ = e
@@ -100,7 +100,7 @@ func random_enemy (A, x, y, rs, exclude) {
     var e = rtable(es)
     var tries = 0
     loop {
-        while exclude && X.xin(e, exclude) && (tries < 20)
+        while exclude && X.in(e, exclude) && (tries < 20)
         set e = rtable(es)
         set tries += 1
     }
@@ -390,7 +390,7 @@ task Projectile (A, p, fx) {
         ;; dies on a wall, or bounces
         loop e on :collision.enter until (it.b == p.b) && (it.other.kind == :wall) {
             ifs {
-                X.xin(c, ["archer", "hunter", "barrage", "barrager", "sentry"]) => {
+                X.in(c, ["archer", "hunter", "barrage", "barrager", "sentry"]) => {
                     play(rtable([arrow_hit_wall1, arrow_hit_wall2]), [pitch=rfloat(0.9, 1.1), volume=0.2])
                     if p.ricochet <= 0 {
                         spawn @fx WallArrow(e.x, e.y, p.r, p.color)
@@ -399,7 +399,7 @@ task Projectile (A, p, fx) {
                     bounce(p, e.nx, e.ny)
                     set p.ricochet -= 1
                 }
-                X.xin(c, ["scout", "outlaw", "blade", "spellblade", "jester", "beastmaster", "witch", "thief"]) => {
+                X.in(c, ["scout", "outlaw", "blade", "spellblade", "jester", "beastmaster", "witch", "thief"]) => {
                     play(knife_hit_wall1, [pitch=rfloat(0.9, 1.1), volume=0.2])
                     bounce(p, e.nx, e.ny)
                     spawn @fx WallKnife(A, e.x, e.y, p.r, p.v*0.1, p.color, fx)
@@ -416,7 +416,7 @@ task Projectile (A, p, fx) {
                     bounce(p, e.nx, e.ny)
                     set p.ricochet -= 1
                 }
-                X.xin(c, ["wizard", "lich", "arcanist", "arcanist_projectile", "witch"]) => {
+                X.in(c, ["wizard", "lich", "arcanist", "arcanist_projectile", "witch"]) => {
                     play(magic_area1, [pitch=rfloat(0.95, 1.05), volume=0.075])
                     break (e.x, e.y, rint(2, 3))
                 }
@@ -424,7 +424,7 @@ task Projectile (A, p, fx) {
                     play(cannon_hit_wall1, [pitch=rfloat(0.95, 1.05), volume=0.1])
                     break (e.x, e.y, rint(2, 3))
                 }
-                X.xin(c, ["engineer", "dual_gunner", "miner"]) => {
+                X.in(c, ["engineer", "dual_gunner", "miner"]) => {
                     play(rtable([turret_hit_wall1, turret_hit_wall2]), [pitch=rfloat(0.9, 1.1), volume=0.2])
                     break (e.x, e.y, rint(2, 3))
                 }
@@ -681,14 +681,14 @@ task WallKnife (A, x, y, r, v, color, fx) {
 ;; The sound of a projectile that hits an enemy.
 func projectile_sound (c) {
     ifs {
-        X.xin(c, ["archer", "scout", "outlaw", "blade", "hunter", "spellblade", "engineer", "jester", "assassin",
+        X.in(c, ["archer", "scout", "outlaw", "blade", "hunter", "spellblade", "engineer", "jester", "assassin",
                   "barrager", "beastmaster", "witch", "miner", "thief", "psyker", "sentry"]) => {
             play(hit2, [pitch=rfloat(0.95, 1.05), volume=0.35])
-            if X.xin(c, ["spellblade", "psyker"]) {
+            if X.in(c, ["spellblade", "psyker"]) {
                 play(magic_area1, [pitch=rfloat(0.95, 1.05), volume=0.15])
             }
         }
-        X.xin(c, ["wizard", "lich", "arcanist"]) =>
+        X.in(c, ["wizard", "lich", "arcanist"]) =>
             play(magic_area1, [pitch=rfloat(0.95, 1.05), volume=0.15])
         c == "arcanist_projectile" =>
             play(magic_area1, [pitch=rfloat(0.95, 1.05), volume=0.075])
@@ -738,15 +738,15 @@ task Area (A, a, fx) {
         spawn @fx HitParticle(e.x, e.y, [color=a.color])
         spawn @fx HitParticle(e.x, e.y, [color=e.color])
         ifs {
-            X.xin(c, ["wizard", "magician", "elementor", "psychic"]) =>
+            X.in(c, ["wizard", "magician", "elementor", "psychic"]) =>
                 play(magic_hit1, [pitch=rfloat(0.95, 1.05), volume=0.5])
-            X.xin(c, ["swordsman", "barbarian", "juggernaut", "highlander"]) =>
+            X.in(c, ["swordsman", "barbarian", "juggernaut", "highlander"]) =>
                 play(hit2, [pitch=rfloat(0.95, 1.05), volume=0.35])
             c == "blade" => {
                 play(blade_hit1, [pitch=rfloat(0.9, 1.1), volume=0.35])
                 play(hit2, [pitch=rfloat(0.95, 1.05), volume=0.2])
             }
-            X.xin(c, ["saboteur", "pyromancer", "bomber"]) => {
+            X.in(c, ["saboteur", "pyromancer", "bomber"]) => {
                 if c == "pyromancer" {
                     play(pyro2, [pitch=rfloat(0.95, 1.05), volume=0.4])
                 }
@@ -872,7 +872,7 @@ task DotArea (A, a, fx) {
         loop us on :clock {
             val dt = us / 1000000
             set st.vr += dvr*dt
-            if follows && X.xin(a.parent, A.units) {
+            if follows && X.in(a.parent, A.units) {
                 set a.x = a.parent.x
                 set a.y = a.parent.y
             }
@@ -889,7 +889,7 @@ task DotArea (A, a, fx) {
         }
     }
     val cryo = c == "cryomancer"
-    val dots = cryo || a.void_rift || X.xin(c, ["plague_doctor", "pyromancer", "witch", "burning_field"])
+    val dots = cryo || a.void_rift || X.in(c, ["plague_doctor", "pyromancer", "witch", "burning_field"])
     par :any {
         if !dots {
             await(false)
@@ -1035,16 +1035,16 @@ func shoot_args (u, r, mods) {
 ;; The sound of a shot.
 func shoot_sound (c) {
     ifs {
-        X.xin(c, ["vagrant", "artificer"]) => play(shoot1, [pitch=rfloat(0.95, 1.05), volume=0.2])
+        X.in(c, ["vagrant", "artificer"]) => play(shoot1, [pitch=rfloat(0.95, 1.05), volume=0.2])
         c == "dual_gunner" => {
             play(dual_gunner1, [pitch=rfloat(0.95, 1.05), volume=0.3])
             play(dual_gunner2, [pitch=rfloat(0.95, 1.05), volume=0.3])
         }
-        X.xin(c, ["archer", "hunter", "barrager", "corruptor"]) =>
+        X.in(c, ["archer", "hunter", "barrager", "corruptor"]) =>
             play(archer1, [pitch=rfloat(0.95, 1.05), volume=0.35])
-        X.xin(c, ["wizard", "lich", "arcanist"]) =>
+        X.in(c, ["wizard", "lich", "arcanist"]) =>
             play(wizard1, [pitch=rfloat(0.95, 1.05), volume=0.15])
-        X.xin(c, ["scout", "outlaw", "blade", "spellblade", "jester", "assassin", "beastmaster", "thief"]) => {
+        X.in(c, ["scout", "outlaw", "blade", "spellblade", "jester", "assassin", "beastmaster", "thief"]) => {
             play(rtable([scout1, scout2]), [pitch=rfloat(0.95, 1.05), volume=0.35])
             if c == "spellblade" {
                 play(wizard1, [pitch=rfloat(0.95, 1.05), volume=0.15])

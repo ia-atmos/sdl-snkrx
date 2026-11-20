@@ -57,7 +57,7 @@ task Camera () {
         val now = 1000*eng.tick()/60
         var ax, ay = 0, 0
         set CAM.shakes = do {
-            pin keep = []
+            val keep = []
             loop _, s in CAM.shakes {
                 val t = now - s.t0
                 if t <= s.dur {

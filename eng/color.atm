@@ -62,7 +62,7 @@ func alpha (c, a) {
 
 ;; The ramp of a color, as `ColorRamp(color, 0.025)`.
 func ramp (c) {
-    pin t = []
+    val t = []
     loop i in (-10, 10) {
         set t@(i) = if i == 0 => c => lighten(c, i*0.025)
     }
