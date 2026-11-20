@@ -106,10 +106,15 @@ flags that a task kept for itself (`dead`, `being_pushed`,
 
 ## The measures
 
-From `bench.md`: in the same container, on OpenGL over Xvfb, the port
-runs 1.8 to 3.0 times as many ticks per second as the original in the
-menu, the shop, level 1, and level 1 with 200 more enemies, with a peak
-of memory of 131 to 141 MB against 946 MB.
+From `bench.md`: in the same container, on OpenGL over Xvfb, with the
+sound of both mixed, the port runs 1.07 to 1.22 times as many ticks per
+second as the original in the menu, the shop, level 1, and level 1 with
+200 more enemies, with 83% to 91% of its CPU time. Their peaks of memory
+(546 MB and 946 MB) are mostly the sounds, which both decode whole at
+the start, so they say nothing about the language. (An earlier
+measurement, of 1.8 to 3.0 times and 131 MB, had a port that loaded no
+sound: `bench.md`.) The logic alone of the port takes 0.089 ms per tick
+in level 1, and 2.77 ms with the crowd of 200.
 
 The timings of the original are kept where they were measured: the
 menu reaches the shop in tick 113 in both, and the first marker of level

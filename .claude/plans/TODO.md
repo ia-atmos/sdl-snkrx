@@ -18,7 +18,7 @@ session, `session#N` (this session: `sdl-snxkx`, for the repository
 | #7 | Drop the guard of `await :all` on an empty pool | work | done |
 | #8 | Small differences from the original | work | done |
 | #9 | The new names of the sessions in the documents | work | done |
-| #10 | Why the original peaks at 946 MB | work | open |
+| #10 | Why the original peaks at 946 MB | work | done |
 | #11 | The S7 stress numbers are not to be compared | remark | reported, not acknowledged |
 | #12 | All features in, the first `pin` migration, F5, the student's trail | remark | reported, not acknowledged |
 | #13 | The time of the logic by compiler (`atmos-pin#14`) | work | done, sent to `atmos-pin` |
@@ -26,6 +26,7 @@ session, `session#N` (this session: `sdl-snxkx`, for the repository
 | #15 | The counts of lines in `bench.md` and `case-study.md` (paper) | work | done |
 | #16 | The CPU of the logic alone, per tick, with its method (paper) | work | done |
 | #17 | How the port was written, in the README (paper) | work | done |
+| #18 | The benchmark ran the port with no sound; rerun with it | work | done |
 
 ## Items
 
@@ -92,7 +93,10 @@ and `Quiet` (`src/level.atm`) no longer guards it; same outputs.
 compiler session"); the other documents name no session (`pico-sdl`
 in `CREDITS.md` and `doc/study.md` is the library the student used).
 
-**#10** Not investigated (`bench.md`).
+**#10** Done (`bench.md`, "Memory"): the original decodes its 103
+sounds whole at the start (`'static'` sources), 359 MB of samples, 321
+MB of them the six songs; streamed, it peaks at 215 MB instead of 946.
+The port decodes them too: 546 MB with its audio open.
 
 **#11** The benchmark rerun (`41ae483`): the S7 stress numbers were
 measured on a port that did not attack.
@@ -120,4 +124,12 @@ game, against 10381 and 134827 for the original (91% and 68%).
 **#16** `bench.md`, "The CPU of the logic alone": 0.089 ms per tick in
 level 1, 2.77 ms in the stress (medians of three, 1500 ticks, no
 window), with the method for other ports.
+
+**#18** `tools/bench/perf.py` ran the port with the disk driver of SDL
+on `/dev/null`, which the driver refuses: the port opened no audio,
+loaded no sound, and mixed none. With a regular file, at the pace of
+the driver: 1.07 to 1.22 times the ticks per second of the original
+(not 1.8 to 3.0), 83% to 91% of its CPU (not 56% to 71%), and 546 MB
+against 946 MB (not 131). `bench.md` and `case-study.md` are corrected.
+To tell the paper.
 

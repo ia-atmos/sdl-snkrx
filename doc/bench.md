@@ -11,12 +11,15 @@ other, with the same scripted input and the same seed
   OpenGL over Mesa 25.2.8 (llvmpipe, which renders on the CPU, in
   threads), every frame drawn, no cap on the frames.
 - The sound is mixed but not played: the port on the "disk" driver of
-  SDL 2.30.0, to `/dev/null`; the original on the "null" driver of
-  OpenAL.
+  SDL 2.30.0, to a regular file, at the pace of the driver; the
+  original on the "null" driver of OpenAL. (Until `7639dd3`, the port
+  was run with the disk driver on `/dev/null`, which the driver refuses:
+  the port then opened no audio, and loaded and mixed no sound. See
+  "An earlier run, with no sound in the port".)
 - The original: LÖVE 11.5 with LuaJIT 2.1, in the bench mode of
   `tools/bench/bench.lua` (every loop is one tick of 1/60 s).
-- The port: at `b2c2089` (the whole game, S9), built with `-O2`,
-  compiler `ia-atmos/lang` at `995c3b2`.
+- The port: at `7639dd3` (all the features), built with `-O2`, compiler
+  `ia-atmos/lang` at `c4e99c4`.
 - Each run is a process, measured by `wait4`: the time on the clock, the
   CPU time (user and system, of all of its threads, which includes the
   threads of llvmpipe), and the peak of its resident memory. The display
@@ -37,23 +40,36 @@ level 1 from tick 573, with no steering.
 
 | scenario | program | ticks | clock (s) | CPU (s) | ticks/s | peak (MB) |
 |----------|---------|------:|----------:|--------:|--------:|----------:|
-| menu     | port     |  600 |  3.72 | 10.24 | 161 | 130.6 |
-| menu     | original |  600 | 11.02 | 18.13 |  54 | 946.2 |
-| shop     | port     |  720 |  4.10 | 11.17 | 176 | 131.7 |
-| shop     | original |  720 | 11.18 | 18.72 |  64 | 946.1 |
-| level 1  | port     | 1800 | 10.46 | 29.13 | 172 | 131.6 |
-| level 1  | original | 1800 | 19.85 | 40.86 |  91 | 946.2 |
-| stress   | port     | 1500 | 13.26 | 29.58 | 113 | 140.8 |
-| stress   | original | 1500 | 23.85 | 42.37 |  63 | 946.9 |
+| menu     | port     |  600 | 10.06 | 16.62 |  60 | 546.7 |
+| menu     | original |  600 | 10.78 | 18.35 |  56 | 946.3 |
+| shop     | port     |  720 | 10.11 | 17.15 |  71 | 545.9 |
+| shop     | original |  720 | 10.98 | 18.96 |  66 | 946.5 |
+| level 1  | port     | 1800 | 16.00 | 33.69 | 113 | 546.0 |
+| level 1  | original | 1800 | 19.34 | 40.48 |  93 | 946.2 |
+| stress   | port     | 1500 | 19.10 | 34.64 |  79 | 546.1 |
+| stress   | original | 1500 | 23.10 | 41.32 |  65 | 946.0 |
 
-- Ticks per second: the port runs 3.0 times as many as the original in
-  the menu, 2.8 in the shop, 1.9 in level 1, and 1.8 in the stress.
-- CPU: the port spends 56% to 71% of the CPU time of the original.
-- Memory: the peak of the port is 131 to 141 MB, of the original 946 to
-  947 MB, in every scenario. Why the original needs that much was not
-  investigated.
+- Ticks per second: the port runs 1.07 times as many as the original
+  in the menu, 1.08 in the shop, 1.22 in level 1, and 1.22 in the
+  stress. Both spend most of the short scenarios loading: decoding the
+  sounds, the songs above all (about 6 s of the 10 s of the menu of the
+  port).
+- CPU: the port spends 83% to 91% of the CPU time of the original.
+- Memory: the peak of the port is 546 MB, of the original 946 MB, in
+  every scenario; both are mostly the sounds, decoded at the start (see
+  "Memory").
 
-### An earlier run, with a port that did not attack
+### An earlier run, with no sound in the port
+
+The runs of S9 (port at `b2c2089`, compiler `995c3b2`) gave 1.8 to 3.0
+times as many ticks per second for the port, 56% to 71% of the CPU, and
+131 to 141 MB against 946 MB. In them the port ran with the disk driver
+of SDL on `/dev/null`, which the driver refuses ("not a regular file"),
+so the port opened no audio and loaded none of its sounds, while the
+original decoded all of its sounds. Those numbers are not to be
+compared.
+
+### A still earlier run, with a port that did not attack
 
 The first runs of this benchmark were at the end of S7 (port at
 `f151195`, compiler at `2f45211` and `995c3b2`): 155 to 177 ticks per
@@ -64,6 +80,26 @@ ended at once, `compiler.md`, 7): the snake took no damage and killed no
 seeker, so the crowd of 200 lived to the end, while the snake of the
 original killed it. With attacks, 197 seekers die by tick 1500 of the
 stress in the port, and the logic has less to do.
+
+## Memory
+
+The original loads its 103 sounds with `love.audio.newSource(path,
+'static')` (`engine/sound.lua`), which decodes each file whole at the
+start: 359 MB of samples (16 bits), of which 321 MB are the six songs.
+After one frame its peak is already 930.6 MB. With its sounds loaded as
+`'stream'` instead (a copy of the original, changed only there), the
+peak of 60 frames is 214.7 MB, 731 MB less, about two times the decoded
+samples (LÖVE keeps the decoded data and OpenAL a copy of it in its
+buffer). An empty program of LÖVE with the same window peaks at 138.8
+MB.
+
+The port decodes its sounds at the start too (`Mix_LoadWAV`, as the
+original's static sources): song 1 alone is 56.8 MB. With its audio
+open, the port peaks at 546 MB; with no audio (`SNX_MUTE=1`), at 131.4
+MB.
+
+So neither peak is about the language: it is how the sounds are
+loaded. Streaming the songs, in either, would remove most of it.
 
 ## Where the time of the port goes
 
