@@ -327,6 +327,69 @@ game time, emitted by the engine (not on the events of the runtime's
 time), and keep `await 1s` for the timers. This changes the expected
 outputs of every arena test, so it is left for the author to decide.
 
+### On the branch `step`
+
+The engine emits `:step [us]` once per tick, right after the time of
+the tick (`eng.h`, with the same `us` as the time it passed), and the
+51 uses of `:clock` in the game, the engine, and the tests now step on
+`:step` (`loop us on :clock` became `loop st_ on :step`, with
+`val us = st_.us`). The timers keep `await 1s`.
+
+Where the step is emitted matters, measured on the 40 tests:
+
+- From `eng.h`, after the clock (the branch): the physics, the
+  movements, and the springs step after all the time of the tick has
+  passed and all the timers that expire in it have awoken, as the
+  original updates its timers and then its objects in a frame.
+- From Atmos, on the last piece of the clock (`late` is 0): 13 tests
+  differ from the above, since the step comes before the timers that
+  expire at the end of the tick.
+- From Atmos, on `:draw`, by a task that reacts to it first: 5 tests
+  differ, since what a step spawns misses the `:draw` of its tick, and
+  the draws that take random numbers take them in another order.
+
+So the step is emitted by `eng.h`. Over `env-sdl`, which will emit no
+`:step`, the same order comes from a first pass of drawing, before
+`:draw` (`sdl.window [passes=[:steps, :draw, :overlay]]`), on which a
+task of the port that has added up the pieces of the clock emits
+`:step`.
+
+The step changes the traces of 19 of the 40 tests. Against `main`:
+
+| test | the level clears at tick (main, step) | what else changes |
+|------|----------------------------------------|-------------------|
+| `arena` | 256, 264 | the ticks of the deaths |
+| `allpassives` | 315, 314 | |
+| `achievements` | 290, 275 | |
+| `level` | 646, 996 | 18 and 20 seekers added, 16 and 18 deaths |
+| `boss` | 620, 628 | 12 and 14 added, 10 and 12 deaths |
+| `chars` | 825, 789 | 17 and 18 deaths |
+| `chars2` | 988, 1146 | 33 and 40 deaths |
+| `chars3` | 1595, 985 | 73 and 38 deaths in its run |
+| `classes` | 1637, 1864 | 58 and 60 deaths |
+| `run` | 2101, 1376 | 18 and 17 deaths |
+| `elites`, `bosses`, `arena2`, `arena3` | | the deaths and the hits of the units |
+| `won`, `credits`, `passives`, `options2` | | ticks and screenshots only |
+
+The original's trace (`tst/original/run1.txt`, the same input, 1800
+ticks) records only its timers and the objects it adds, not hits or
+deaths. What it can show is the first wave of seekers: the original
+adds 8, at ticks 926 to 968, one every 6; `main` adds the same 8, 4
+ticks earlier (922 to 964); `step` adds 7, since the fifth, at the
+middle of its group (tick 946), finds a seeker over its point and is
+prevented (`spawn_blocked`, as `spawn_n_enemies` of the original
+counts a spawn that is prevented). On this one measure, `main` is the
+closer; the trace of the original ends before the second wave, which
+comes at 1591 on `main` and at 1285 on `step`.
+
+The new timing also reached two lines that `main` never runs in its
+tests, and both failed: a headbutter that lives to its first headbutt
+gave its color, pinned in the arm of a `match`, to a tween in a pool of
+an outer block (`invalid escape : table pinned at src/elite.atm:216`),
+and the randomizer, when it draws "swarm" or "explode", gave its list
+of nearby seekers, pinned in a step of its loop, to `Sacrifice` in that
+pool. Both are fixed on `main` too.
+
 ## 9. The new rules of `pin`
 
 Seen at `3a6ffe9` (the rules since `98ad03a`). The port moved to them
