@@ -547,3 +547,36 @@ it holds, 4.9 million times in 700 ticks, about 260 instructions each.
 The branch `pin` adds `a_clr_tmp` (0.76 G). The rest of the top of the
 profile (`emit_trail`, `probe`, `a_tab_get`, `a_call`) is the same in
 the three.
+
+### On the branch `contacts`: the contacts sent to their two tasks
+
+With `set :out` (since `8361f88`), the task of each body writes
+`set :out A.w.objs@(b).task = task` after its `body(...)`, in its own
+block; the place goes back to `nil` when the task ends. `phys_step`
+emits each contact with `emit @(o.task)` to the task of its body only,
+instead of to the whole arena. The world stays in `A`, made by the
+caller of the arena. 18 tasks register; the walls do not (no task
+awaits their contacts). The 21 awaits keep their `until it.b == ...`:
+an emit to a task also reaches its subtree, which may hold the tasks of
+other bodies. The 40 tests are identical.
+
+In the stress scenario, the logic takes 3.27 s against 4.04 s on `main`
+(medians of seven, alternated, `SNX_PROFILE=1`, no window), and the
+whole run (`tools/bench/perf.py`, with the window, three runs) 12.61 s
+against 13.33 s on the clock, 119 against 113 ticks per second.
+
+`SHARED_SPRINGS` stays: a widget lends its spring to its owner in an
+event, and the form of `set :out` would need a table from each owner
+through some 30 places that spawn widgets, and one of the widgets
+(`ItemCard`) has an owner only in the shop. A `set :out` in an `if`
+is cleared at the end of the `if`, so it cannot be conditional:
+
+```
+task Child (o, id) {
+    pin s = [ k=10 ]
+    if o {
+        set :out o.springs@(id) = s     ;; nil again at the end of the if
+    }
+    ...
+}
+```
