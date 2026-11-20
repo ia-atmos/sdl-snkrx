@@ -11,7 +11,7 @@ where it was seen, and its status.
 | 3 | `math` has no `atan2`, `exp`, `log` | fixed in `9ec67ec` |
 | 4 | `pub` accepted as a name | fixed in `9ec67ec`: a compile error |
 | 5 | A hang when the program ends inside an emit | fixed in `9ec67ec` |
-| 6 | `await :all` on an empty pool | as the reference Atmos; a question for the author |
+| 6 | `await :all` on an empty pool | fixed: satisfied at once; the guard is gone |
 | 7 | A spawn in a loop or an `if` ends with its block, silently | caught at `3cc4855`: a compile error when the spawn ends its block; it found 3 more in the port |
 | 8 | A time await splits the time of the tick for every task | by design of the runtime, as far as the port knows; the port integrates on `:clock`, so a tick can take two steps (a question for the author) |
 | 9 | The new rules of `pin` | migrated at `3a6ffe9`, tests identical; three strange cases and one workaround (shared springs) left |
@@ -202,9 +202,10 @@ await :all ts           ;; never awakes
 it while it awaits, but on a pool that is already empty it awaits the
 next one forever. The port guards it: `if #ts > 0 { await :all ts }`.
 
-Status: the reference Atmos does the same (it awakes on the end of a
-task of the pool). Whether an empty pool satisfies it at once is a
-question raised to the author. The port keeps its guard.
+Status: fixed in the compiler (manual, "Await", at `c4e99c4`): an
+`await :all` over an empty pool is satisfied at once (the reference
+still waits). The port dropped its guard (`Quiet`, `src/level.atm`),
+with the same outputs.
 
 ## 7. A task spawned in a loop or an `if` ends with its block, silently
 

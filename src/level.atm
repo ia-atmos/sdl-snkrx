@@ -35,12 +35,8 @@ func level_index (level) {
 ;; waves of the original (`#enemies <= 0 and not self.spawning_enemies`).
 task Quiet (A, foes, spawns) {
     loop {
-        if #spawns > 0 {
-            await :all spawns
-        }
-        if #foes > 0 {
-            await :all foes
-        }
+        await :all spawns       ;; at once if empty (`compiler.md`, 6)
+        await :all foes
         ;; the critters of the enemies count too (they are not in `foes`)
         loop {
             until #A.enemies == 0
