@@ -6,8 +6,10 @@
 #
 # Both run on a virtual display (Xvfb, 960x540, the scale 2 of both), with
 # OpenGL (Mesa), every frame drawn, no cap on the frames, and the sound
-# mixed but not played (the port on the "disk" driver of SDL, to
-# /dev/null; the original on the "null" driver of OpenAL). Each run is
+# mixed but not played (the port on the "disk" driver of SDL, to a
+# regular file, at the pace of the driver: the driver refuses /dev/null,
+# and with no delay it mixes as fast as it can; the original on the
+# "null" driver of OpenAL). Each run is
 # measured as a process: the time on the clock, the CPU time (user and
 # system, of all of its threads), and the peak of its resident memory.
 # The display server is a separate process, not measured.
@@ -53,8 +55,7 @@ def measure (cmd, env):
 def port (name, frames, inp, display):
     env = dict(os.environ, DISPLAY=display, SNX_FRAMES=str(frames), SNX_INPUT=inp,
                SNX_STRESS=str(STRESS) if name == "stress" else "", SNX_RENDER="1", SNX_RENDERER="opengl",
-               SDL_VIDEODRIVER="x11", SDL_AUDIODRIVER="disk", SDL_DISKAUDIOFILE="/dev/null",
-               SDL_DISKAUDIODELAY="0")
+               SDL_VIDEODRIVER="x11", SDL_AUDIODRIVER="disk", SDL_DISKAUDIOFILE="build/bench-audio.raw")
     env.pop("SNX_MUTE", None)
     return measure(["build/snx"], env)
 
