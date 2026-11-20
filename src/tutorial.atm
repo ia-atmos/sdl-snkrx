@@ -46,6 +46,9 @@ task Tutorial () {
     pin arrow = image("arrow")
     spawn {
         loop on :draw {
+            ;; the texts under the mouse of the shop, frozen with it, under
+            ;; the dark screen (`self.ui:draw()` before it, in `BuyScreen:draw`)
+            info_draw(INFO)
             eng.rect(W/2, H/2, 2*W, 2*H, nil, nil, rgba(0.1, 0.1, 0.1, 0.9))
             draw_image(arrow, W/2 + 93, H/2 - 30, 0, 0.4, 0.35, white@0)
             draw_image(arrow, W/2 + 93, H/2 - 10, 0, 0.4, 0.35, white@0)

@@ -16,7 +16,7 @@ session, `session#N` (this session: `sdl-snxkx`, for the repository
 | #5 | A clock per task or pool | remark | answered; not needed by the port |
 | #6 | E5: move the platform part of `eng/` to `env-sdl` | work | unblocked (after #1) |
 | #7 | Drop the guard of `await :all` on an empty pool | work | done |
-| #8 | Small differences from the original | work | open |
+| #8 | Small differences from the original | work | done |
 | #9 | The new names of the sessions in the documents | work | done |
 | #10 | Why the original peaks at 946 MB | work | open |
 | #11 | The S7 stress numbers are not to be compared | remark | reported, not acknowledged |
@@ -81,7 +81,8 @@ and `Quiet` (`src/level.atm`) no longer guards it; same outputs.
   shake of `tst/game/options2` moved;
 - #8c done: the run timer stops for good when the game is won (`not
   self.won` in `Arena:update`); the port counted again after the win;
-- #8d the text under the mouse of the guide hides during the tutorial.
+- #8d done: the shop's texts under the mouse stay, under the dark
+  screen of the tutorial (`self.ui:draw()` before it).
 
 **#9** Done: `doc/compiler.md` names the session `atmos-lang` (was "the
 compiler session"); the other documents name no session (`pico-sdl`
