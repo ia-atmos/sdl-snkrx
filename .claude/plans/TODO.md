@@ -79,7 +79,8 @@ and `Quiet` (`src/level.atm`) no longer guards it; same outputs.
 - #8b done: each option plays the sounds of its action in the original
   (`main.lua:1859-2104`), so fewer random numbers are drawn and the
   shake of `tst/game/options2` moved;
-- #8c the run timer does not count during the end of a won level;
+- #8c done: the run timer stops for good when the game is won (`not
+  self.won` in `Arena:update`); the port counted again after the win;
 - #8d the text under the mouse of the guide hides during the tutorial.
 
 **#9** Done: `doc/compiler.md` names the session `atmos-lang` (was "the

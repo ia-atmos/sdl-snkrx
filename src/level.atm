@@ -337,8 +337,13 @@ task Clear (A, ui) {
         }
         await ClearGo(A)
     }
-    ;; the time of the run goes on until the shop (the game is not won)
-    spawn RunClock(A.run)
+    ;; the time of the run goes on until the shop, unless the game is won
+    ;; (`not self.won` in `Arena:update`)
+    spawn {
+        if (A.level % 25) != 0 {
+            await RunClock(A.run)
+        }
+    }
     spawn {
         await WaitReal(2)
         await SlowDown(0.7)
