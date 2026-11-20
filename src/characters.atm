@@ -219,7 +219,7 @@ task HealingOrb (A, x, y, fx, extra) {
         }
     }
     spawn {
-        loop on :clock {
+        loop on :step {
             magnet(A, o)
         }
     }
@@ -297,7 +297,8 @@ task Sentry (A, u, fx, shots) {
         }
     }
     spawn {
-        loop us on :clock {
+        loop st_ on :step {
+            val us = st_.us
             set s.r += math.pi*(us/1000000)
             body_set(s.b, :angle, s.r)
         }

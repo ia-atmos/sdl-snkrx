@@ -59,7 +59,8 @@ task Star (p) {
     val dr = rfloat(0, math.pi/4)
     val v  = rfloat(30, 42)
     par :any {
-        loop us on :clock {
+        loop st_ on :step {
+            val us = st_.us
             val dt = us / 1000000
             set x += v*math.cos(-math.pi/4)*dt
             set y += v*math.sin(-math.pi/4)*dt

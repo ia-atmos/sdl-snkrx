@@ -156,7 +156,8 @@ task HitParticle (x0, y0, o) {
     set st.h = o.h || (st.w/2)
     val color = o.color || fg@0
     spawn {
-        loop us on :clock {
+        loop st_ on :step {
+            val us = st_.us
             val dt = us / 1000000
             set st.x += st.v*math.cos(st.r)*dt
             set st.y += st.v*math.sin(st.r)*dt

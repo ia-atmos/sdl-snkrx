@@ -16,7 +16,7 @@ pin run = [ level=7, loop=0, gold=3, units=[
 pin A = new_arena(7)
 set A.run = run
 spawn Arena(A)
-await(3, :clock)
+await(3, :step)
 print("levels", A.cl.ranger, A.cl.warrior, A.cl.mage, A.cl.rogue, A.cl.explorer, A.cl.enchanter, "active", active_sets(A.units))
 ;; vagrant: dmg 1.5 (squire) x 1.5 (vagrant) x 1.75 (explorer) = 3.9375,
 ;;          aspd 1.3 x 1.5 x 1.75 = 3.4125
@@ -28,10 +28,10 @@ loop _, u in A.units {
 }
 
 ;; mage 1: the enemies have 15 less defense (25 - 15 = 10)
-loop on :clock {
+loop on :step {
     until #A.enemies > 0
 }
-await :clock
+await :step
 print("enemy def", (A.enemies@0).def)
 
 ;; the rangers barrage, the rogues crit (see the trace)

@@ -242,7 +242,7 @@ task Seeker (A, e, fx, shots) {
         }
     } with {
         ;; the position and the speed, in every tick
-        loop on :clock {
+        loop on :step {
             set e.x, e.y = body_pos(e.b)
             set e.r = body_angle(e.b)
             set e.buff_def_a = match (A.cl && A.cl.mage) { 2 => -30 ; 1 => -15 ; else => 0 }
@@ -264,7 +264,7 @@ task Seeker (A, e, fx, shots) {
         loop {
             ;; chasing
             var p = par :any {
-                loop on :clock {
+                loop on :step {
                     steer_update(st)
                     ;; the leader, or a construct that taunts it
                     val l = (e.taunted && e.taunted.v.alive && e.taunted.v) || A.units@0
@@ -316,7 +316,7 @@ task Seeker (A, e, fx, shots) {
                 set e.push_invulnerable = p.inv
                 seeker_push(e, p.f, p.r)
                 set p = par :any {
-                    loop on :clock {
+                    loop on :step {
                         val vx, vy = body_vel(e.b)
                         until math.sqrt(vx*vx + vy*vy) < 25
                     }

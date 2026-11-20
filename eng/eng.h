@@ -1388,6 +1388,14 @@ int main (int argc, char** argv) {
             if (g > 0) {
                 EG_GAME -= g;
                 st = atm_emit(a_int(g));
+                // the step of game time of the tick, once, after all of its
+                // time has passed (`:step [us]`): the runtime passes the time
+                // in pieces, cut where a timer expires, so a step on `:clock`
+                // would step twice in such a tick (`doc/compiler.md`, 8); the
+                // original steps once per frame, with its `dt`
+                if (st == A_OK) {
+                    st = eg_emit("step", NULL, (double)g, 0, -2);
+                }
             }
         }
 

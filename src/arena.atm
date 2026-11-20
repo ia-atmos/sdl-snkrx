@@ -191,14 +191,16 @@ task Arena (A, enemies) {
 
     ;; the time of the arena, as its timer (`main.current.t.time`)
     spawn {
-        loop us on :clock {
+        loop st_ on :step {
+            val us = st_.us
             set A.time += us / 1000000
         }
     }
 
     ;; the world steps after all entities have moved
     spawn {
-        loop us on :clock {
+        loop st_ on :step {
+            val us = st_.us
             phys_step(w, us / 1000000)
         }
     }

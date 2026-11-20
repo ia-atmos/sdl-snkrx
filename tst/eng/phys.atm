@@ -58,7 +58,8 @@ val e = spawn @ts Ball(:e, 200, 152, 0, :enemy)
 val c = spawn @ts Ball(:c, 250, 80, 100, :player, 0.5)
 print("mass", f(body_mass(a.pub.b)*1000), f(body_mass(p.pub.b)*1000))
 
-loop us on :clock {
+loop st_ on :step {
+    val us = st_.us
     phys_step(w, us/1000000)
     until eng.tick() == 180
 }

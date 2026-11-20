@@ -11,7 +11,12 @@
 ;;      :quit                   the window was closed
 ;;      :tick [us]              the real time of the tick (1/60 s, in us)
 ;;      (time)                  the game time, which `await 1s` and `:clock`
-;;                              follow: the real time scaled by `eng.slow`
+;;                              follow: the real time scaled by `eng.slow`,
+;;                              in pieces (`compiler.md`, 8)
+;;      :step [us]              once per tick, after its time: the game time
+;;                              of the tick, on which the physics, the
+;;                              movements, and the springs step (none when
+;;                              the game time does not pass)
 ;;      :draw                   to draw the frame
 ;;      :overlay                to draw over the frame (after all of :draw)
 ;;

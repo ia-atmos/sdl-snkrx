@@ -2,18 +2,18 @@
 0	add	Seeker 330.0 151.0
 0	add	Seeker 360.0 151.0
 0	add	Seeker 390.0 151.0
-23	unit.hit	vagrant 108.2
+24	unit.hit	vagrant 108.2
 39	unit.hit	vagrant 66.4
-67	unit.hit	vagrant 24.7
-82	unit.hit	archer 61.6
-135	unit.hit	archer 23.3
-142	unit.hit	archer -15.1
-142	unit.die	archer
-467	unit.hit	vagrant -17.1
-467	unit.die	vagrant
-546	unit.hit	swordsman 104.2
-644	unit.hit	swordsman 68.4
-829	unit.hit	swordsman 32.6
-871	unit.hit	swordsman -3.2
-871	unit.die	swordsman
-871	died	1
+53	unit.hit	vagrant 24.7
+68	unit.hit	vagrant -17.1
+68	unit.die	vagrant
+182	unit.hit	swordsman 104.2
+231	unit.hit	swordsman 68.4
+332	unit.hit	swordsman 32.6
+435	unit.hit	swordsman -3.2
+435	unit.die	swordsman
+522	unit.hit	archer 61.6
+573	unit.hit	archer 23.3
+774	unit.hit	archer -15.1
+774	unit.die	archer
+774	died	1
