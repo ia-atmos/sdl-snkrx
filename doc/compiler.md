@@ -541,9 +541,14 @@ the compiler and the port. Alternated with `c4e99c4` (seven of each):
 So most of the extra instructions (2.55 G, 15%) are `a_unname_x`, and
 1.28 G of it comes from one function, `separate` (`eng/steer.atm`, the
 loop over all the other enemies of each seeker, 17% of the program):
-at the end of each step of `loop _, o in others`, the name `o` of a
-record of an enemy is dropped, and `ceil_up` walks the record and what
-it holds, 4.9 million times in 700 ticks, about 260 instructions each.
+4.9 million times in 700 ticks, about 260 instructions each. It is not
+a walk of the records: at the end of each step of `loop _, o in
+others`, the generated C un-names every slot of the body, its names
+and its temporaries (23 in a standalone copy of `separate`), and
+`ceil_up` returns at once for each, since most hold numbers. The same
+standalone program, with no physics or window, shows the same share
+(9% of its instructions in `a_unname_x`, about 155 per step), whether
+the records come as arguments of a spawn or are made in their vector.
 The branch `pin` adds `a_clr_tmp` (0.76 G). The rest of the top of the
 profile (`emit_trail`, `probe`, `a_tab_get`, `a_call`) is the same in
 the three.
