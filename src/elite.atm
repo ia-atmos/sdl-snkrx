@@ -56,6 +56,7 @@ task EnemyProjectile (A, p, fx) {
     set p.w = 10
     set p.h = 4
     body(A.w, p, :dynamic, p.x, p.y, :enemy_projectile, [:rect, 10, 4])
+    set :out A.w.objs@(p.b).task = task   ;; its contacts come to this task
     defer {
         body_free(A.w, p.b)
     }
@@ -489,6 +490,7 @@ task EnemyCritter (A, x, y, r, v, dmg, from, fx) {
     unit_stats(c, true, A.ng)
     set c.dmg = dmg
     body(A.w, c, :dynamic, x, y, :enemy_projectile, [:rect, 7, 4])
+    set :out A.w.objs@(c.b).task = task   ;; its contacts come to this task
     body_restitution(c.b, 0.5)
     set c.st = steerable(c.b, c.v, 400, math.pi, 1)
     val st = c.st

@@ -9,6 +9,7 @@ task Pet (A, x, y, r, v, parent, fx) {
     trace("add", string.format("Pet %.1f %.1f", x, y))
     val o = body(A.w, [ kind=:pet, w=8, h=8, x=x, y=y, r=r, v=v, pierce=6, ricochet=1, hit=hfx(1),
               color=character_colors@("hunter") ], :dynamic, x, y, :projectile, [:rect, 8, 8])
+    set :out A.w.objs@(o.b).task = task   ;; its contacts come to this task
     defer {
         body_free(A.w, o.b)
     }
@@ -71,6 +72,7 @@ task Critter (A, x, y, r, v, dmg, parent, fx) {
     set c.dmg = dmg || parent.dmg
     set c.hp = 1 + (match A.cl.swarmer { 2 => 3 ; 1 => 1 ; else => 0 }) + (parent.hive || 0)
     body(A.w, c, :dynamic, x, y, :player, [:rect, 7, 4])
+    set :out A.w.objs@(c.b).task = task   ;; its contacts come to this task
     body_restitution(c.b, 0.5)
     pin st = steerable(c.b, c.v, 400, math.pi, 1)
     defer {
@@ -199,6 +201,7 @@ task Automaton (A, x, y, parent, fx, shots) {
     trace("add", string.format("Automaton %.1f %.1f", x, y))
     val a = body(A.w, [ kind=:automaton, w=8, h=8, x=x, y=y, r=0, level=parent.level, stats=:automaton,
               classes=[:sorcerer, :conjurer], color=character_colors@("artificer"), hit=hfx(1), alive=true ], :dynamic, x, y, :player, [:rect, 8, 8])
+    set :out A.w.objs@(a.b).task = task   ;; its contacts come to this task
     unit_stats(a, true, 0)
     defer {
         set a.alive = false
@@ -299,6 +302,7 @@ task Saboteur (A, x, y, parent, crit, fx) {
     val o = body(A.w, [ kind=:saboteur, w=8, h=8, x=x, y=y, r=0, level=parent.level, stats=:player,
               character="saboteur", classes=character_classes@("saboteur"),
               color=character_colors@("saboteur"), hit=hfx(1) ], :dynamic, x, y, :player, [:rect, 8, 8])
+    set :out A.w.objs@(o.b).task = task   ;; its contacts come to this task
     unit_stats(o, true, 0)
     body_restitution(o.b, 0.5)
     pin st = steerable(o.b, o.v, 2000, 4*math.pi, 4)
@@ -350,6 +354,7 @@ task Saboteur (A, x, y, parent, crit, fx) {
 task Bomb (A, x, y, parent, fx) {
     trace("add", string.format("Bomb %.1f %.1f", x, y))
     val o = body(A.w, [ kind=:bomb, w=8, h=8, x=x, y=y, r=0, color=orange@0, hit=hfx(1) ], :static, x, y, :player, [:rect, 8, 8])
+    set :out A.w.objs@(o.b).task = task   ;; its contacts come to this task
     defer {
         body_free(A.w, o.b)
     }
@@ -388,6 +393,7 @@ task Turret (A, x, y, parent, fx, shots) {
     trace("add", string.format("Turret %.1f %.1f", x, y))
     val o = vector.insert(A.turrets, [ kind=:turret, w=14, h=6, x=x, y=y, r=0, color=orange@0, hit=hfx(1), upgrade_dmg_m=1, upgrade_aspd_m=1, alive=true ])
     body(A.w, o, :static, x, y, :player, [:rect, 14, 6])
+    set :out A.w.objs@(o.b).task = task   ;; its contacts come to this task
     defer {
         body_free(A.w, o.b)
     }
@@ -466,6 +472,7 @@ task Turret (A, x, y, parent, fx, shots) {
 task Tree (A, x, y, parent, fx) {
     trace("add", string.format("Tree %.1f %.1f", x, y))
     val o = body(A.w, [ kind=:tree, w=9, h=9, x=x, y=y, r=0, color=fg@0, hit=hfx(1), alive=true ], :static, x, y, :player, [:rect, 9, 9])
+    set :out A.w.objs@(o.b).task = task   ;; its contacts come to this task
     defer {
         body_free(A.w, o.b)
     }
@@ -525,6 +532,7 @@ task Tree (A, x, y, parent, fx) {
 task Volcano (A, x, y, parent, fx) {
     trace("add", string.format("Volcano %.1f %.1f", x, y))
     val o = body(A.w, [ kind=:volcano, w=9, h=9, x=x, y=y, r=0, color=fg@0, hit=hfx(1) ], :static, x, y, :player, [:rect, 9, 9])
+    set :out A.w.objs@(o.b).task = task   ;; its contacts come to this task
     body_restitution(o.b, 0.5)
     defer {
         body_free(A.w, o.b)
@@ -582,6 +590,7 @@ task ForceField (A, u, fx) {
     trace("add", string.format("ForceField %.1f %.1f", u.x, u.y))
     val rs = match u.magnify { 1 => 14 ; 2 => 17 ; 3 => 20 ; else => 12 }
     val o = body(A.w, [ kind=:force_field, x=u.x, y=u.y, r=0, color=fg@0, hit=hfx(1) ], :static, u.x, u.y, :force_field, [:circle, rs])
+    set :out A.w.objs@(o.b).task = task   ;; its contacts come to this task
     defer {
         body_free(A.w, o.b)
     }
@@ -648,6 +657,7 @@ task Gold (A, x, y, fx, shots) {
     set A.golds += 1
     trace("add", string.format("Gold %.1f %.1f", x, y))
     val o = body(A.w, [ kind=:gold, w=3, h=3, x=x, y=y, r=0, hit=hfx(1), color=yellow2@0 ], :dynamic, x, y, :ghost, [:rect, 3, 3])
+    set :out A.w.objs@(o.b).task = task   ;; its contacts come to this task
     defer {
         body_free(A.w, o.b)
         set A.golds -= 1

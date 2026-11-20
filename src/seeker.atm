@@ -71,6 +71,7 @@ task Seeker (A, e, fx, shots) {
         set e.hp = e.max_hp
     }
     body(A.w, e, :dynamic, e.x, e.y, :enemy, [:rect, e.w, e.h])
+    set :out A.w.objs@(e.b).task = task   ;; its contacts come to this task
     body_restitution(e.b, 0.5)
     set e.st = if e.boss => steerable(e.b, e.v, 1000, 2*math.pi, 2) => steerable(e.b, e.v, 2000, 4*math.pi, 4)
     val st = e.st
