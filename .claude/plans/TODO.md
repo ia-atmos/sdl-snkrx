@@ -11,7 +11,7 @@ session, `session#N` (this session: `sdl-snxkx`, for the repository
 |---|-------|------|-------|
 | #1 | Second migration to the rules of `pin` | decision | done at `c4e99c4`, by the session, to be confirmed |
 | #2 | Contacts sent only to their two tasks, with `set :out` | decision | done on the branch `contacts`, not merged: waits for the author |
-| #3 | Finding 8: step the physics once per frame | decision | waits for the author |
+| #3 | Finding 8: step the physics once per frame | decision | done on the branch `step`, not merged: waits for the author |
 | #4 | Relax exactness for expressiveness | decision | waits for the author |
 | #5 | A clock per task or pool | remark | answered; not needed by the port |
 | #6 | E5: move the platform part of `eng/` to `env-sdl` | work | unblocked (after #1) |
@@ -53,13 +53,16 @@ against 113 ticks per second. The filters `until it.b == ...` stay
 `doc/compiler.md`, 2, on the branch. Reported to `atmos-pin`.
 Recommended: merge.
 
-**#3 Finding 8** (`doc/compiler.md`): a timer splits the time of a
-tick, so the physics and the movements may take two steps in a tick;
-the original steps once per frame. Step once per frame on an event of
-game time: `env-sdl` offers `:step [us]` once this is decided, and
-until the move the port can emit its own from `eng.h`. Changes the
-expected outputs of the arena tests, toward the original. Recommended:
-yes, after #1 and #2.
+**#3 Finding 8** Done on the branch `step` (`a76264c`, `7c825f8`), not
+merged: `eng.h` emits `:step [us]` once per tick, after its time, and
+the 51 uses of `:clock` step on it; 40 tests green with 19 expectations
+changed (`doc/compiler.md`, 8, on the branch, has the comparison). Two
+forms in Atmos were measured and differ from it (13 and 5 tests), so
+the step is emitted by `eng.h`; over `env-sdl`, a first pass of drawing
+before `:draw` gives the same order. On the one measure the original's
+trace allows (its first wave), `main` is the closer: `step` loses one
+seeker of the first wave to a blocked spawn. Recommended: decide with
+the comparison; the branch also found #19.
 
 **#4 Relax exactness.** The port is faithful by events and formulas,
 not tick by tick (Box2D 3.1 against the 2.3 of LÖVE). Recommended: tag
