@@ -461,3 +461,44 @@ of the arena (and the gold of the transition copied), 3 buttons given
 pools that hold their owners, 2 texts owned by their `Text2`, the lines
 of a text copied, 2 arguments read without a name, and 1 closure that
 captures a number. The 40 tests gave the same traces and screenshots.
+
+## 10. The stable rules of `pin`
+
+Seen at `c4e99c4` (the rules declared stable on 2026-11-19, at
+`8361f88`). The port moved to them from `3a6ffe9`, the last migration
+of these lines. The 40 tests gave the same traces and screenshots.
+
+The compiler found every site at compile time: 35 warnings `pinned
+value given away by its block (expected 'val')` in the sources and one
+in a test (`tst/game/drag.atm`), each a function that builds a table in
+a `pin` and returns it. The warning points at the line that gives the
+value away (the return), not at the declaration. Each became `val`.
+Two more sites failed at run time on paths the warnings do not see:
+
+```
+func body (w, rec, type, x, y, tag, shape) {
+    ...
+    :polygon => do {
+        pin pts = shape@1       ;; invalid pin : table named at <the line of body>
+```
+
+The parameter `shape` names a fresh table, so it may not be adopted one
+block deeper; `val pts` reads it. And in `text_parse`, a pinned state
+(`pin st = [ tags=[] ]`) gave its `tags` to the characters it returned
+(`invalid escape : table pinned at ...`); the tags became a `var`.
+`X.xin` is now `X.in` (28 lines).
+
+Removed workaround: an argument that callers pass fresh or owned can be
+named again (`val m = mods || []` in `Attack`, where the first
+migration copied it with `X.copy`). The lists given by a `do`
+(`set A.enemies = do { pin es = [] ... es }`) still work and were left
+as they are.
+
+The cost: 22 files, 71 lines changed; 36 `pin` to `val`, one to `var`,
+one `pin` to `val` for an argument, the `X.copy` gone, and the rename.
+
+The time of the logic in the stress scenario (1500 ticks, 200 more
+seekers, `SNX_PROFILE=1`, no window), five runs of each, alternated:
+3.60 s at `3a6ffe9` and 4.04 s at `c4e99c4` (medians), about 12% more.
+Whether it comes from the runtime (the marks of finalized data, the
+checks of the emits) or from the port's changes was not separated.
