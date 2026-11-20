@@ -7,7 +7,10 @@ SNKRX is an arcade roguelite by a327ex: a snake of heroes that attack
 by themselves, in an arena with waves of enemies, with a shop between
 levels. The original is written in Lua over LÖVE.
 
-The port is written from scratch. Its goal is a study: every timer
+The port was written from scratch in Atmos by Claude Code sessions,
+from the Lua original, with the partial port of a student as a starting
+point; it is faithful by events and formulas, and tested against traces
+and screenshots of the original. Its goal is a study: every timer
 callback of the original (`after`, `every`, `tween`, `cooldown`)
 becomes an `await` in a task, and the flags and timestamps that guard
 the phases of the game disappear.

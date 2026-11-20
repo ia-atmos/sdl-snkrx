@@ -25,6 +25,7 @@ session, `session#N` (this session: `sdl-snxkx`, for the repository
 | #14 | Widgets lend their springs with `set :out` (`pin-out`, `atmos-pin#16`) | remark | tried on the branch `contacts-pinout`, never to merge |
 | #15 | The counts of lines in `bench.md` and `case-study.md` (paper) | work | done |
 | #16 | The CPU of the logic alone, per tick, with its method (paper) | work | done |
+| #17 | How the port was written, in the README (paper) | work | done |
 
 ## Items
 
