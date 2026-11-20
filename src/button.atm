@@ -3,7 +3,8 @@
 ;; and lights up while the mouse is over it.
 ;;
 ;; A click is not an action of the button: the button emits
-;; `:Button.click [id, spring]` to the task `owner`, which decides what
+;; `:Button.click [id]` to the task `owner` (and lends its spring
+;; to `owner.pub.springs@(id)`, if the owner keeps one), which decides what
 ;; follows. The button lives until its owner aborts it. With `opts.info`,
 ;; a text shows under it while the mouse is over it. `opts.pull` and
 ;; `opts.dy` change the pull of its spring on hover (0.2) and the height
@@ -14,11 +15,10 @@ task Button (owner, id, x, y, label, opts) {
     val bg_color = opts && opts.bg_color || bg
     val w = opts && opts.w || (text_width(pixul_font, label) + 8)
     val h = pixul_font.h + 4
-    val s = shared_spring()     ;; it goes in the clicks, to the owner
-    defer {
-        shared_spring_free(s)
+    pin s = spring(1)
+    if owner.pub && owner.pub.springs {
+        set :out owner.pub.springs@(id) = s     ;; the owner pulls it on a click
     }
-    set pub = [ spring=s ]
     spawn UISprings(s)
 
     ;; the two looks of the button, out and over
@@ -54,7 +54,7 @@ task Button (owner, id, x, y, label, opts) {
             await :mouse.mv until !inside()
         } with {
             loop on :mouse.dn until it.but == 1 {
-                emit @owner :Button.click [ id=id, spring=s ]
+                emit @owner :Button.click [ id=id ]
             }
         } with {
             ;; its text under the mouse, if any (`mouse_enter` of the

@@ -18,6 +18,8 @@ func rect_vertices (x1, y1, x2, y2) {
 val modal_transparent = rgba(0.1, 0.1, 0.1, 0.6)
 
 task Menu () {
+    set pub = [ springs=[] ]                ;; the springs its buttons lend
+    val springs = pub.springs
     pin title = text([ [text="[wavy_mid, fg]SNKRX", font=fat_font, alignment=:center] ])
 
     ;; the arena, with a snake that runs by itself, as the original's
@@ -56,7 +58,7 @@ task Menu () {
     spawn {
         loop {
             await 2s
-            spring_pull(soundtrack.pub.spring, 0.025, 200, 10)
+            spring_pull(springs@(:soundtrack), 0.025, 200, 10)
         }
     }
 
@@ -78,7 +80,7 @@ task Menu () {
             \{ (it == :soundtrack) || (it == :discord) } => {
                 ;; the original opens a page in the browser
                 play(ui_switch2, [pitch=rfloat(0.95, 1.05), volume=0.5])
-                spring_pull(e.spring, 0.2, 200, 10)
+                spring_pull(springs@(e.id), 0.2, 200, 10)
                 play(ui_switch1, [pitch=rfloat(0.95, 1.05), volume=0.5])
             }
             :options => {
