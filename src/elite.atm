@@ -231,7 +231,9 @@ task EliteAttack (A, e, fx, shots) {
                 await Tween(2, c, [r=f_r, g=f_g, b=f_b], cubic_in_out)
                 set e.aiming -= 1
                 ;; and headbutts the leader
-                spawn @fxs Tween(0.25, c, [r=o_r, g=o_g, b=o_b], linear)
+                ;; in this step of the loop, which lasts 10s: `c` cannot go to
+                ;; the pool `fxs`, of an outer block
+                spawn Tween(0.25, c, [r=o_r, g=o_g, b=o_b], linear)
                 play(headbutt1, [pitch=rfloat(0.95, 1.05), volume=0.2])
                 set e.headbutting = true
                 body_set(e.b, :damping, 0)
@@ -317,7 +319,7 @@ task BossAttack (A, e, fx, shots) {
         }
         if !(e.silenced || e.stunned) {
             val k = if e.boss == "randomizer" => rtable(["explode", "swarm", "force", "speed_boost"]) => e.boss
-            pin near = enemies_in_circle(A, e.x, e.y, 128)
+            val near = enemies_in_circle(A, e.x, e.y, 128)    ;; given to `Sacrifice`, in the outer pool `fxs`
             match k {
                 "speed_booster" => spawn @fxs BoostAround(A, e, 4, 3 + e.level*0.015 + (A.ng || 0)*0.1, fx)
                 "speed_boost" => spawn @fxs BoostAround(A, e, nil, 3 + e.level*0.015 + (A.ng || 0)*0.1, fx)

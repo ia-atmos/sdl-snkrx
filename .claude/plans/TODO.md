@@ -27,6 +27,7 @@ session, `session#N` (this session: `sdl-snxkx`, for the repository
 | #16 | The CPU of the logic alone, per tick, with its method (paper) | work | done |
 | #17 | How the port was written, in the README (paper) | work | done |
 | #18 | The benchmark ran the port with no sound; rerun with it | work | done |
+| #19 | Two latent errors of `pin` in the elites, found by the timing of #3 | work | done |
 
 ## Items
 
@@ -132,4 +133,12 @@ the driver: 1.07 to 1.22 times the ticks per second of the original
 (not 1.8 to 3.0), 83% to 91% of its CPU (not 56% to 71%), and 546 MB
 against 946 MB (not 131). `bench.md` and `case-study.md` are corrected.
 To tell the paper.
+
+**#19** The timing of the branch `step` (#3) reached two lines that the
+tests of `main` never run, and both failed with `invalid escape`: the
+headbutter's color, pinned in an arm of a `match`, given to a tween in
+an outer pool, and the randomizer's list of nearby seekers, pinned in a
+step of its loop, given to `Sacrifice` in that pool. Fixed on `main`
+(the tween in the step of the loop; the list a `val`); the 40 tests are
+identical.
 
