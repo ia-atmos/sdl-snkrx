@@ -4,8 +4,8 @@
 ;; dark transitions, the run timer, the size of the window, screen shake,
 ;; the cooldowns and the arrow drawn on the snake, screen movement, the
 ;; new game plus (in the menu), a restart of the run, the menu, and quit.
-;; The window starts at 2 game pixels per pixel, not at the size of the
-;; desktop as the original, until a size is chosen and saved.
+;; The window starts at the size of the desktop, as the original, or at
+;; the size saved.
 
 ;; The text of an option.
 func onoff (b) {

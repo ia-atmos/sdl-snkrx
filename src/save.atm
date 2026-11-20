@@ -99,8 +99,11 @@ func state_load () {
             }
         }
     }
-    if STATE.sx {
-        eng.window(STATE.sx)        ;; as `engine_run`, with `state.sx`
+    ;; as `engine_run`: the size saved, or else the size of the desktop
+    ;; (not in the test mode, whose screenshots are at 2 pixels per pixel)
+    ifs {
+        STATE.sx => eng.window(STATE.sx)
+        !eng.testing() => set STATE.sx = eng.window(0)
     }
     set VOLUME.sfx = STATE.sfx_volume
     set VOLUME.music = STATE.music_volume
