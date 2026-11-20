@@ -56,7 +56,8 @@ toggled off for the global time.
 Status: time is global by design. Whether a pool or a task may have a
 clock of its own is a question of the language, raised to its author.
 
-The answer of the compiler session (read from `rt/task.c`, 2026-11-16):
+The answer of the session `atmos-lang` (the compiler; read from
+`rt/task.c`, 2026-11-16):
 each timer keeps its own time left, and time is an ordinary event; only
 the bookkeeping of the pieces of a tick (`CLK_MIN`, `CLK_LATE`) is
 global. The refusal is a check at run time, in `a_emit`, not at compile
@@ -329,7 +330,7 @@ outputs of every arena test, so it is left for the author to decide.
 ## 9. The new rules of `pin`
 
 Seen at `3a6ffe9` (the rules since `98ad03a`). The port moved to them
-from `44dbe47`, with the guide of the compiler session
+from `44dbe47`, with the guide of the session `atmos-lang`
 (`.claude/plans/261115-pin-migration.md`). The traces and screenshots
 of the tests stayed identical.
 

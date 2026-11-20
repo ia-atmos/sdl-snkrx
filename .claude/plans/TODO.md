@@ -15,9 +15,9 @@ session, `session#N` (this session: `sdl-snxkx`, for the repository
 | #4 | Relax exactness for expressiveness | decision | waits for the author |
 | #5 | A clock per task or pool | remark | answered; not needed by the port |
 | #6 | E5: move the platform part of `eng/` to `env-sdl` | work | unblocked (after #1) |
-| #7 | Drop the guard of `await :all` on an empty pool | work | after #1 |
+| #7 | Drop the guard of `await :all` on an empty pool | work | done |
 | #8 | Small differences from the original | work | open |
-| #9 | The new names of the sessions in the documents | work | open |
+| #9 | The new names of the sessions in the documents | work | done |
 | #10 | Why the original peaks at 946 MB | work | open |
 | #11 | The S7 stress numbers are not to be compared | remark | reported, not acknowledged |
 | #12 | All features in, the first `pin` migration, F5, the student's trail | remark | reported, not acknowledged |
@@ -73,8 +73,8 @@ another speed. Not needed by the port.
 `sdl_on_flush(f(render))`, frames of exactly 1/60 s. Its plan waits for
 #1; the drawing stays in the port.
 
-**#7** The compiler now ends `await :all` on an empty pool at once
-(manual, "Await"); the port's guard (`doc/compiler.md`, 6) can go.
+**#7** Done: the compiler ends `await :all` on an empty pool at once,
+and `Quiet` (`src/level.atm`) no longer guards it; same outputs.
 
 **#8 Small differences from the original:**
 - #8a the window starts at scale 2, not at the size of the desktop;
@@ -82,8 +82,9 @@ another speed. Not needed by the port.
 - #8c the run timer does not count during the end of a won level;
 - #8d the text under the mouse of the guide hides during the tutorial.
 
-**#9** `atmos-lang` (was `ceu-atmos`), `atmos-pin`, `env-sdl`, ...: use
-them in the documents when next touched.
+**#9** Done: `doc/compiler.md` names the session `atmos-lang` (was "the
+compiler session"); the other documents name no session (`pico-sdl`
+in `CREDITS.md` and `doc/study.md` is the library the student used).
 
 **#10** Not investigated (`bench.md`).
 
