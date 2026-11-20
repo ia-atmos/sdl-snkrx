@@ -108,11 +108,7 @@ task Options (kind) {
         val e = await <:Button.click || :key.dn>
         val id = if e ?? :key.dn => (match e.name { "Escape" => :resume ; "R" => (if kind == :menu => nil => :restart) ; else => nil }) => e.id
         if id {
-            play(ui_switch2, [pitch=rfloat(0.95, 1.05), volume=0.5])
-            if e.spring {
-                spring_pull(e.spring, 0.2, 200, 10)
-            }
-            play(ui_switch1, [pitch=rfloat(0.95, 1.05), volume=0.5])
+            option_sound(id, e.spring)
         }
         until id == :resume
         match id {
@@ -145,13 +141,11 @@ task Options (kind) {
             :ng_down => set STATE.ng = math.max(0, math.min(STATE.ng - 1, 5))
             :ng_up => set STATE.ng = math.max(0, math.min(STATE.ng + 1, STATE.ng_max))
             :restart => {
-                play(ui_transition2, [pitch=rfloat(0.95, 1.05), volume=0.5])
                 state_save()
                 emit @:global :goto [ screen=:restart, x=W/2, y=H/2, color=fg@0, text="[wavy, bg]restarting..." ]
                 await(false)
             }
             :menu => {
-                play(ui_transition2, [pitch=rfloat(0.95, 1.05), volume=0.5])
                 state_save()
                 emit @:global :goto [ screen=:menu, x=W/2, y=H/2, color=fg@0, text="[wavy, bg].." ]
                 await(false)
@@ -195,6 +189,35 @@ task RunClock (run) {
         }
     }
     await(false)
+}
+
+;; The sounds of a click on an option, as the actions of the buttons of
+;; `open_options` (`main.lua:1859-2104`): restart and the menu sound the
+;; transition and pull the button; the volumes pull it; the other options
+;; only switch, and "window size-" only when the window can shrink; resume,
+;; "reset video settings", and quit are silent.
+func option_sound (id, spring) {
+    val pull = func () {
+        play(ui_switch2, [pitch=rfloat(0.95, 1.05), volume=0.5])
+        if spring {
+            spring_pull(spring, 0.2, 200, 10)
+        }
+        play(ui_switch1, [pitch=rfloat(0.95, 1.05), volume=0.5])
+    }
+    ifs {
+        (id == :restart) || (id == :menu) => {
+            play(ui_transition2, [pitch=rfloat(0.95, 1.05), volume=0.5])
+            pull()
+        }
+        (id == :sfx) || (id == :music) => pull()
+        (id == :resume) || (id == :reset_video) || (id == :quit) => nil
+        (id == :size_down) => {
+            if (STATE.sx || 2) > 1 {
+                play(ui_switch1, [pitch=rfloat(0.95, 1.05), volume=0.5])
+            }
+        }
+        else => play(ui_switch1, [pitch=rfloat(0.95, 1.05), volume=0.5])
+    }
 }
 
 ;; The size of the window, half a step smaller or larger (the buttons

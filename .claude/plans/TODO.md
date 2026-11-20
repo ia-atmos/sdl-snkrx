@@ -76,7 +76,9 @@ and `Quiet` (`src/level.atm`) no longer guards it; same outputs.
 **#8 Small differences from the original:**
 - #8a done: the window starts at the size of the desktop (or the size
   saved), as the original; at scale 2 in the test mode;
-- #8b clicks in the options play the sounds of the generic button;
+- #8b done: each option plays the sounds of its action in the original
+  (`main.lua:1859-2104`), so fewer random numbers are drawn and the
+  shake of `tst/game/options2` moved;
 - #8c the run timer does not count during the end of a won level;
 - #8d the text under the mouse of the guide hides during the tutorial.
 
