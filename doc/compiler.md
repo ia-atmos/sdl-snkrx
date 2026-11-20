@@ -552,3 +552,8 @@ the records come as arguments of a spawn or are made in their vector.
 The branch `pin` adds `a_clr_tmp` (0.76 G). The rest of the top of the
 profile (`emit_trail`, `probe`, `a_tab_get`, `a_call`) is the same in
 the three.
+
+The fix of `atmos-pin` on the branch `pin` (`23a063e`: the end of a
+block tests its slots inline, before any call): 3.79 s against 3.96 s
+for `c4e99c4` (medians of five, alternated, the same tree), and the 40
+tests identical. The port stays on `c4e99c4` until it is on `main`.
