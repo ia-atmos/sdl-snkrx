@@ -9,12 +9,12 @@ session, `session#N` (this session: `sdl-snxkx`, for the repository
 
 | # | Title | Kind | State |
 |---|-------|------|-------|
-| #1 | Second migration to the rules of `pin` | decision | waits for the author |
+| #1 | Second migration to the rules of `pin` | decision | done at `c4e99c4`, by the session, to be confirmed |
 | #2 | Contacts sent only to their two tasks, with `set :out` | decision | waits for the author (after #1) |
 | #3 | Finding 8: step the physics once per frame | decision | waits for the author |
 | #4 | Relax exactness for expressiveness | decision | waits for the author |
 | #5 | A clock per task or pool | remark | answered; not needed by the port |
-| #6 | E5: move the platform part of `eng/` to `env-sdl` | work | after #1 |
+| #6 | E5: move the platform part of `eng/` to `env-sdl` | work | unblocked (after #1) |
 | #7 | Drop the guard of `await :all` on an empty pool | work | after #1 |
 | #8 | Small differences from the original | work | open |
 | #9 | The new names of the sessions in the documents | work | open |
@@ -25,15 +25,14 @@ session, `session#N` (this session: `sdl-snxkx`, for the repository
 ## Items
 
 **#1 Second migration to the rules of `pin`** (declared stable by the
-author; guide: `.claude/plans/261117-pin-migration-2.md` in
-`ia-atmos/lang`). The port is at `3a6ffe9`, 40 tests green. At `8c9453c`
-a compile pass gives 35 warnings `pinned value given away by its block
-(expected 'val')` and one `pin var` (`src/classes.atm:71`); on
-`a4c465a` 26 tests failed at `eng/phys.atm:83` and `src/shop.atm:143`.
-Also `X.xin` is now `X.in`. Recommended: yes, now, outputs identical, at
-`8361f88` or later (which also raises `invalid access : finalized` on
-finalized data: report any to `atmos-pin`), with the time of the frame loop measured; report to
-`atmos-pin`.
+author). Done on the branch `pin2`, merged into `main`, by the session,
+to be confirmed: the compiler at `c4e99c4` (`tools/setup.sh`), 36 `pin`
+to `val` found by the compiler's warnings, two more at run time
+(`eng/phys.atm` `body`, `eng/text.atm` `text_parse`), `X.xin` to `X.in`,
+one workaround of the first migration gone (`X.copy` in `Attack`). The
+40 tests are identical; no `invalid access : finalized` seen. The logic
+of the stress takes about 12% more (3.60 s to 4.04 s, medians of 5);
+`doc/compiler.md`, 10. Reported to `atmos-pin`.
 
 **#2 Contacts sent only to their two tasks.** Answered by `atmos-pin`
 (2026-11-19, tested on `ia-atmos/lang` branch `pin` `4199167`): the
