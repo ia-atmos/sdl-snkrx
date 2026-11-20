@@ -21,6 +21,7 @@ session, `session#N` (this session: `sdl-snxkx`, for the repository
 | #10 | Why the original peaks at 946 MB | work | open |
 | #11 | The S7 stress numbers are not to be compared | remark | reported, not acknowledged |
 | #12 | All features in, the first `pin` migration, F5, the student's trail | remark | reported, not acknowledged |
+| #13 | The time of the logic by compiler (`atmos-pin#14`) | work | done, sent to `atmos-pin` |
 
 ## Items
 
@@ -94,3 +95,9 @@ measured on a port that did not attack.
 **#12** All features of the original but Steam; the first `pin`
 migration (`5c489ea`); F5; the single walk of the trail from the
 student's port (`4445236`).
+
+**#13** The cost of the migration separated by compiler (`doc/compiler.md`,
+10): no difference beyond the spread between `8c9453c`, `8361f88`,
+`c4e99c4` and the branch `pin`; most of the extra instructions are
+`a_unname_x`, from the loop variable of `separate` (`eng/steer.atm`).
+

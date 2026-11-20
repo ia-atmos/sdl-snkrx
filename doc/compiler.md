@@ -504,3 +504,46 @@ seekers, `SNX_PROFILE=1`, no window), five runs of each, alternated:
 3.60 s at `3a6ffe9` and 4.04 s at `c4e99c4` (medians), about 12% more.
 Whether it comes from the runtime (the marks of finalized data, the
 checks of the emits) or from the port's changes was not separated.
+
+### The time of the logic, by compiler (`atmos-pin#14`)
+
+The same tree (`a770cd3`, after the migration), the stress scenario
+(1500 ticks, 200 more seekers, `SNX_PROFILE=1`, no window, `-O2`), each
+compiler built in its own worktree, the runs alternated across the
+compilers (seven of each), nothing else running:
+
+| `ia-atmos/lang` | builds | runs | 40 tests | logic (s, median) | ticks/s |
+|-----------------|--------|------|----------|------------------:|--------:|
+| `138f392` | yes | no: `invalid escape : task pinned at src/menu.atm:32` | | | |
+| `7480111` | yes | no: the same | | | |
+| `8c9453c` | yes | yes | 40 identical | 3.90 | 333 |
+| `8361f88` | yes | yes | 40 identical | 4.07 | 319 |
+| `c4e99c4` (setup) | yes | yes | 40 identical | 3.72 | 347 |
+| `f06fd26` (branch `pin`) | yes | yes | 40 identical | 3.94 | 327 |
+
+The ticks per second are 1500 over the median time on the clock of the
+run. Between these four compilers, the differences are within the
+spread of the runs (3.65 to 4.92 s). The tree before the migration
+(`ae9c69f`) runs only on its compiler `3a6ffe9`, and neither old
+compiler runs either tree, so runs alone cannot split the cost between
+the compiler and the port. Alternated with `c4e99c4` (seven of each):
+3.31 s for the old tree on `3a6ffe9`, 3.97 s for the new one on
+`c4e99c4`.
+
+`callgrind`, 700 ticks of the same scenario, instructions:
+
+| | total | `a_unname_x` | `a_clr_tmp` | `a_cycles` / `cyc_collect` | `a_name` |
+|-|------:|------------:|-----------:|---------------------------:|---------:|
+| old tree, `3a6ffe9` | 17.11 G | not called | not called | not called | not called |
+| new tree, `c4e99c4` | 19.66 G | 1.71 G | not called | 0.06 G | 0.01 G |
+| new tree, `f06fd26` | 20.18 G | 1.71 G | 0.76 G | 0.06 G | 0.01 G |
+
+So most of the extra instructions (2.55 G, 15%) are `a_unname_x`, and
+1.28 G of it comes from one function, `separate` (`eng/steer.atm`, the
+loop over all the other enemies of each seeker, 17% of the program):
+at the end of each step of `loop _, o in others`, the name `o` of a
+record of an enemy is dropped, and `ceil_up` walks the record and what
+it holds, 4.9 million times in 700 ticks, about 260 instructions each.
+The branch `pin` adds `a_clr_tmp` (0.76 G). The rest of the top of the
+profile (`emit_trail`, `probe`, `a_tab_get`, `a_call`) is the same in
+the three.
