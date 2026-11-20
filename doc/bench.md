@@ -114,6 +114,28 @@ them, and the seekers do not bounce off the walls. Together, they are
 about 70% of the logic of the stress. The original runs the same loop of the
 separation in LuaJIT.
 
+## The CPU of the logic alone
+
+The time that the reactions of the tasks take, without drawing or
+rendering: the port at `7639dd3` (compiler `c4e99c4`), built with `-O2`,
+no window (`SDL_VIDEODRIVER=dummy`), no sound, `SNX_PROFILE=1`, which
+measures around the emits of the input, of the real tick, and of the
+time (the logic), the emits of `:draw` and `:overlay` (the drawing),
+and the rendering,
+apart. The scenarios of `tools/bench/perf.py`, 1500 ticks each, three
+runs, medians:
+
+| | logic (s) | logic per tick (ms) | runs (s) |
+|-|----------:|--------------------:|---------:|
+| level 1 | 0.133 | 0.089 | 0.125, 0.133, 0.149 |
+| stress (200 more seekers) | 4.161 | 2.77 | 4.099, 4.161, 4.182 |
+
+The per tick is over all 1500 ticks of the run, the menu and the shop
+included; in the stress, the crowd is in the arena from tick 573 on.
+To measure another port the same way: the same scripted input and
+number of ticks, the time of the reactions to the events of a frame
+alone, with no window, and the median of three runs.
+
 ## Size of the code
 
 Lines of code (no blanks, no comments) and tokens, with

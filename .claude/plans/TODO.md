@@ -24,6 +24,7 @@ session, `session#N` (this session: `sdl-snxkx`, for the repository
 | #13 | The time of the logic by compiler (`atmos-pin#14`) | work | done, sent to `atmos-pin` |
 | #14 | Widgets lend their springs with `set :out` (`pin-out`, `atmos-pin#16`) | remark | tried on the branch `contacts-pinout`, never to merge |
 | #15 | The counts of lines in `bench.md` and `case-study.md` (paper) | work | done |
+| #16 | The CPU of the logic alone, per tick, with its method (paper) | work | done |
 
 ## Items
 
@@ -114,4 +115,8 @@ its owner, conditionally; 40 tests identical; no slowdown. Reported to
 `51627cd`), `case-study.md` 8647 (S9). Both now give the count at
 `7639dd3` with `tools/count.py`: 9455 lines and 91671 tokens for the
 game, against 10381 and 134827 for the original (91% and 68%).
+
+**#16** `bench.md`, "The CPU of the logic alone": 0.089 ms per tick in
+level 1, 2.77 ms in the stress (medians of three, 1500 ticks, no
+window), with the method for other ports.
 
