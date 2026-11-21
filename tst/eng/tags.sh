@@ -1,2 +1,2 @@
-SNX_FRAMES=10
-SNX_SHOT=10:$OUT/eng-tags.png
+SDL_ATM_FRAMES=10
+SDL_ATM_SHOT=10:$OUT/eng-tags.png

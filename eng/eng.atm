@@ -1,27 +1,64 @@
-;; The engine of the port, in Atmos, over `eng/eng.h`.
+;; The engine of the port, in Atmos, over `eng/eng.h` and the SDL
+;; environment `env-sdl` (`ext/env-sdl/sdl.atm`, see its `doc/api.md`).
 ;;
-;; The program runs inside the loop of `eng.h`, which emits, once per
-;; tick of 1/60 s:
+;; The program runs inside the loop of env-sdl, which emits, once per
+;; frame of exactly 1/60 s:
 ;;
-;;      :key.dn [name]          a key was pressed  (names of SDL: 'A', 'Left')
-;;      :key.up [name]          a key was released
-;;      :mouse.motion [x,y]         the mouse moved    (in game pixels)
-;;      :mouse.button.dn [x,y,but]     a button was pressed (1 left, 3 right)
-;;      :mouse.button.up [x,y,but]     a button was released
+;;      :key.dn [key,code]      a key was pressed  (names of SDL: 'A', 'Left')
+;;      :key.up [key,code]      a key was released
+;;      :mouse.motion [x,y]     the mouse moved    (window pixels: the game
+;;                              pixels are in `eng.mouse()`)
+;;      :mouse.button.dn [x,y,button]   a button was pressed (1 left, 3 right)
+;;      :mouse.button.up [x,y,button]   a button was released
 ;;      :quit                   the window was closed
-;;      :frame [us]              the real time of the tick (1/60 s, in us)
+;;      :frame [n,us]           the real time of the frame (1/60 s, in us)
 ;;      (time)                  the game time, which `await 1s` and `:clock`
 ;;                              follow: the real time scaled by `eng.slow`
 ;;      :draw                   to draw the frame
 ;;      :overlay                to draw over the frame (after all of :draw)
 ;;
-;; The game is 480x270 pixels, scaled to the window. Shapes are drawn in
-;; the current canvas, in the current transform, as `graphics` of the
-;; original. Colors are integers 0xRRGGBBAA (see `rgba`).
+;; and then the port renders its canvases (`eg_flush`). The game is
+;; 480x270 pixels, scaled to the window. Shapes are drawn in the current
+;; canvas, in the current transform, as `graphics` of the original.
+;; Colors are integers 0xRRGGBBAA (see `rgba`).
+
+include "../ext/env-sdl/sdl.atm"
 
 ```:prelude
 #include "eng/eng.h"
 ```
+
+;; The window of env-sdl, 480x270 game pixels times the scale, in frames of
+;; exactly 1/60 s, with two passes of drawing; the port draws over its
+;; renderer (`eg_init_post`, `eg_flush`).
+do {
+    val sc = `:number.float eg_init_pre()`
+    sdl.window [ title="SNKRX", width=math.floor(480*sc + 0.5), height=math.floor(270*sc + 0.5),
+                 fps=60, fixed=true, passes=[:draw, :overlay] ]
+    `eg_init_post();`
+}
+defer {
+    `eg_quit();`
+}
+;; the mouse in game pixels, at each of its events (`eng.mouse()`)
+spawn {
+    loop e on :mouse {
+        val x = e.x
+        val y = e.y
+        `eg_mouse_at(eg_int($x), eg_int($y));`
+    }
+}
+;; SNX_PROFILE: the start of the logic and of the drawing of each frame
+spawn {
+    loop on :frame {
+        `eg_mark(0);`
+    }
+}
+spawn {
+    loop on :draw {
+        `eg_mark(1);`
+    }
+}
 
 val W = 480
 val H = 270
@@ -106,7 +143,7 @@ pin eng = [
 
     ;; eng.slow(f): the game time runs at f times the real time
     slow = func (f) {
-        `EG_SLOW = eg_dbl($f);`
+        sdl.clock(f)
     },
 
     ;; the mouse, in game pixels; the tick; the test mode
@@ -114,10 +151,10 @@ pin eng = [
         return `:number.float EG_MX`, `:number.float EG_MY`
     },
     tick = func () {
-        `:number EG_TICK`
+        `:number SDL_FRAME`
     },
     testing = func () {
-        `:boolean EG_TEST`
+        `:boolean SDL_TESTING`
     },
 
     ;; files: the contents of a file (or nil), and a string written to one

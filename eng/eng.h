@@ -3,8 +3,9 @@
 // It is included by `eng/eng.atm`, in a prelude, after the header of the
 // runtime of Atmos. It holds what is not game logic:
 //
-//   - the driver: window, the loop of ticks, the events of SDL, and the
-//     test mode with no screen;
+//   - the setup of the window of `env-sdl` (`ext/env-sdl/sdl.atm`), which
+//     runs the loop, the events, the time, and the test mode: the port
+//     draws over its renderer, at the end of each frame (`eg_flush`);
 //   - drawing, as the original does with LÖVE: canvases of 480x270
 //     scaled to the window, a stack of transforms, and shapes (rounded
 //     rectangles, circles, arcs, polygons, lines), images, and text;
@@ -38,13 +39,8 @@ static SDL_Window*   EG_WIN  = NULL;
 static SDL_Renderer* EG_REN  = NULL;
 static double        EG_SCALE = 2;      // window pixels per game pixel
 static int           EG_SND  = 0;       // audio is open
-static int           EG_TEST = 0;       // test mode: fixed ticks, no cap
-static int           EG_TICK = 0;       // the number of the current tick
-static double        EG_MX = 0, EG_MY = 0;  // the mouse, in game pixels
-static double        EG_SLOW = 1.0;     // the scale of the game time
-static double        EG_GAME = 0.0;     // game time not emitted yet, in us
-static int           EG_RENDER_ALL = 0; // in test mode, render every frame
 static Uint64        EG_PROF[3];        // SNX_PROFILE: time in logic, draw, render
+static double        EG_MX = 0, EG_MY = 0;  // the mouse at its last event, in game pixels
 
 static int eg_int (AVal v) {
     return a_isnum(v) ? (int) a_dbl(v) : 0;
@@ -1072,35 +1068,6 @@ static double eg_snd_len (int i) {
 // DRIVER
 ///////////////////////////////////////////////////////////////////////////////
 
-static AVal eg_field (AVal t, const char* k, AVal v) {
-    AVal key = a_strz(k);
-    a_setindex(t, key, v);
-    a_dec(key);
-    a_dec(v);
-    return t;
-}
-
-// Emits `:tag`, `:tag [name=...]`, or `:tag [x=,y=,but=]`.
-static AStatus eg_emit (const char* tag, const char* name, double x, double y, int but) {
-    AVal t = a_strz(tag);
-    AVal evt = a_tab();
-    a_tag(evt, t);
-    if (name != NULL) {
-        eg_field(evt, "key", a_strz(name));
-    } else if (but == -2) {
-        eg_field(evt, "n", a_int(EG_TICK));
-        eg_field(evt, "us", a_int((int64_t)x));
-    } else if (but >= 0) {
-        eg_field(evt, "x", a_num(x));
-        eg_field(evt, "y", a_num(y));
-        eg_field(evt, "button", a_int(but));
-    }
-    AStatus st = atm_emit(evt);
-    a_dec(evt);
-    a_dec(t);
-    return st;
-}
-
 // The size of the window: `s` window pixels per game pixel, or with
 // `s <= 0` the size of the desktop (as the buttons "fullscreen" and
 // "reset video settings" of the original, which make a window of that
@@ -1152,22 +1119,6 @@ static void eg_cursor (int on) {
     SDL_ShowCursor(on ? SDL_ENABLE : SDL_DISABLE);
 }
 
-static void eg_shot (const char* path) {
-    int w, h;
-    SDL_SetRenderTarget(EG_REN, NULL);
-    SDL_GetRendererOutputSize(EG_REN, &w, &h);
-    SDL_Surface* sfc = SDL_CreateRGBSurfaceWithFormat(0, w, h, 32, SDL_PIXELFORMAT_RGBA32);
-    SDL_RenderReadPixels(EG_REN, NULL, SDL_PIXELFORMAT_RGBA32, sfc->pixels, sfc->pitch);
-    IMG_SavePNG(sfc, path);
-    SDL_FreeSurface(sfc);
-}
-
-static AStatus eg_mouse (const char* tag, double x, double y, int but) {
-    EG_MX = x;
-    EG_MY = y;
-    return eg_emit(tag, NULL, x, y, but);
-}
-
 // Files: the contents of a file as a string (or nil), and a string
 // written to a file, after its directories (as `love.filesystem`).
 #include <sys/stat.h>
@@ -1209,263 +1160,122 @@ static int eg_write_file (const char* path, const char* s) {
     return 1;
 }
 
-// The test script, as `tools/bench/bench.lua` of the original:
+// The setup, around `sdl.window` of env-sdl (see `eng/eng.atm`):
 //
-//   SNX_INPUT = f:mv:x:y,f:dn:k,f:up:k,...   (game pixels; k is a key
-//               name of SDL, or m1, m2, m3 for the mouse buttons)
-//   SNX_SHOT  = f:path.png,...
-static AStatus eg_script (const char* var, int tick) {
-    AStatus st = A_OK;
-    const char* s = getenv(var);
-    while (s!=NULL && *s!='\0' && st==A_OK) {
-        char item[256];
-        size_t n = strcspn(s, ",");
-        snprintf(item, sizeof(item), "%.*s", (int)n, s);
-        s += n + (s[n] == ',');
-        char* arg = strchr(item, ':');
-        if (arg==NULL || atoi(item)!=tick) {
-            continue;
-        }
-        arg++;
-        if (!strcmp(var, "SNX_SHOT")) {
-            eg_shot(arg);
-        } else if (!strncmp(arg, "mv:", 3)) {
-            double x=0, y=0;
-            sscanf(arg+3, "%lf:%lf", &x, &y);
-            st = eg_mouse("mouse.motion", x, y, 0);
-        } else if (!strncmp(arg, "dn:", 3) || !strncmp(arg, "up:", 3)) {
-            int dn = (arg[0] == 'd');
-            const char* k = arg+3;
-            if (k[0]=='m' && k[1]>='1' && k[1]<='3' && k[2]=='\0') {
-                st = eg_mouse(dn ? "mouse.button.dn" : "mouse.button.up", EG_MX, EG_MY, k[1]-'0');
-            } else {
-                st = eg_emit(dn ? "key.dn" : "key.up", k, 0, 0, -1);
-            }
-        }
-    }
-    return st;
-}
-
-// Whether SNX_SHOT has a screenshot at this tick.
-static int eg_shot_due (int tick) {
-    const char* s = getenv("SNX_SHOT");
-    while (s != NULL && *s != '\0') {
-        if (atoi(s) == tick) {
-            return 1;
-        }
-        s = strchr(s, ',');
-        if (s != NULL) s++;
-    }
-    return 0;
-}
-
-// The driver. Each loop is one tick of 1/60 s, as the original:
-//
-//   - the events of SDL and of the test script:
-//       :key.dn [name]         :key.up [name]      (names of SDL: 'A', 'Left')
-//       :mouse.mv [x,y]        :mouse.dn [x,y,but] :mouse.up [x,y,but]
-//       :quit
-//   - :tick [us], the real time of the tick, in microseconds (60 ticks
-//     are exactly 1 s);
-//   - the game time, the real time scaled by EG_SLOW (the slow motion of
-//     the original), so that `await 1s` and `:clock` follow it;
-//   - :draw, and the frame is rendered.
-//
-// Environment:
-//   SNX_FRAMES=n       test mode: runs n ticks with no cap, then quits
-//   SNX_INPUT, SNX_SHOT  the test script (see `eg_script`)
-//   SNX_MUTE=1         no audio
 //   SNX_SCALE=n        window pixels per game pixel (default 2)
-//   SNX_RENDER=1       in test mode, renders every frame (by default, only
-//                      the frames of the screenshots)
+//   SNX_RENDERER=name  a render driver of SDL (default: software in the
+//                      test mode, so that screenshots repeat; the best one
+//                      otherwise)
 //   SNX_PROFILE=1      prints the time spent in logic, drawing, and rendering
-//   SNX_RENDERER=name  a render driver of SDL (default: software in test
-//                      mode, the best one otherwise)
-int main (int argc, char** argv) {
-    if (SDL_Init(SDL_INIT_VIDEO|SDL_INIT_AUDIO) != 0) {
-        SDL_Init(SDL_INIT_VIDEO);
-    }
-    TTF_Init();
-    EG_SND = getenv("SNX_MUTE")==NULL &&
-             (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 1024) == 0);
-    if (EG_SND) {
-        Mix_AllocateChannels(EG_CHANS);
-        Mix_ChannelFinished(eg_chan_done);
-    }
-    int frames = -1;
-    if (getenv("SNX_FRAMES") != NULL) {
-        frames = atoi(getenv("SNX_FRAMES"));
-        EG_TEST = 1;
-    }
-    EG_RENDER_ALL = getenv("SNX_RENDER") != NULL;
+//
+// and of env-sdl: SDL_ATM_FRAMES, SDL_ATM_KEYS, SDL_ATM_MOUSE, SDL_ATM_SHOT,
+// SDL_ATM_MUTE, SDL_ATM_RENDER (see `ext/env-sdl/doc/api.md`).
+
+// Before the window: the scale and the hints of the renderer.
+static double eg_init_pre (void) {
     if (getenv("SNX_SCALE") != NULL && atof(getenv("SNX_SCALE")) > 0) {
         EG_SCALE = atof(getenv("SNX_SCALE"));
     }
     SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "0");
-    EG_WIN = SDL_CreateWindow("SNKRX", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
-                              (int)(EG_W*EG_SCALE + 0.5), (int)(EG_H*EG_SCALE + 0.5), 0);
-    if (EG_WIN != NULL) {
-        // the test mode renders in software, so that screenshots repeat
-        const char* r = getenv("SNX_RENDERER");
-        if (r == NULL) {
-            r = EG_TEST ? "software" : NULL;
-        }
-        if (r != NULL) {
-            SDL_SetHint(SDL_HINT_RENDER_DRIVER, r);
-        }
-        EG_REN = SDL_CreateRenderer(EG_WIN, -1, 0);
+    const char* r = getenv("SNX_RENDERER");
+    if (r == NULL) {
+        r = SDL_TESTING ? "software" : NULL;
     }
-    if (EG_REN == NULL) {
-        fprintf(stderr, "sdl : %s\n", SDL_GetError());
-        exit(1);
+    if (r != NULL) {
+        SDL_SetHint(SDL_HINT_RENDER_DRIVER, r);
     }
+    return EG_SCALE;
+}
+
+static void eg_flush (int render);
+
+// After the window: the renderer of env-sdl, the offsets of the vertices,
+// the audio, and the flush at the end of each frame.
+static void eg_init_post (void) {
+    EG_WIN = sdl_win();
+    EG_REN = sdl_ren();
     SDL_SetRenderDrawBlendMode(EG_REN, SDL_BLENDMODE_BLEND);
-    {
-        SDL_RendererInfo info;
-        SDL_GetRendererInfo(EG_REN, &info);
-        if (!strcmp(info.name, "software")) {
-            EG_OFF_SHAPE = 0.499f;
-            EG_OFF_TEXT  = 0.501f;
-        }
-        EG_OFF = EG_OFF_SHAPE;
-        if (getenv("SNX_RENDERER_INFO") != NULL) {
-            fprintf(stderr, "renderer : %s\n", info.name);
-        }
+    SDL_RendererInfo info;
+    SDL_GetRendererInfo(EG_REN, &info);
+    if (!strcmp(info.name, "software")) {
+        EG_OFF_SHAPE = 0.499f;
+        EG_OFF_TEXT  = 0.501f;
     }
-
-    atm_init(argc, argv);
-    AStatus st = atm_main();
-
-    const Uint64 period = SDL_GetPerformanceFrequency() / 60;
-    Uint64 next = SDL_GetPerformanceCounter();
-    int quit = 0;
-    for (int tick=1; st==A_OK && !quit && atm_alive(); tick++) {
-        EG_TICK = tick;
-        Uint64 p0 = SDL_GetPerformanceCounter();
-        SDL_Event e;
-        while (st==A_OK && SDL_PollEvent(&e)) {
-            switch (e.type) {
-                case SDL_QUIT:
-                    st = eg_emit("quit", NULL, 0, 0, -1);
-                    quit = 1;
-                    break;
-                case SDL_KEYDOWN:
-                    if (!e.key.repeat) {
-                        st = eg_emit("key.dn", SDL_GetKeyName(e.key.keysym.sym), 0, 0, -1);
-                    }
-                    break;
-                case SDL_KEYUP:
-                    st = eg_emit("key.up", SDL_GetKeyName(e.key.keysym.sym), 0, 0, -1);
-                    break;
-                case SDL_MOUSEMOTION:
-                    if (!EG_TEST) {
-                        st = eg_mouse("mouse.motion", (double)e.motion.x/EG_SCALE,
-                                      (double)e.motion.y/EG_SCALE, 0);
-                    }
-                    break;
-                case SDL_MOUSEBUTTONDOWN:
-                case SDL_MOUSEBUTTONUP:
-                    if (!EG_TEST) {
-                        st = eg_mouse(e.type==SDL_MOUSEBUTTONDOWN ? "mouse.button.dn" : "mouse.button.up",
-                                      (double)e.button.x/EG_SCALE,
-                                      (double)e.button.y/EG_SCALE, e.button.button);
-                    }
-                    break;
-            }
-        }
-        if (st == A_OK) {
-            st = eg_script("SNX_INPUT", tick);
-        }
-
-        // real time: 1/60 s, rounded so that 60 ticks are exactly 1 s
-        int64_t us = (int64_t)tick*1000000/60 - (int64_t)(tick-1)*1000000/60;
-        if (st == A_OK) {
-            st = eg_emit("frame", NULL, (double)us, 0, -2);
-        }
-        // game time: the real time, scaled by the slow motion
-        if (st == A_OK) {
-            EG_GAME += us * EG_SLOW;
-            int64_t g = (int64_t) EG_GAME;
-            if (g > 0) {
-                EG_GAME -= g;
-                st = atm_emit(a_int(g));
-            }
-        }
-
-        // screen
-        Uint64 p1 = SDL_GetPerformanceCounter();
-        if (st == A_OK) {
-            st = eg_emit("draw", NULL, 0, 0, -1);
-        }
-        // what goes over the screen: texts under the mouse, transitions
-        if (st == A_OK) {
-            st = eg_emit("overlay", NULL, 0, 0, -1);
-        }
-        Uint64 p2 = SDL_GetPerformanceCounter();
-        if (st == A_OK) {
-            // in test mode, only the frames of the screenshots are rendered
-            if (!EG_TEST || EG_RENDER_ALL || eg_shot_due(tick)) {
-                eg_frame();
-                eg_script("SNX_SHOT", tick);
-                SDL_RenderPresent(EG_REN);
-            } else {
-                for (int i=0; i<EG_CVS_N; i++) {
-                    EG_CVS[i].vs_n = 0;
-                    EG_CVS[i].rs_n = 0;
-                }
-                EG_TOP = 0;
-            }
-        }
-        Uint64 p3 = SDL_GetPerformanceCounter();
-        EG_PROF[0] += p1 - p0;      // events and time: the logic
-        EG_PROF[1] += p2 - p1;      // :draw: the shapes
-        EG_PROF[2] += p3 - p2;      // rendering and composing
-
-        if (frames>0 && tick>=frames) {
-            quit = 1;
-        } else if (!EG_TEST) {
-            next += period;
-            Uint64 now = SDL_GetPerformanceCounter();
-            if (now < next) {
-                SDL_Delay((Uint32)((next-now)*1000 / SDL_GetPerformanceFrequency()));
-            } else {
-                next = now;
-            }
-        }
+    EG_OFF = EG_OFF_SHAPE;
+    if (getenv("SNX_RENDERER_INFO") != NULL) {
+        fprintf(stderr, "renderer : %s\n", info.name);
     }
+    // the sounds are the port's (pitch, instances), over SDL_mixer
+    EG_SND = getenv("SDL_ATM_MUTE")==NULL
+          && SDL_InitSubSystem(SDL_INIT_AUDIO)==0
+          && Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 1024)==0;
+    if (EG_SND) {
+        Mix_AllocateChannels(EG_CHANS);
+        Mix_ChannelFinished(eg_chan_done);
+    }
+    sdl_on_flush(eg_flush);
+}
 
+// The mouse at an event of env-sdl (window pixels), in game pixels: it
+// keeps its game position when the window changes size, until it moves.
+static void eg_mouse_at (int x, int y) {
+    EG_MX = (double)x/EG_SCALE;
+    EG_MY = (double)y/EG_SCALE;
+}
+
+// SNX_PROFILE: the times of a frame, between its marks (`eng.atm`):
+// 0 at `:frame`, 1 at `:draw`, then the flush.
+static Uint64 EG_MARK[2];
+static void eg_mark (int i) {
+    EG_MARK[i] = SDL_GetPerformanceCounter();
+}
+
+// The end of a frame, after the passes of drawing: the canvases are
+// rendered and composed (`render`), or dropped (a frame of the test mode
+// with no screenshot). The target is the window again, for the
+// screenshot and the present of env-sdl.
+static void eg_flush (int render) {
+    Uint64 p2 = SDL_GetPerformanceCounter();
+    if (render) {
+        eg_frame();
+        SDL_SetRenderTarget(EG_REN, NULL);
+    } else {
+        for (int i=0; i<EG_CVS_N; i++) {
+            EG_CVS[i].vs_n = 0;
+            EG_CVS[i].rs_n = 0;
+        }
+        EG_TOP = 0;
+    }
+    Uint64 p3 = SDL_GetPerformanceCounter();
+    if (EG_MARK[0] != 0) {
+        EG_PROF[0] += EG_MARK[1] - EG_MARK[0];  // :frame and the time: the logic
+        EG_PROF[1] += p2 - EG_MARK[1];          // :draw and :overlay: the shapes
+    }
+    EG_PROF[2] += p3 - p2;                      // rendering and composing
+}
+
+// At the end of the program: the profile, and the sounds.
+static void eg_quit (void) {
     if (getenv("SNX_PROFILE") != NULL) {
         double f = (double) SDL_GetPerformanceFrequency();
         fprintf(stderr, "ticks: %d, logic: %.3fs, draw: %.3fs, render: %.3fs\n",
-            EG_TICK, EG_PROF[0]/f, EG_PROF[1]/f, EG_PROF[2]/f);
+            SDL_FRAME, EG_PROF[0]/f, EG_PROF[1]/f, EG_PROF[2]/f);
         fprintf(stderr, "  canvases: %.3fs, unpremultiply/copy: %.3fs, compose: %.3fs (blend %.3fs)\n",
             EG_PROF2[0]/f, EG_PROF2[1]/f, EG_PROF2[2]/f, EG_PROF2[3]/f);
     }
-    if (st == A_OK) {
-        st = atm_stop();
-    }
-    fflush(stdout);
-    if (st == A_ESCAPE) {
-        st = a_escape_err();
-    }
-    if (st != A_OK) {
-        a_error_dump();
-    }
-    atm_quit();
     if (EG_SND) {
         Mix_HaltChannel(-1);
         Mix_CloseAudio();
+        EG_SND = 0;
         for (int i=0; i<EG_CHANS; i++) {
             if (EG_OWN[i] != NULL) {
                 SDL_free(EG_OWN[i]->abuf);
                 SDL_free(EG_OWN[i]);
+                EG_OWN[i] = NULL;
             }
         }
         for (int i=0; i<EG_SNDS_N; i++) {
             Mix_FreeChunk(EG_SNDS_[i].chk);
         }
     }
-    TTF_Quit();
-    SDL_Quit();
-    return (st == A_OK) ? 0 : 1;
 }

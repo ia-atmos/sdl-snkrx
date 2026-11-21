@@ -17,7 +17,7 @@
 ;; An empty `run.txt` means no run to continue.
 
 val SAVE_DIR = os.getenv("SNX_SAVE") ||
-    (if os.getenv("SNX_FRAMES") => nil => ((os.getenv("HOME") || ".") ++ "/.local/share/sdl-snkrx"))
+    (if os.getenv("SDL_ATM_FRAMES") => nil => ((os.getenv("HOME") || ".") ++ "/.local/share/sdl-snkrx"))
 
 func save_lines (name, lines) {
     if SAVE_DIR {

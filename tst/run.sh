@@ -8,7 +8,7 @@
 #
 # Each test is a program `tst/[dir/]X.atm`, run from the root:
 #   - its output is compared with `X.out`;
-#   - `X.sh`, if any, sets its environment (e.g. SNX_FRAMES, SNX_INPUT);
+#   - `X.sh`, if any, sets its environment (e.g. SDL_ATM_FRAMES, SDL_ATM_MOUSE);
 #     a screenshot is saved as `$OUT/name.png` and compared with
 #     `tst/shots/name.png`.
 
@@ -18,7 +18,7 @@ ATMOS="$ROOT/ext/atmos/atmos"
 export ATMOS_HOME="$ROOT/ext/atmos"
 export ATMOS_CFLAGS="-O0 -I$ROOT -I$ROOT/ext/box2d/include"
 export ATMOS_LDFLAGS="$ROOT/ext/box2d/build/libbox2d.a -lSDL2 -lSDL2_image -lSDL2_ttf -lSDL2_mixer -lm"
-export SDL_VIDEODRIVER=dummy SDL_AUDIODRIVER=dummy SNX_MUTE=1
+export SDL_VIDEODRIVER=dummy SDL_AUDIODRIVER=dummy SDL_ATM_MUTE=1
 [ -n "$ASAN" ] && export ATMOS_ASAN=1
 OUT="$ROOT/build/tst"
 mkdir -p "$OUT" tst/shots
@@ -36,7 +36,7 @@ for t in tst/*.atm tst/*/*.atm; do
             . "./$base.sh"
             set +a
         fi
-        [ -z "$SNX_MUTE" ] && unset SNX_MUTE
+        [ -z "$SDL_ATM_MUTE" ] && unset SDL_ATM_MUTE
         # a test that does not end is killed
         timeout -k 10 "${TST_TIMEOUT:-600}" "$ATMOS" "$t" || echo "(exit $?)"
     ) > "$OUT/$n.got" 2>&1 < /dev/null

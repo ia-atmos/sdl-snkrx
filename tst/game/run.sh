@@ -1,4 +1,4 @@
-SNX_FRAMES=5300
+SDL_ATM_FRAMES=5300
 SNX_TRACE=1
-SNX_INPUT=60:mv:55:125,62:dn:m1,64:up:m1,450:mv:60:60,452:dn:m1,454:up:m1,520:mv:390:250,522:dn:m1,524:up:m1
-SNX_SHOT=500:$OUT/game-run.0.png,1500:$OUT/game-run.1.png,5000:$OUT/game-run.2.png,5280:$OUT/game-run.3.png
+SDL_ATM_MOUSE=60:mv:110:250,62:dn:110:250:1,64:up:110:250:1,450:mv:120:120,452:dn:120:120:1,454:up:120:120:1,520:mv:780:500,522:dn:780:500:1,524:up:780:500:1
+SDL_ATM_SHOT=500:$OUT/game-run.0.png,1500:$OUT/game-run.1.png,5000:$OUT/game-run.2.png,5280:$OUT/game-run.3.png

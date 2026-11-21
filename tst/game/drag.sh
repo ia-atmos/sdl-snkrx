@@ -1,4 +1,4 @@
-SNX_FRAMES=60
+SDL_ATM_FRAMES=60
 SNX_SAVE=$OUT
-SNX_INPUT=10:mv:450:40,12:dn:m1,14:mv:450:90,20:mv:420:120,30:up:m1
-SNX_SHOT=16:$OUT/game-drag.0.png,40:$OUT/game-drag.1.png
+SDL_ATM_MOUSE=10:mv:900:80,12:dn:900:80:1,14:mv:900:180,20:mv:840:240,30:up:840:240:1
+SDL_ATM_SHOT=16:$OUT/game-drag.0.png,40:$OUT/game-drag.1.png

@@ -1,4 +1,4 @@
-SNX_FRAMES=600
+SDL_ATM_FRAMES=600
 SNX_TRACE=1
-SNX_INPUT=10:dn:A,200:up:A
-SNX_SHOT=150:$OUT/game-arena2.0.png,500:$OUT/game-arena2.1.png
+SDL_ATM_KEYS=10:dn:A,200:up:A
+SDL_ATM_SHOT=150:$OUT/game-arena2.0.png,500:$OUT/game-arena2.1.png

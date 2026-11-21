@@ -1,3 +1,3 @@
-SNX_FRAMES=80
-SNX_INPUT=10:mv:60:75,12:dn:m1,13:up:m1,20:mv:140:75,22:dn:m1,23:up:m1,30:mv:150:18,32:dn:m1,33:up:m1,50:mv:390:250,52:dn:m1,53:up:m1
-SNX_SHOT=8:$OUT/game-shop.0.png,40:$OUT/game-shop.1.png,70:$OUT/game-shop.2.png
+SDL_ATM_FRAMES=80
+SDL_ATM_MOUSE=10:mv:120:150,12:dn:120:150:1,13:up:120:150:1,20:mv:280:150,22:dn:280:150:1,23:up:280:150:1,30:mv:300:36,32:dn:300:36:1,33:up:300:36:1,50:mv:780:500,52:dn:780:500:1,53:up:780:500:1
+SDL_ATM_SHOT=8:$OUT/game-shop.0.png,40:$OUT/game-shop.1.png,70:$OUT/game-shop.2.png

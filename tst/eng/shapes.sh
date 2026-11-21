@@ -1,2 +1,2 @@
-SNX_FRAMES=2
-SNX_SHOT=2:$OUT/eng-shapes.png
+SDL_ATM_FRAMES=2
+SDL_ATM_SHOT=2:$OUT/eng-shapes.png
