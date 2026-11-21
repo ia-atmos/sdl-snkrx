@@ -28,7 +28,7 @@ session, `session#N` (this session: `sdl-snxkx`, for the repository
 | #17 | How the port was written, in the README (paper) | work | done |
 | #18 | The benchmark ran the port with no sound; rerun with it | work | done |
 | #19 | Two latent errors of `pin` in the elites, found by the timing of #3 | work | done |
-| #20 | The clear of the window by env-sdl costs 0.82 s of a stress run that the port covers anyway | remark | sent to `env-sdl` |
+| #20 | The clear of the window by env-sdl costs 0.82 s of a stress run that the port covers anyway | remark | closed: `clear=false` (env-sdl `e0aba7b`) adopted; measured 18.42 s against 18.62 s, within the spread (`bench.md`) |
 | #21 | On env-sdl the stress is 1.45 s slower on the clock; 0.63 s is not the clear and is not explained | work | open |
 
 ## Items

@@ -203,6 +203,14 @@ patch of `sdl.atm`, not committed), the stress takes 17.34 s instead of
 18.16 s, and the logic 3.305 s instead of 3.468 s (three runs each,
 alternated).
 
+With the option of env-sdl that skips the clear (`sdl.window
+[clear=false]`, env-sdl `e0aba7b`), adopted by the port, the stress
+took 18.42 s against 18.62 s with the clear (three runs each,
+alternated, the same machine: 18.76, 18.42, 17.38 against 19.22, 18.58,
+18.62), CPU 34.40 s against 35.40 s. The gain is smaller than the
+0.82 s of the local patch above and within the spread of the runs. The
+outputs of the 40 tests are the same.
+
 ## Size of the code
 
 Lines of code (no blanks, no comments) and tokens, with
