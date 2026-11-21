@@ -4,9 +4,9 @@
 ;; `open_url` (`eng/eng.atm`).
 
 ;; The click on a button that opens a page, as `open_url(b, url)`.
-func url_click (e, url) {
+func url_click (s, url) {
     play(ui_switch2, [pitch=rfloat(0.95, 1.05), volume=0.5])
-    spring_pull(e.spring, 0.2, 200, 10)
+    spring_pull(s, 0.2, 200, 10)
     play(ui_switch1, [pitch=rfloat(0.95, 1.05), volume=0.5])
     open_url(url)
 }
@@ -61,6 +61,8 @@ func button_colors (c) {
 ;; The credits: a dark screen with the names, each a button to its page.
 ;; They end with "x" or Escape.
 task Credits () {
+    set pub = [ springs=[] ]                ;; the springs its buttons lend
+    val springs = pub.springs
     spawn {
         loop on :draw {
             eng.rect(W/2, H/2, 2*W, 2*H, nil, nil, rgba(0.1, 0.1, 0.1, 0.9))
@@ -81,7 +83,7 @@ task Credits () {
     par :any {
         loop e on :Button.click {
             until e.id == :close
-            url_click(e, urls@(e.id))
+            url_click(springs@(e.id), urls@(e.id))
         }
     } with {
         await :key.dn until it.name == "Escape"
@@ -95,6 +97,8 @@ task Credits () {
 ;; hold it). While the credits are open,
 ;; the buttons below stop (`in_credits`), as the shop under its tutorial.
 task WinButtons (last) {
+    set pub = [ springs=[] ]                ;; the springs its buttons lend
+    val springs = pub.springs
     par {
         toggle on :Win.on with :draw {
             pin bs = tasks()
@@ -115,10 +119,10 @@ task WinButtons (last) {
             }
             loop e on :Button.click {
                 match e.id {
-                    :follow => url_click(e, "https://store.steampowered.com/dev/a327ex/")
-                    :soundtrack => url_click(e, "https://kubbimusic.com/album/ember")
-                    :nimble => url_click(e, "https://store.steampowered.com/app/259780/Nimble_Quest/")
-                    :underlords => url_click(e, "https://store.steampowered.com/app/1046930/Dota_Underlords/")
+                    :follow => url_click(springs@(e.id), "https://store.steampowered.com/dev/a327ex/")
+                    :soundtrack => url_click(springs@(e.id), "https://kubbimusic.com/album/ember")
+                    :nimble => url_click(springs@(e.id), "https://store.steampowered.com/app/259780/Nimble_Quest/")
+                    :underlords => url_click(springs@(e.id), "https://store.steampowered.com/app/1046930/Dota_Underlords/")
                     :credits => emit @me :Credits.open
                     else => emit @:global :Won.pick [ id=e.id ]
                 }

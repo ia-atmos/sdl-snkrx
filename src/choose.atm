@@ -51,6 +51,8 @@ task PassiveCard (screen, i, x, y, passive) {
 ;; with a merchant of level 3), the build, and the passives so far. The
 ;; cards that are not chosen go back to the pool.
 task ChoosePassive (A, ui) {
+    set pub = [ springs=[] ]                ;; the springs its buttons lend
+    val springs = pub.springs
     eng.cursor(true)
     val run = A.run
     spawn @ui Modal()
@@ -99,11 +101,11 @@ task ChoosePassive (A, ui) {
                     (e.id == :reroll) && (e.but == 1) => {
                         if !free && (run.gold < 5) {
                             play(error1, [pitch=rfloat(0.95, 1.05), volume=0.5])
-                            spring_pull(e.spring, 0.2, 200, 10)
+                            spring_pull(springs@(e.id), 0.2, 200, 10)
                             emit @me :Message [ slot=:reroll, lines=info_line("[fg]not enough gold") ]
                         } else {
                             play(ui_switch2, [pitch=rfloat(0.95, 1.05), volume=0.5])
-                            spring_pull(e.spring, 0.2, 200, 10)
+                            spring_pull(springs@(e.id), 0.2, 200, 10)
                             if !free {
                                 set run.gold -= 5
                             }

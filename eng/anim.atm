@@ -53,25 +53,6 @@ func spring_update (s, dt) {
     set s.x = s.x + s.v*dt
 }
 
-;; The springs that go in events to the task that owns a widget (a click
-;; and its spring, which the owner pulls): a value of a task cannot go
-;; out to its owner, so these belong to the program, and are removed
-;; when their widget ends (`shared_spring_free`, in a `defer`).
-pin SHARED_SPRINGS = []
-
-func shared_spring () {
-    vector.insert(SHARED_SPRINGS, spring(1))
-}
-
-func shared_spring_free (s) {
-    loop i, o in SHARED_SPRINGS {
-        if o == s {
-            vector.remove(SHARED_SPRINGS, i)
-            break
-        }
-    }
-}
-
 ;; Pulls the spring by f, as `Spring:pull(f, k, d)`.
 func spring_pull (s, f, k, d) {
     if k { set s.k = k }

@@ -191,6 +191,7 @@ task HealingOrb (A, x, y, fx, extra) {
     }
     set A.orbs += 1
     val o = body(A.w, [ kind=:orb, w=4, h=4, x=x, y=y, r=0, hit=hfx(1) ], :dynamic, x, y, :ghost, [:rect, 4, 4])
+    set :out A.w.objs@(o.b).task = task   ;; its contacts come to this task
     defer {
         body_free(A.w, o.b)
         set A.orbs -= 1
@@ -283,6 +284,7 @@ func magnet (A, o) {
 task Sentry (A, u, fx, shots) {
     val s = body(A.w, [ kind=:sentry, w=6, h=6, x=u.x, y=u.y, r=0, color=u.color, hit=hfx(1), dmg=u.dmg,
               area_size_m=u.area_size_m, area_dmg_m=u.area_dmg_m ], :static, u.x, u.y, :player, [:rect, 6, 6])
+    set :out A.w.objs@(s.b).task = task   ;; its contacts come to this task
     defer {
         body_free(A.w, s.b)
     }

@@ -156,6 +156,7 @@ task Unit (A, u, fx, shots) {
     set u.r = u.r || 0
     unit_stats(u, true, A.ng)
     body(A.w, u, :dynamic, u.x, u.y, :player, [:rect, 9, 9])
+    set :out A.w.objs@(u.b).task = task   ;; its contacts come to this task
     body_set(u.b, :angle, u.r)
     defer {
         body_free(A.w, u.b)

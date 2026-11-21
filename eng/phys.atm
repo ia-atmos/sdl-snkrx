@@ -3,7 +3,7 @@
 ;; mixin `Physics`).
 ;;
 ;; A world has tags of collision. Each body has a tag. After each step,
-;; `phys_step` emits, to the task that calls it and the tasks inside it:
+;; `phys_step` emits, to the task of each body (see below):
 ;;
 ;;      :collision.enter [b, other, nx, ny, x, y]
 ;;                                    two bodies touch (once for each),
@@ -15,10 +15,12 @@
 ;;      :trigger.exit    [b, other]   the overlap ends
 ;;
 ;; where `b` is the body that receives the event, and `other` is the
-;; public record of the other body (see `body`). The task of a body
-;; awaits its own events with `until it.b == b`. (A table cannot keep the
-;; tasks of a pool, so the events cannot go to the two tasks alone: see
-;; `doc/compiler.md`, 2.)
+;; public record of the other body (see `body`). Each event goes only to
+;; the task of its body, which registers itself in the record of the
+;; body with `set :out A.w.objs@(b).task = task` (cleared when the task
+;; ends); a body with no task gets no events. The task still awaits
+;; with `until it.b == b`, since its subtree may hold the tasks of other
+;; bodies (`doc/compiler.md`, 2).
 
 ```:prelude
 #include "eng/phys.h"
@@ -157,14 +159,17 @@ func phys_step (w, dt) {
                 x  = `:number.float PW_EV_PX[eg_int($i)]`,
                 y  = `:number.float PW_EV_PY[eg_int($i)]`,
             ] => []
+            ;; each to the task of its body only (`set :out` in that task)
+            val oa = w.objs@(a)
             val ob = w.objs@(b)
-            if w.objs@(a) && ob {
-                emit tagged(names@(k), [b=a, other=ob] ++ e)
+            if oa && ob && oa.task {
+                emit @(oa.task) tagged(names@(k), [b=a, other=ob] ++ e)
             }
             ;; contacts go to both bodies, sensors only to the sensor
-            val oa = w.objs@(a)
-            if (k < 2) && w.objs@(b) && oa {
-                emit tagged(names@(k), [b=b, other=oa] ++ e)
+            val oa2 = w.objs@(a)
+            val ob2 = w.objs@(b)
+            if (k < 2) && ob2 && oa2 && ob2.task {
+                emit @(ob2.task) tagged(names@(k), [b=b, other=oa2] ++ e)
             }
         }
     }

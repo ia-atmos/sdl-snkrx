@@ -40,6 +40,8 @@ task NgText () {
 ;; (:arena). It ends on resume; restart, the menu, and quit go to their
 ;; screens (`:goto`).
 task Options (kind) {
+    set pub = [ springs=[] ]                ;; the springs its buttons lend
+    val springs = pub.springs
     eng.cursor(true)
     pin ps = tasks()
     spawn @ps Modal()
@@ -108,7 +110,7 @@ task Options (kind) {
         val e = await <:Button.click || :key.dn>
         val id = if e ?? :key.dn => (match e.name { "Escape" => :resume ; "R" => (if kind == :menu => nil => :restart) ; else => nil }) => e.id
         if id {
-            option_sound(id, e.spring)
+            option_sound(id, springs@(e.id))
         }
         until id == :resume
         match id {

@@ -557,3 +557,42 @@ The fix of `atmos-pin` on the branch `pin` (`23a063e`: the end of a
 block tests its slots inline, before any call): 3.79 s against 3.96 s
 for `c4e99c4` (medians of five, alternated, the same tree), and the 40
 tests identical. The port stays on `c4e99c4` until it is on `main`.
+
+### On the branch `contacts`: the contacts sent to their two tasks
+
+With `set :out` (since `8361f88`), the task of each body writes
+`set :out A.w.objs@(b).task = task` after its `body(...)`, in its own
+block; the place goes back to `nil` when the task ends. `phys_step`
+emits each contact with `emit @(o.task)` to the task of its body only,
+instead of to the whole arena. The world stays in `A`, made by the
+caller of the arena. 18 tasks register; the walls do not (no task
+awaits their contacts). The 21 awaits keep their `until it.b == ...`:
+an emit to a task also reaches its subtree, which may hold the tasks of
+other bodies. The 40 tests are identical.
+
+In the stress scenario, the logic takes 3.27 s against 4.04 s on `main`
+(medians of seven, alternated, `SNX_PROFILE=1`, no window), and the
+whole run (`tools/bench/perf.py`, with the window, three runs) 12.61 s
+against 13.33 s on the clock, 119 against 113 ticks per second.
+
+At first `SHARED_SPRINGS` stayed: a widget lends its spring to its owner in an
+event, and the form of `set :out` would need a table from each owner
+through some 30 places that spawn widgets, and one of the widgets
+(`ItemCard`) has an owner only in the shop. A `set :out` in an `if`
+is cleared at the end of the `if`, so it cannot be conditional:
+
+```
+task Child (o, id) {
+    pin s = [ k=10 ]
+    if o {
+        set :out o.springs@(id) = s     ;; nil again at the end of the if
+    }
+    ...
+}
+```
+
+Since `a80a77f` (`atmos-pin#16b`, approved), the place of a `set :out`
+lasts until the value ends, wherever the `set :out` is written, so the
+form above is right: the widgets lend their springs to their owners
+with a conditional `set :out`, and `SHARED_SPRINGS` is gone (the branch
+`contacts-pinout`, merged into `main` with #2; the 40 tests identical).

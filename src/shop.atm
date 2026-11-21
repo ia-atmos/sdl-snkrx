@@ -49,11 +49,10 @@ func shop_text (s) {
 ;; With `info`, a text shows while the mouse is over it, made again when
 ;; a click changes it (`LevelButton:create_info_text`).
 task ShopButton (owner, id, x, y, look, info) {
-    val s = shared_spring()     ;; it goes in the clicks, to the owner
-    defer {
-        shared_spring_free(s)
+    pin s = spring(1)
+    if owner.pub && owner.pub.springs {
+        set :out owner.pub.springs@(id) = s     ;; the owner pulls it on a click
     }
-    set pub = [ spring=s ]
     spawn UISprings(s)
     pin draw = func (over) {
         pin l = look()
@@ -91,7 +90,7 @@ task ShopButton (owner, id, x, y, look, info) {
             await :mouse.mv until !inside()
         } with {
             loop e on :mouse.dn {
-                emit @owner :Button.click [ id=id, but=e.but, spring=s ]
+                emit @owner :Button.click [ id=id, but=e.but ]
             }
         } with {
             ;; after the click above, which the owner handles at once
@@ -547,9 +546,9 @@ task Party (shop, run, fx) {
 ;; experience change. Out of the shop (`shop` is nil), it is smaller (`sc`,
 ;; in a card of 30x45), with no experience, and it is not clicked.
 task ItemCard (shop, i, x, y, p, sc) {
-    val s = shared_spring()     ;; it goes in `:Shop.item_up`, to the shop
-    defer {
-        shared_spring_free(s)
+    pin s = spring(1)
+    if shop && shop.pub && shop.pub.items {
+        set :out shop.pub.items@(i) = s         ;; the shop pulls it on `:Shop.item_up`
     }
     spawn UISprings(s)
     val w = if shop => 40 => 30
@@ -595,7 +594,7 @@ task ItemCard (shop, i, x, y, p, sc) {
             if shop {
                 loop e on :mouse.dn {
                     if (e.but == 1) && !fixed && (p.level < 3) {
-                        emit @shop :Shop.item_up [ i=i, spring=s ]
+                        emit @shop :Shop.item_up [ i=i ]
                     }
                     if e.but == 3 {
                         emit @shop :Shop.item_sell [ i=i ]
@@ -761,6 +760,9 @@ task Shop (run) {
 }
 
 task ShopMain (run, shop) {
+    set pub = [ springs=[], items=[] ]      ;; the springs its widgets lend
+    val springs = pub.springs
+    val items = pub.items
     pin fx = tasks()
 
     ;; the texts
@@ -931,7 +933,7 @@ task ShopMain (run, shop) {
                 val p = run.passives@(e.i)
                 if run.gold < 5 {
                     play(error1, [pitch=rfloat(0.95, 1.05), volume=0.5])
-                    spring_pull(e.spring, 0.2, 200, 10)
+                    spring_pull(items@(e.i), 0.2, 200, 10)
                     emit @:task :Message [ slot=:item, lines=gold_short ]
                 } else {
                     play(ui_switch2, [pitch=rfloat(0.95, 1.05), volume=0.5])
@@ -947,7 +949,7 @@ task ShopMain (run, shop) {
                             play(level_up1, [pitch=1, volume=0.5])
                         }
                     }
-                    spring_pull(e.spring, 0.2, 200, 10)
+                    spring_pull(items@(e.i), 0.2, 200, 10)
                     set run.gold -= 5
                     emit @:task :Shop.gold
                 }
@@ -976,10 +978,10 @@ task ShopMain (run, shop) {
             }
             (id == :reroll) && (but == 1) => {
                 if run.gold < 2 {
-                    error(e.spring)
+                    error(springs@(e.id))
                     emit @:task :Message [ slot=:reroll, lines=gold_short ]
                 } else {
-                    switch(e.spring)
+                    switch(springs@(e.id))
                     set run.cards = roll_cards(run)
                     emit @:task :Shop.reroll
                     set run.gold -= 2
@@ -988,14 +990,14 @@ task ShopMain (run, shop) {
             }
             (id == :lock) && (but == 1) => {
                 set run.locked = !run.locked
-                switch(e.spring)
+                switch(springs@(e.id))
             }
             (id == :level) && (but == 1) && (run.shop_level < 5) => {
                 if run.gold < 5 {
-                    error(e.spring)
+                    error(springs@(e.id))
                     emit @:task :Message [ slot=:level, lines=gold_short ]
                 } else {
-                    switch(e.spring)
+                    switch(springs@(e.id))
                     set run.shop_xp += 1
                     if run.shop_xp >= shop_max_xp(run.shop_level) {
                         set run.shop_xp = 0
@@ -1007,10 +1009,10 @@ task ShopMain (run, shop) {
             }
             (id == :level) && (but == 3) && (run.shop_level > 1) => {
                 if run.gold < 10 {
-                    error(e.spring)
+                    error(springs@(e.id))
                     emit @:task :Message [ slot=:level, lines=gold_short ]
                 } else {
-                    switch(e.spring)
+                    switch(springs@(e.id))
                     set run.shop_xp = 0
                     set run.shop_level -= 1
                     set run.gold -= 10
@@ -1034,8 +1036,8 @@ task ShopMain (run, shop) {
                         lines=info_line("[fg]cannot start the round with [yellow]0 [fg]units") ]
                 } else {
                     play(ui_switch2, [pitch=rfloat(0.95, 1.05), volume=0.5])
-                    if e.spring {
-                        spring_pull(e.spring, 0.2, 200, 10)
+                    if springs@(e.id) {
+                        spring_pull(springs@(e.id), 0.2, 200, 10)
                     }
                     play(ui_switch1, [pitch=rfloat(0.95, 1.05), volume=0.5])
                     play(ui_transition1, [pitch=rfloat(0.95, 1.05), volume=0.5])

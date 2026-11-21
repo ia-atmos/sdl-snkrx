@@ -172,6 +172,7 @@ task Projectile (A, p, fx) {
     val c = p.character
     pin hit_list = []
     body(A.w, p, :dynamic, p.x, p.y, :projectile, [:rect, 10, 4])
+    set :out A.w.objs@(p.b).task = task   ;; its contacts come to this task
     defer {
         body_free(A.w, p.b)
     }
@@ -644,6 +645,7 @@ task WallArrow (x, y, r, color) {
 ;; in 0.8 to 1.6s, and blinks away.
 task WallKnife (A, x, y, r, v, color, fx) {
     val k = body(A.w, [ kind=:knife, w=10, h=4, x=x, y=y, r=r, v=v, vr=r ], :dynamic, x, y, :projectile, [:rect, 10, 4])
+    set :out A.w.objs@(k.b).task = task   ;; its contacts come to this task
     defer {
         body_free(A.w, k.b)
     }
