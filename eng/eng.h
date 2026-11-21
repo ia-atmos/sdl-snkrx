@@ -202,7 +202,9 @@ static int eg_canvas_new (int screen, int shadow) {
     return EG_CVS_N++;
 }
 
+static long EG_SWITCHES = 0;     // SNX_PROFILE: the calls of eng.target
 static void eg_canvas_set (int i) {
+    EG_SWITCHES++;
     if (i>=0 && i<EG_CVS_N) {
         EG_CUR = i;
     }
@@ -1262,6 +1264,7 @@ static void eg_quit (void) {
             SDL_FRAME, EG_PROF[0]/f, EG_PROF[1]/f, EG_PROF[2]/f);
         fprintf(stderr, "  canvases: %.3fs, unpremultiply/copy: %.3fs, compose: %.3fs (blend %.3fs)\n",
             EG_PROF2[0]/f, EG_PROF2[1]/f, EG_PROF2[2]/f, EG_PROF2[3]/f);
+        fprintf(stderr, "  canvas switches: %ld (%.2f per frame)\n", EG_SWITCHES, (double)EG_SWITCHES/(SDL_FRAME ? SDL_FRAME : 1));
     }
     if (EG_SND) {
         Mix_HaltChannel(-1);
