@@ -30,6 +30,10 @@ session, `session#N` (this session: `sdl-snxkx`, for the repository
 | #19 | Two latent errors of `pin` in the elites, found by the timing of #3 | work | done |
 | #20 | The clear of the window by env-sdl costs 0.82 s of a stress run that the port covers anyway | remark | closed: `clear=false` (env-sdl `e0aba7b`) adopted; measured 18.42 s against 18.62 s, within the spread (`bench.md`) |
 | #21 | On env-sdl the stress is 1.45 s slower on the clock; 0.63 s is not the clear and is not explained | work | open |
+| #22 | The frame loop on the rules of 2026-11-21 (`atmos-pin#17`, `#18`) | remark | done: lang `95b0d0b` 2.985 s against `7db3c99` 2.937 s of stress logic, within the spread; 40 identical, no ASAN leak; setup at `95b0d0b` (`4b2219f`) |
+| #23 | `grab`: the options take the input of the screen behind them (`atmos-lang#112a`) | experiment | branch `exp-grab` (`1167084`, lang `grab` `c66c735`), not to merge: 40 identical plus a new test; reported to `atmos-grab`; the merge of `grab` into the language is the author's |
+| #24 | `context`: the stars and the background draw in their canvas by a context (`atmos-lang#112a`) | experiment | branch `exp-context` (`88da713`, lang `context` `46703cd`), not to merge: 40 identical, 24.72 -> 4.86 canvas switches per frame; reported to `atmos-context`; the merge is the author's |
+| #25 | The options do not take the input today: a click behind them buys a card in the shop (the original does not update the shop while `paused`) | defect | open: fixed on `exp-grab` with `grab`; without `grab`, the port would need its own guard, or `toggle` of the shop's input |
 
 ## Items
 
@@ -165,3 +169,26 @@ step of its loop, given to `Sacrifice` in that pool. Fixed on `main`
 (the tween in the step of the loop; the list a `val`); the 40 tests are
 identical.
 
+
+**#22** Measured on `90b0d95` (env-sdl `e0aba7b`): the stress logic
+(`SNX_PROFILE=1`, no window, no sound, `-O2`, three runs alternated) is
+2.985 s at `95b0d0b` against 2.937 s at `7db3c99`; `doc/compiler.md`,
+10.
+
+**#23** On `exp-grab`: `main.atm` wraps the screens in a `grabbable` of
+the five input events, and `Options` grabs them while it is open; the
+time tweens stay outside the grab, so the input comes back at once, as
+`close_options`. Lines: `options.atm` 202 -> 208, `main.atm` 100 -> 102.
+What did not fit: a grab without a grabbable is an error (three tests
+needed their own); a grabbable is a block (the tests pin the arena inside
+it and lend it out with `set :out`); the patterns are repeated; the
+tutorial stays on `toggle`, since it also freezes time.
+
+**#24** On `exp-context`: `eng.on(c)` gives the enter and leave of a
+canvas, and `Stars` and `Background` draw inside a `context`. Stress
+logic 2.855 s against 2.973 s (three runs, alternated, the same
+compiler), within the spread. Lines: `shared.atm` 115 -> 117,
+`eng/eng.atm` 199 -> 213.
+
+**#25** Measured on `main` (Escape at tick 20, click on a card at 42):
+gold 3 -> 1, units 0 -> 1. The test `tst/game/grab` of `exp-grab` shows it.
