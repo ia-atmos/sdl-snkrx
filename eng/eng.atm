@@ -73,6 +73,22 @@ pin eng = [
     target = func (c) {
         `eg_canvas_set(eg_int($c));`
     },
+    ;; the canvas selected now
+    target_get = func () {
+        `:number EG_CUR`
+    },
+    ;; eng.on(c): the enter and the leave of a `context` that draws in `c`
+    on = func (c) {
+        val enter = func () {
+            val old = `:number EG_CUR`
+            `eg_canvas_set(eg_int($c));`
+            old
+        }
+        val leave = func (old) {
+            `eg_canvas_set(eg_int($old));`
+        }
+        return enter, leave
+    },
     canvas_draw = func (c, x, y, color) {
         `eg_canvas_draw(eg_int($c), eg_dbl($x), eg_dbl($y), eg_color($color));`
     },
