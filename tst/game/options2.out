@@ -2,8 +2,8 @@ click	53	mouse	true	movement	true	sx	nil
 click	73	mouse	true	movement	false	sx	nil
 click	93	mouse	true	movement	false	sx	2.5
 K	sx	2.0
-tick	297	r	-6.57	time	103	cam	240.1 134.8
-tick	327	r	15.29	time	103	cam	238.6 134.5
-tick	357	r	-11.61	time	104	cam	239.9 135.4
-tick	387	r	-14.22	time	104	cam	240.0 135.0
-tick	417	r	23.11	time	105	cam	240.0 134.8
+tick	301	r	-6.75	time	103	cam	240.0 135.0
+tick	333	r	15.64	time	103	cam	240.0 135.1
+tick	365	r	-11.97	time	104	cam	240.1 134.8
+tick	397	r	-14.57	time	105	cam	240.2 135.2
+tick	430	r	-17.16	time	105	cam	239.5 136.4

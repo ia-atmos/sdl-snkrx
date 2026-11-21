@@ -16,6 +16,7 @@ which tick of 1/60 s a delay ends, a rounding).
 | # | What was given up | What was gained | Lines | Tests whose outputs changed |
 |---|-------------------|-----------------|-------|-----------------------------|
 | R1 | A wait in real time ended a tick after its duration for most durations, as the original's `after(d)`, which tests `timer > d` on a sum of floats | `WaitReal(s)` is one counted await, `await(math.floor(s*60 + 0.5), :tick)`, instead of a loop that sums the floats of the original | `WaitReal`: 7 lines to 3 | 9 traces, one or two ticks earlier (`allpassives`, `boss`, `chars`, `elites`, `gold`, `level`, `menu`, `passives`, `run`; the scripted `run` follows another path through level 1, which it still clears); 8 screenshots |
+| R2 | A tween of the interface (real time) ended in the first tick past its duration, and could overshoot its values by a tick, as the original | `TweenReal` counts whole microseconds, clamps the time to the duration, and ends at it, with the fields at their values; it no longer needs `tick_dt` | 13 lines to 16 | 3 traces (`arena3`, `bosses`, `options2`: a tick earlier, then the physics diverges by tenths of a pixel); 18 screenshots |
 
 ## Candidates rejected
 
@@ -26,4 +27,5 @@ which tick of 1/60 s a delay ends, a rounding).
 | `Every` keeps what passes beyond the delay, and reads the attack speed in every tick | `src/attack.atm` | A rule of the game: the attack speed may change during a wait, and the rhythm of the attacks depends on the carry. |
 | `Cooldown` and `BossAttack` sum the time by hand | `src/attack.atm`, `src/elite.atm` | The sum drives a bar on the screen (`u.cooldown`, `e.attack_ratio`): it is visible. |
 | The `trace` lines | `eng/eng.atm` and 27 calls | They are the tests, not an imitation of the original. |
+| `Tween` in game time ends in the first tick past its duration (as R2 does for `TweenReal`) | `eng/anim.atm` | Tried: ending the tweens of the game a tick earlier shifts the order of the random draws in every arena, and the tests that rely on chance lose what they show (no gold drops in `chars3`, no barrage of the cannoneer in `chars2`, no crit of the outlaw in `classes`). The gain, a tick, is not worth the coverage. |
 | The muted music awaits forever instead of drawing random numbers | `main.atm` | It keeps the tests deterministic; nothing of the original. |

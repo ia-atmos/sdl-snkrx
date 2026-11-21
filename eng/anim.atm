@@ -110,20 +110,25 @@ func tick_dt (us) {
     math.floor(us*60/1000000 + 0.5) / 60
 }
 
-;; A tween in real time (as the global `trigger` of the original).
+;; A tween in real time (as the global `trigger` of the original), for
+;; the interface: it ends at `dur`, with the fields at the values. (The
+;; original, as `Tween` here, ends in the first tick past `dur`, and may
+;; overshoot the values: `doc/relaxed.md`.)
 task TweenReal (dur, target, source, method) {
     pin from = []
     loop k, _ in source {
         set from@(k) = target@(k)
     }
+    val f = method || linear
+    val end = math.floor(dur*1000000 + 0.5)    ;; in whole microseconds
     var timer = 0
     loop e on :tick {
-        set timer += tick_dt(e.us)
-        val t = (method || linear)(timer / dur)
+        set timer = math.min(timer + e.us, end)
+        val t = if end > 0 => f(timer / end) => 1
         loop k, v in source {
             set target@(k) = lerp(t, from@(k), v)
         }
-        until timer > dur
+        until timer >= end
     }
 }
 
