@@ -52,11 +52,27 @@ def measure (cmd, env):
     assert os.waitstatus_to_exitcode(status) == 0, cmd
     return wall, ru.ru_utime + ru.ru_stime, ru.ru_maxrss / 1024
 
+# The input of the original (game pixels; m1 is the left button) as the
+# test variables of env-sdl (window pixels, at the scale 2).
+def sdl_input (inp):
+    keys, mouse, x, y = [], [], 0, 0
+    for it in filter(None, inp.split(",")):
+        f, kind, *rest = it.split(":")
+        if kind == "mv":
+            x, y = int(float(rest[0])*2), int(float(rest[1])*2)
+            mouse.append("%s:mv:%d:%d" % (f, x, y))
+        elif rest[0] in ("m1", "m2", "m3"):
+            mouse.append("%s:%s:%d:%d:%s" % (f, kind, x, y, rest[0][1]))
+        else:
+            keys.append("%s:%s:%s" % (f, kind, rest[0]))
+    return ",".join(keys), ",".join(mouse)
+
 def port (name, frames, inp, display):
-    env = dict(os.environ, DISPLAY=display, SNX_FRAMES=str(frames), SNX_INPUT=inp,
-               SNX_STRESS=str(STRESS) if name == "stress" else "", SNX_RENDER="1", SNX_RENDERER="opengl",
+    keys, mouse = sdl_input(inp)
+    env = dict(os.environ, DISPLAY=display, SDL_ATM_FRAMES=str(frames), SDL_ATM_KEYS=keys, SDL_ATM_MOUSE=mouse,
+               SNX_STRESS=str(STRESS) if name == "stress" else "", SDL_ATM_RENDER="1", SNX_RENDERER="opengl",
                SDL_VIDEODRIVER="x11", SDL_AUDIODRIVER="disk", SDL_DISKAUDIOFILE="build/bench-audio.raw")
-    env.pop("SNX_MUTE", None)
+    env.pop("SDL_ATM_MUTE", None)
     return measure(["build/snx"], env)
 
 def original (name, frames, inp, display):

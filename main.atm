@@ -35,7 +35,7 @@ task Music () {
         val song = rtable([song1, song2, song3, song4, song5])
         val inst = play(song, [volume=st.v])
         if inst < 0 {
-            await(false)        ;; no sound (SNX_MUTE): one song, as at the start
+            await(false)        ;; no sound (SDL_ATM_MUTE): one song, as at the start
         }
         par :any {
             loop on :frame {

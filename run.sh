@@ -5,8 +5,8 @@
 #   ./run.sh -o out main.atm  only builds
 #
 # Needs `tools/setup.sh` first. The assets come from the checkout of the
-# original in `ext/SNKRX` (or SNKRX_DIR). See `eng/eng.h` for the
-# variables of the test mode (SNX_FRAMES, SNX_INPUT, SNX_SHOT, ...).
+# original in `ext/SNKRX` (or SNKRX_DIR). The test mode is that of env-sdl
+# (SDL_ATM_FRAMES, SDL_ATM_KEYS, SDL_ATM_MOUSE, SDL_ATM_SHOT, ...).
 
 ROOT=$(cd "$(dirname "$0")" && pwd)
 export ATMOS_HOME="$ROOT/ext/atmos"
