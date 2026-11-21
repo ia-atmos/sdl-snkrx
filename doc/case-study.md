@@ -116,10 +116,17 @@ measurement, of 1.8 to 3.0 times and 131 MB, had a port that loaded no
 sound: `bench.md`.) The logic alone of the port takes 0.089 ms per tick
 in level 1, and 2.77 ms with the crowd of 200.
 
-The timings of the original are kept where they were measured: the
-menu reaches the shop in tick 113 in both, and the first marker of level
-1 comes 269 ticks after the arena starts in the port, 272 in the
-original (`study.md`, 9).
+The timings of the original are kept where they were measured: in the
+faithful version (the branch `exact`), the menu reaches the shop in
+tick 113 in both, and the first marker of level 1 comes 269 ticks after
+the arena starts in the port, 272 in the original (`study.md`, 9).
+
+`main` relaxes a few of these exactnesses that no player can see, in
+favor of more direct code: a wait or a tween of the interface ends at
+its duration, not a tick past it, and the run timer adds real
+microseconds instead of the floats of the original (the menu now
+reaches the shop in tick 112). The list, with what each gives up and
+gains, and the candidates rejected: `relaxed.md`.
 
 The code, counted without comments or blank lines, with
 `tools/count.py`, the port at `7639dd3` (all the features, after the

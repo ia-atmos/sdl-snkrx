@@ -43,6 +43,12 @@ the tutorial, and the credits. Left out: Steam (see
 - `doc/bench.md`: the port against the original (`tools/bench/perf.py`).
 - `doc/compiler.md`: findings about the compiler.
 
+## Exact and relaxed
+
+The branch `exact` is the port faithful to the original by events and
+formulas. `main` relaxes, one commit each, exactnesses that no player
+can see, in favor of more direct code: [`doc/relaxed.md`](doc/relaxed.md).
+
 ## Sources
 
 | What | Where |
