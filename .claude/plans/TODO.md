@@ -13,7 +13,7 @@ session, `session#N` (this session: `sdl-snxkx`, for the repository
 | #2 | Contacts sent only to their two tasks, with `set :out` | decision | closed: `contacts-pinout` merged into main by the author's decision (2026-11-21), compiler `7db3c99`, 40 tests identical |
 | #3 | Finding 8: step the physics once per frame | decision | left out for now by the author's decision (2026-11-21): the branch `step` stays, not merged; a longer trace of the original would settle it |
 | #4 | Relax exactness for expressiveness | work | done (2026-11-21): the branch `exact` (`58594e4`) marks the faithful version; R1 (real-time waits, `51c429c`), R2 (interface tweens, `f17dc27`), R3 (`tick_dt` gone, `3c9ce56`) on main; rejected candidates, among them the tweens of game time, in `doc/relaxed.md` |
-| #5 | A clock per task or pool | remark | answered; not needed by the port |
+| #5 | A clock per task or pool | remark | closed: answered (`doc/compiler.md`, 1); not needed by the port |
 | #6 | E5: move the platform part of `eng/` to `env-sdl` | work | done: `eng/` over `env-sdl` `94cb414`, 40 tests identical but `tst/eng/input` (the new names of the events) |
 | #7 | Drop the guard of `await :all` on an empty pool | work | done |
 | #8 | Small differences from the original | work | done |
@@ -22,7 +22,7 @@ session, `session#N` (this session: `sdl-snxkx`, for the repository
 | #11 | The S7 stress numbers are not to be compared | remark | reported, not acknowledged |
 | #12 | All features in, the first `pin` migration, F5, the student's trail | remark | reported, not acknowledged |
 | #13 | The time of the logic by compiler (`atmos-pin#14`) | work | done, sent to `atmos-pin` |
-| #14 | Widgets lend their springs with `set :out` (`pin-out`, `atmos-pin#16`) | remark | tried on the branch `contacts-pinout`, never to merge |
+| #14 | Widgets lend their springs with `set :out` (`pin-out`, `atmos-pin#16`) | remark | closed: the rule became main (`a80a77f`, `atmos-pin#16b`) and `contacts-pinout` was merged with #2 |
 | #15 | The counts of lines in `bench.md` and `case-study.md` (paper) | work | done |
 | #16 | The CPU of the logic alone, per tick, with its method (paper) | work | done |
 | #17 | How the port was written, in the README (paper) | work | done |
