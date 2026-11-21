@@ -596,3 +596,12 @@ lasts until the value ends, wherever the `set :out` is written, so the
 form above is right: the widgets lend their springs to their owners
 with a conditional `set :out`, and `SHARED_SPRINGS` is gone (the branch
 `contacts-pinout`, merged into `main` with #2; the 40 tests identical).
+
+The rules of 2026-11-21 (`atmos-pin#17`, the ceiling on the value only;
+`atmos-pin#18`, no collection of unpinned cycles), at `ia-atmos/lang`
+`95b0d0b` against `7db3c99`, the tree of `main` at `90b0d95` (on
+env-sdl): the logic of the stress (`SNX_PROFILE=1`, no window, no
+sound, `-O2`, three runs alternated) takes 2.985 s against 2.937 s
+(2.985, 3.076, 2.927 against 3.037, 2.937, 2.767), within the spread of
+the runs; the 40 tests are identical, and with `ATMOS_ASAN=1` no test
+reports a leak.
