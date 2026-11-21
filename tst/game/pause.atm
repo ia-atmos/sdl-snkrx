@@ -1,0 +1,22 @@
+;; The options over the shop freeze it: a click on a card behind
+;; them buys nothing (the original does not update the shop while it is
+;; `paused`).
+include "../../src/game.atm"
+spawn Background()
+spawn Input()
+pin run = [ level=1, loop=0, gold=3, units=[], passives=[], shop_level=1, shop_xp=0 ]
+spawn {
+    loop e on :mouse.button.dn {
+        print("dn", eng.tick(), "gold", run.gold, "units", #run.units)
+    }
+}
+spawn {
+    loop e on :key.dn {
+        print("key", eng.tick(), e.key, "gold", run.gold, "units", #run.units)
+    }
+}
+spawn {
+    await(90, :frame)
+    print("end", "gold", run.gold, "units", #run.units)
+}
+await Shop(run)

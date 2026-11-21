@@ -33,7 +33,7 @@ session, `session#N` (this session: `sdl-snxkx`, for the repository
 | #22 | The frame loop on the rules of 2026-11-21 (`atmos-pin#17`, `#18`) | remark | done: lang `95b0d0b` 2.985 s against `7db3c99` 2.937 s of stress logic, within the spread; 40 identical, no ASAN leak; setup at `95b0d0b` (`4b2219f`) |
 | #23 | `grab`: the options take the input of the screen behind them (`atmos-lang#112a`) | experiment | branch `exp-grab` (`1167084`, lang `grab` `c66c735`), not to merge: 40 identical plus a new test; reported to `atmos-grab`; the merge of `grab` into the language is the author's |
 | #24 | `context`: the stars and the background draw in their canvas by a context (`atmos-lang#112a`) | experiment | branch `exp-context` (`88da713`, lang `context` `46703cd`), not to merge: 40 identical, 24.72 -> 4.86 canvas switches per frame; reported to `atmos-context`; the merge is the author's |
-| #25 | The options do not take the input today: a click behind them buys a card in the shop (the original does not update the shop while `paused`) | defect | open: fixed on `exp-grab` with `grab`; without `grab`, the port would need its own guard, or `toggle` of the shop's input |
+| #25 | The options do not take the input today: a click behind them buys a card in the shop (the original does not update the shop while `paused`) | defect | closed (author's go, 2026-11-21): the shop opens the options itself and is toggled off behind them until they start to close (`ShopPause`, `:Shop.options`, `:Options.closing`); no flag; test `tst/game/pause`, the same output as `exp-grab`; two tutorial screenshots change (the shop frozen while paused). To be replaced by `grab` if it enters the language |
 
 ## Items
 

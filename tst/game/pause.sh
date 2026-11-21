@@ -1,0 +1,3 @@
+SDL_ATM_FRAMES=95
+SDL_ATM_KEYS=20:dn:Escape,21:up:Escape,60:dn:Escape,61:up:Escape
+SDL_ATM_MOUSE=40:mv:120:150,42:dn:120:150:1,43:up:120:150:1,70:mv:120:150,72:dn:120:150:1,73:up:120:150:1

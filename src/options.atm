@@ -39,7 +39,7 @@ task NgText () {
 ;; Options from the menu (`kind` :menu), the shop (:shop), or the arena
 ;; (:arena). It ends on resume; restart, the menu, and quit go to their
 ;; screens (`:goto`).
-task Options (kind) {
+task Options (kind, host) {
     set pub = [ springs=[] ]                ;; the springs its buttons lend
     val springs = pub.springs
     eng.cursor(true)
@@ -161,6 +161,10 @@ task Options (kind) {
         state_save()
         emit @me :Options.changed
     }
+    ;; the input comes back at once, before the game time does
+    if host {
+        emit @host :Options.closing
+    }
     await TweenReal(0.25, st, [v=1], linear)
     eng.cursor((kind != :arena) || STATE.mouse_control)
 }
@@ -169,15 +173,32 @@ task Options (kind) {
 ;; they are closed, the time of the run goes on (`run_time`).
 task Pause (kind, run) {
     loop {
-        par :any {
-            await :key.dn until it.key == "Escape"
-        } with {
-            await :Pause.open
-        } with {
-            await RunClock(run)
-        }
-        play(ui_switch1, [pitch=rfloat(0.95, 1.05), volume=0.5])
+        await PauseKey(run)
         await Options(kind)
+    }
+}
+
+;; Escape (or `:Pause.open`) asks for the options; until then, the time of
+;; the run passes.
+task PauseKey (run) {
+    par :any {
+        await :key.dn until it.key == "Escape"
+    } with {
+        await :Pause.open
+    } with {
+        await RunClock(run)
+    }
+    play(ui_switch1, [pitch=rfloat(0.95, 1.05), volume=0.5])
+}
+
+;; In the shop, the shop itself opens the options (`:Shop.options`), so
+;; that it is toggled off behind them: the original does not update the
+;; shop while it is `paused`, so a click behind the options buys nothing.
+task ShopPause (run, shop) {
+    loop {
+        await PauseKey(run)
+        emit @shop :Shop.options
+        await :Shop.resumed
     }
 }
 

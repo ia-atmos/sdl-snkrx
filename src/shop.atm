@@ -734,7 +734,9 @@ func shop_sell (run, i, copy) {
 ;; shop is toggled off but for `:draw`: it stays on the screen as it was,
 ;; and nothing in it moves or answers the mouse (the original stops
 ;; updating its groups `main` and `effects` while `in_tutorial`).
+;; The same while the options are open (`paused`).
 task Shop (run) {
+    val me = task
     eng.cursor(true)
     par {
         toggle on :Shop.on with :draw {
@@ -755,6 +757,19 @@ task Shop (run) {
                 ;; the tutorial, then sees the key again in the same frame
                 emit @:task :Pause.open
             }
+        }
+    } with {
+        ;; the options, over the shop toggled off (`ShopPause`)
+        loop {
+            await :Shop.options
+            emit @me :Shop.on [false]
+            par :all {
+                await Options(:shop, me)
+            } with {
+                await :Options.closing
+                emit @me :Shop.on [true]
+            }
+            emit @me :Shop.resumed
         }
     }
 }
@@ -871,7 +886,7 @@ task ShopMain (run, shop) {
     pin gold_short = info_line("[fg]not enough gold")
 
     run_save(run)
-    spawn Pause(:shop, run)
+    spawn ShopPause(run, shop)
     pin coins = func () {
         play(rtable([coins1, coins2, coins3]), [pitch=rfloat(0.95, 1.05), volume=0.5])
     }
