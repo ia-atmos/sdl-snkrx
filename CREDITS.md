@@ -22,5 +22,6 @@ of the game in `atmos/readme.md`, which `doc/` starts from.
 ## Tools
 
 - Atmos: <https://github.com/ia-atmos/lang>.
+- env-sdl, the SDL environment of Atmos: <https://github.com/ia-atmos/env-sdl>.
 - SDL2: <https://www.libsdl.org>.
 - Box2D, by Erin Catto: <https://box2d.org> (MIT).

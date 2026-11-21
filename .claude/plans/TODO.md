@@ -14,7 +14,7 @@ session, `session#N` (this session: `sdl-snxkx`, for the repository
 | #3 | Finding 8: step the physics once per frame | decision | left out for now by the author's decision (2026-11-21): the branch `step` stays, not merged; a longer trace of the original would settle it |
 | #4 | Relax exactness for expressiveness | work | done (2026-11-21): the branch `exact` (`58594e4`) marks the faithful version; R1 (real-time waits, `51c429c`), R2 (interface tweens, `f17dc27`), R3 (`tick_dt` gone, `3c9ce56`) on main; rejected candidates, among them the tweens of game time, in `doc/relaxed.md` |
 | #5 | A clock per task or pool | remark | answered; not needed by the port |
-| #6 | E5: move the platform part of `eng/` to `env-sdl` | work | unblocked (after #1) |
+| #6 | E5: move the platform part of `eng/` to `env-sdl` | work | done: `eng/` over `env-sdl` `94cb414`, 40 tests identical but `tst/eng/input` (the new names of the events) |
 | #7 | Drop the guard of `await :all` on an empty pool | work | done |
 | #8 | Small differences from the original | work | done |
 | #9 | The new names of the sessions in the documents | work | done |
@@ -28,6 +28,8 @@ session, `session#N` (this session: `sdl-snxkx`, for the repository
 | #17 | How the port was written, in the README (paper) | work | done |
 | #18 | The benchmark ran the port with no sound; rerun with it | work | done |
 | #19 | Two latent errors of `pin` in the elites, found by the timing of #3 | work | done |
+| #20 | The clear of the window by env-sdl costs 0.82 s of a stress run that the port covers anyway | remark | sent to `env-sdl` |
+| #21 | On env-sdl the stress is 1.45 s slower on the clock; 0.63 s is not the clear and is not explained | work | open |
 
 ## Items
 
@@ -80,7 +82,19 @@ compiler; the refusal is a check at run time, as in the Lua reference.
 `toggle` freezes a subtree; a clock of its own is needed only for
 another speed. Not needed by the port.
 
-**#6 E5.** `env-sdl` is ready: `:frame [n, us]` before the clock,
+**#6 E5.** Done (2026-11-21), on the branch `env-sdl`, merged: the port
+includes `ext/env-sdl/sdl.atm` (`94cb414`, `tools/setup.sh`), opens its
+window (fixed frames of 1/60 s, passes `[:draw, :overlay]`), and draws
+over its renderer in `sdl_on_flush`; `eng.slow` is `sdl.clock`; the
+events have the names of env-sdl (`:mouse.motion`, `:mouse.button.dn`
+`[x,y,button]`, `:key.dn [key,code]`, `:frame [n,us]`); the test
+variables are `SDL_ATM_*`, the mouse in window pixels. The mouse keeps
+its game position at each of its events (as before: a window that
+grows does not move it in the game until it moves). `eg_*` of the
+driver, the test script, and `main` left `eng.h` (1213 -> 1040 lines).
+The drawing, the sounds (pitch, instances), and the physics stay in the
+port. 39 tests identical; `tst/eng/input` prints the new names. See
+`doc/bench.md`, "On env-sdl". Before: `env-sdl` was ready: `:frame [n, us]` before the clock,
 `sdl.clock(f)` with the carry, the passes `[:draw, :overlay]`,
 `sdl_on_flush(f(render))`, frames of exactly 1/60 s. Its plan waits for
 #1; the drawing stays in the port.

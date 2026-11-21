@@ -1,7 +1,11 @@
 # sdl-snkrx
 
 A port of [SNKRX](https://github.com/a327ex/SNKRX) to
-[Atmos](https://github.com/ia-atmos/lang), over SDL2.
+[Atmos](https://github.com/ia-atmos/lang), over SDL2, through the SDL
+environment of Atmos, [env-sdl](https://github.com/ia-atmos/env-sdl):
+env-sdl runs the window, the loop, the events, the time, and the test
+mode; the port keeps its own drawing (canvases composed as LÖVE does,
+with the shadow, the fonts, the shapes), its sounds, and its physics.
 
 SNKRX is an arcade roguelite by a327ex: a snake of heroes that attack
 by themselves, in an arena with waves of enemies, with a shop between
@@ -20,7 +24,7 @@ the phases of the game disappear.
 On Ubuntu 24.04, with the packages listed in `tools/setup.sh`:
 
 ```
-tools/setup.sh      # the compiler, Box2D, and the original, in ext/
+tools/setup.sh      # the compiler, env-sdl, Box2D, and the original, in ext/
 ./run.sh            # the game
 tst/run.sh          # the tests, with no screen
 ```
@@ -55,7 +59,8 @@ can see, in favor of more direct code: [`doc/relaxed.md`](doc/relaxed.md).
 |------|-------|
 | Original | `a327ex/SNKRX@6b93a64`, Lua over LÖVE 11 |
 | Student port, read as a starting point | `kboltiz/SNKRX@18c593b`, folder `atmos/` |
-| Compiler | `ia-atmos/lang`, branch `main` |
+| Compiler | `ia-atmos/lang`, at the commit of `tools/setup.sh` |
+| Environment | `ia-atmos/env-sdl`, at the commit of `tools/setup.sh` |
 | Physics | Box2D v3 (C) |
 
 ## License

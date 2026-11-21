@@ -152,7 +152,11 @@ costs, classes, and texts of the characters, passives, and items);
 now has every feature of the original but Steam; the engine of the
 original is a general one, so the engines do not compare part for
 part. (Earlier counts in these documents were of smaller ports: 4755
-lines at S7, 8647 at S9.)
+lines at S7, 8647 at S9.) Since the move to env-sdl (sdl-snxkx#6), the
+window, the loop, the events, the time, and the test mode are in
+env-sdl, which, as LÖVE for the original, is not counted: `eng/` is then
+2048 lines and 18037 tokens, against 2194 and 19347 just before
+(`tools/count.py eng/*.h eng/*.atm`).
 
 The lines fall less than the tokens, for three measured reasons:
 

@@ -172,6 +172,37 @@ To measure another port the same way: the same scripted input and
 number of ticks, the time of the reactions to the events of a frame
 alone, with no window, and the median of three runs.
 
+## On env-sdl (sdl-snxkx#6)
+
+Since the move to env-sdl, the window, the loop, the events, the time,
+and the test mode are those of `ia-atmos/env-sdl` (`94cb414`), and the
+port draws over its renderer at the end of each frame. The same
+scenarios as above, the port of `main` before the move (`ad37d31`)
+against the port on env-sdl (`82ce653`), both with the compiler
+`7db3c99`, `-O2`, OpenGL over Xvfb, sound mixed to a file,
+`SNX_PROFILE=1`, three runs each, alternated, medians:
+
+| scenario | build | clock (s) | CPU (s) | ticks/s | peak (MB) | logic (s) |
+|----------|-------|----------:|--------:|--------:|----------:|----------:|
+| menu | before | 8.25 | 14.09 | 73 | 545.2 | 0.167 |
+| menu | env-sdl | 8.77 | 15.32 | 68 | 545.9 | 0.226 |
+| shop | before | 9.00 | 16.03 | 80 | 546.0 | 0.073 |
+| shop | env-sdl | 9.05 | 15.78 | 80 | 545.4 | 0.122 |
+| level 1 | before | 15.14 | 32.45 | 119 | 545.2 | 0.342 |
+| level 1 | env-sdl | 15.66 | 33.62 | 115 | 545.6 | 0.468 |
+| stress | before | 16.62 | 31.49 | 90 | 545.4 | 3.171 |
+| stress | env-sdl | 18.07 | 34.46 | 83 | 545.6 | 3.470 |
+
+The outputs of the 40 tests are the same. On env-sdl, the logic is
+measured from `:frame` to `:draw` (the reactions to `:frame` and to the
+time, and the clear of the window by env-sdl), not around the input
+as before. Of the 1.45 s more on the clock in the stress, 0.82 s is the
+clear of the window that env-sdl does before the passes of drawing,
+which the composition of the port then covers: without it (a local
+patch of `sdl.atm`, not committed), the stress takes 17.34 s instead of
+18.16 s, and the logic 3.305 s instead of 3.468 s (three runs each,
+alternated).
+
 ## Size of the code
 
 Lines of code (no blanks, no comments) and tokens, with
@@ -185,6 +216,7 @@ patch of the benchmark).
 | original, its engine (`engine/`, without `engine/external`) | 4428 | 40796 |
 | port, the game (`src/`, `main.atm`) | 9455 | 91671 |
 | port, its engine (`eng/`, Atmos and C) | 2209 | 19370 |
+| port, its engine on env-sdl (`82ce653`; env-sdl not counted) | 2048 | 18037 |
 
 An earlier version of this table (`51627cd`, S7) gave 4755 lines and
 43606 tokens for the game of the port, which then had ten characters,
