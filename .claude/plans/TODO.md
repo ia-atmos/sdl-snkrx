@@ -11,7 +11,7 @@ session, `session#N` (this session: `sdl-snxkx`, for the repository
 |---|-------|------|-------|
 | #1 | Second migration to the rules of `pin` | decision | closed: confirmed by the author (2026-11-21) |
 | #2 | Contacts sent only to their two tasks, with `set :out` | decision | closed: `contacts-pinout` merged into main by the author's decision (2026-11-21), compiler `7db3c99`, 40 tests identical |
-| #3 | Finding 8: step the physics once per frame | decision | left out for now by the author's decision (2026-11-21): the branch `step` stays, not merged; a longer trace of the original would settle it |
+| #3 | Finding 8: step the physics once per frame | decision | left out by the author until a longer trace (2026-11-21); the trace is done (`tst/original/run2`, `doc/compiler.md` 8): over 5 seeds per branch, `step`'s median is the closer on 4 of 6 measures (level 1: second wave 1464 vs 1213 against the original's 1693, clear 2441 vs 2208 against 2450), farther on 1. Recommended: merge `step`, rebased on env-sdl (its step from `:frame` times the factor, with its carry), its expected outputs regenerated; waits for the author |
 | #4 | Relax exactness for expressiveness | work | done (2026-11-21): the branch `exact` (`58594e4`) marks the faithful version; R1 (real-time waits, `51c429c`), R2 (interface tweens, `f17dc27`), R3 (`tick_dt` gone, `3c9ce56`) on main; rejected candidates, among them the tweens of game time, in `doc/relaxed.md` |
 | #5 | A clock per task or pool | remark | closed: answered (`doc/compiler.md`, 1); not needed by the port |
 | #6 | E5: move the platform part of `eng/` to `env-sdl` | work | done: `eng/` over `env-sdl` `94cb414`, 40 tests identical but `tst/eng/input` (the new names of the events) |
@@ -34,6 +34,7 @@ session, `session#N` (this session: `sdl-snxkx`, for the repository
 | #23 | `grab`: the options take the input of the screen behind them (`atmos-lang#112a`) | experiment | branch `exp-grab` (`1167084`, lang `grab` `c66c735`), not to merge: 40 identical plus a new test; reported to `atmos-grab`; the merge of `grab` into the language is the author's |
 | #24 | `context`: the stars and the background draw in their canvas by a context (`atmos-lang#112a`) | experiment | branch `exp-context` (`88da713`, lang `context` `46703cd`), not to merge: 40 identical, 24.72 -> 4.86 canvas switches per frame; reported to `atmos-context`; the merge is the author's |
 | #25 | The options do not take the input today: a click behind them buys a card in the shop (the original does not update the shop while `paused`) | defect | closed (author's go, 2026-11-21): the shop opens the options itself and is toggled off behind them until they start to close (`ShopPause`, `:Shop.options`, `:Options.closing`); no flag; test `tst/game/pause`, the same output as `exp-grab`; two tutorial screenshots change (the shop frozen while paused). To be replaced by `grab` if it enters the language |
+| #26 | In level 2 with one sentry, the sentry dies earlier in the port than in the original (1671 to 2513 against 2945, ten runs, `doc/compiler.md` 8) | work | open: find why (the damage per hit is the same, 18 hits in all; the seekers reach it sooner or more often) |
 
 ## Items
 

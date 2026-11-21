@@ -327,6 +327,41 @@ game time, emitted by the engine (not on the events of the runtime's
 time), and keep `await 1s` for the timers. This changes the expected
 outputs of every arena test, so it is left for the author to decide.
 
+### A longer trace of the original (2026-11-21)
+
+The branch `step` does it (`7c825f8`). To tell which of `main` and
+`step` is closer to the original, the original was traced longer:
+`tst/original/run2.sh`, the run of `run1` to 9000 ticks, with GO in the
+shop of level 2 and the events of the game (`SNKRX_TRACE_GAME` of
+`tools/bench/bench.lua`: the deaths of the seekers, the hits of the
+units, the waves). With its seed, the original buys a sentry, so the
+port ran each level with one sentry (the same scene, no input), on
+`main` (`d031f2b`) and on `step`, with five seeds each (the port's
+random numbers are not the original's, so one run of the port is one
+sample). The ticks are from the start of the arena:
+
+| measure | original | `main`: median (range) | `step`: median (range) |
+|---------|---------:|-----------------------:|-----------------------:|
+| level 1, second wave starts | 1693 | 1213 (994 to 1463) | 1464 (1190 to 1764) |
+| level 1, cleared | 2450 | 2208 (1666 to 2707) | 2441 (1427 to 3073) |
+| level 1, seekers of the first wave | 8 | 7 (6 to 8) | 8 (7 to 8) |
+| level 1, hits on the sentry | 13 | 18 (12 to 21) | 18 (16 to 23) |
+| level 2, second wave starts | 1400 | 1412 (1203 to 2011) | 1710 (1464 to 2057) |
+| level 2, the sentry dies | 2945 | 1921 (1671 to 2513) | 2221 (1903 to 2447) |
+
+The median of `step` is the closer on four measures, the same on one,
+and farther on one (the second wave of level 2). In level 1, the second
+wave of the original (1693) is out of the range of `main` and in that
+of `step`. A spawn that finds a seeker over its point is skipped in the
+original too (`run2`: one of the 8 of the second wave of level 1, at
+tick 2401, and three in level 2), so the seeker that `step` lost in the
+first trace is the original's rule, not a defect of `step`. The original
+is one sample, and the ranges overlap.
+
+In level 2, the sentry dies earlier in the port than in the original,
+on both branches and in all ten runs (1671 to 2513 against 2945): a
+difference of its own, out of the reach of the step (TODO #26).
+
 ## 9. The new rules of `pin`
 
 Seen at `3a6ffe9` (the rules since `98ad03a`). The port moved to them
