@@ -13,6 +13,8 @@
 --   SNKRX_DUMP=file         dumps the data of the game (see dump.lua), quits
 --   SNKRX_TRACE_POS=Class   traces the position and velocity of the objects
 --                           of a class of the main group, in every tick
+--   SNKRX_TRACE_GAME=1      also traces the events of the game, as the
+--                           port's SNX_TRACE: enemy.die, unit.hit, wave
 --   SNKRX_STRESS=n          n more seekers when an arena starts, and the
 --                           units take no damage
 --
@@ -27,6 +29,9 @@
 --   rnd     a call to the generator            method result file:line
 --   pos     an object, before the tick         class id x y vx vy
 --   end     the run ends                       -
+--   enemy.die  a seeker dies                   seeker | elite kind
+--   unit.hit   a unit takes damage             character hp
+--   wave       a wave of the arena starts      n
 
 bench = {}
 
@@ -197,6 +202,27 @@ function bench.install ()
     end
   end
 
+  if os.getenv("SNKRX_TRACE_GAME") then
+    local shit = Seeker.hit
+    function Seeker:hit (...)
+      local was = self.dead
+      local r = shit(self, ...)
+      if self.dead and not was then
+        bench.trace("enemy.die", self.boss or (self.speed_booster and "speed_booster") or (self.exploder and "exploder")
+          or (self.headbutter and "headbutter") or (self.tank and "tank") or (self.shooter and "shooter")
+          or (self.spawner and "spawner") or "seeker")
+      end
+      return r
+    end
+    local phit = Player.hit
+    function Player:hit (...)
+      local hp = self.hp
+      local r = phit(self, ...)
+      if self.hp ~= hp then bench.trace("unit.hit", string.format("%s %.1f", self.character, self.hp)) end
+      return r
+    end
+  end
+
   local add = Group.add
   function Group:add (o)
     bench.trace("add", string.format("%s %.1f %.1f", system.type_name(o), o.x or 0, o.y or 0))
@@ -229,6 +255,11 @@ function bench.frame ()
         bench.trace("pos", string.format("%s %s %.2f %.2f %.2f %.2f", os.getenv("SNKRX_TRACE_POS"), o.id:sub(1, 4), o.x, o.y, vx, vy))
       end
     end
+  end
+  if os.getenv("SNKRX_TRACE_GAME") and main and main.current then
+    local w = main.current.wave
+    if w and w ~= bench.wave then bench.trace("wave", tostring(w)) end
+    bench.wave = w
   end
   if tick == 2 and os.getenv("SNKRX_DUMP") then
     require("dump")(os.getenv("SNKRX_DUMP"))
