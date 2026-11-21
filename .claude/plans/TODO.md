@@ -12,7 +12,7 @@ session, `session#N` (this session: `sdl-snxkx`, for the repository
 | #1 | Second migration to the rules of `pin` | decision | closed: confirmed by the author (2026-11-21) |
 | #2 | Contacts sent only to their two tasks, with `set :out` | decision | closed: `contacts-pinout` merged into main by the author's decision (2026-11-21), compiler `7db3c99`, 40 tests identical |
 | #3 | Finding 8: step the physics once per frame | decision | left out for now by the author's decision (2026-11-21): the branch `step` stays, not merged; a longer trace of the original would settle it |
-| #4 | Relax exactness for expressiveness | work | approved (2026-11-21): the branch `exact` marks the faithful version (a tag was refused by the proxy); relaxations one per commit, listed in `doc/relaxed.md` |
+| #4 | Relax exactness for expressiveness | work | done (2026-11-21): the branch `exact` (`58594e4`) marks the faithful version; R1 (real-time waits, `51c429c`), R2 (interface tweens, `f17dc27`), R3 (`tick_dt` gone, `3c9ce56`) on main; rejected candidates, among them the tweens of game time, in `doc/relaxed.md` |
 | #5 | A clock per task or pool | remark | answered; not needed by the port |
 | #6 | E5: move the platform part of `eng/` to `env-sdl` | work | unblocked (after #1) |
 | #7 | Drop the guard of `await :all` on an empty pool | work | done |
