@@ -140,11 +140,9 @@ task UISprings (...) {
 }
 
 ;; Waits `s` seconds of real time (the game time may be slowed down or
-;; stopped, as the arena does when it ends).
+;; stopped, as the arena does when it ends): `s*60` ticks. The original
+;; ends such a wait a tick later for most `s` (it tests `timer > s` on a
+;; sum of floats); the port no longer copies that (`doc/relaxed.md`).
 task WaitReal (s) {
-    var timer = 0
-    loop e on :tick {
-        set timer += tick_dt(e.us)
-        until timer > s
-    }
+    await(math.floor(s*60 + 0.5), :tick)
 }

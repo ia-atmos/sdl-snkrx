@@ -15,6 +15,7 @@ which tick of 1/60 s a delay ends, a rounding).
 
 | # | What was given up | What was gained | Lines | Tests whose outputs changed |
 |---|-------------------|-----------------|-------|-----------------------------|
+| R1 | A wait in real time ended a tick after its duration for most durations, as the original's `after(d)`, which tests `timer > d` on a sum of floats | `WaitReal(s)` is one counted await, `await(math.floor(s*60 + 0.5), :tick)`, instead of a loop that sums the floats of the original | `WaitReal`: 7 lines to 3 | 9 traces, one or two ticks earlier (`allpassives`, `boss`, `chars`, `elites`, `gold`, `level`, `menu`, `passives`, `run`; the scripted `run` follows another path through level 1, which it still clears); 8 screenshots |
 
 ## Candidates rejected
 

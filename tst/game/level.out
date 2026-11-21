@@ -41,4 +41,4 @@
 635	unit.hit	vagrant 584.0
 646	enemy.die	seeker
 646	clear	1
-827	buy_screen	6	3	0
+826	buy_screen	6	3	0

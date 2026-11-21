@@ -2,4 +2,4 @@
 220	enemy.die	seeker
 220	clear	3
 502	passive	magnify
-517	buy_screen	passives	1	magnify	pool	81
+516	buy_screen	passives	1	magnify	pool	81
