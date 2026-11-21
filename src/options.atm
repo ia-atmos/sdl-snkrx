@@ -38,17 +38,30 @@ task NgText () {
 
 ;; Options from the menu (`kind` :menu), the shop (:shop), or the arena
 ;; (:arena). It ends on resume; restart, the menu, and quit go to their
-;; screens (`:goto`).
+;; screens (`:goto`). While they are open, they take the input: the screen
+;; behind them does not see the mouse nor the keys (the original does not
+;; update the groups of its screen while `paused`), with a `grab` of the
+;; `grabbable` around the screens (`main.atm`).
 task Options (kind) {
+    ;; the game stops in 0.25s, and comes back in 0.25s, after the options
+    ;; give the input back (`close_options` sets `paused` to false at once)
+    pin st = [ v=1 ]
+    pin ts = tasks()
+    spawn @ts PauseTime(st)
+    spawn @ts TweenReal(0.25, st, [v=0], linear)
+    grab :mouse.motion, :mouse.button.dn, :mouse.button.up, :key.dn, :key.up {
+        await OptionsIn(kind)
+    }
+    await TweenReal(0.25, st, [v=1], linear)
+    eng.cursor((kind != :arena) || STATE.mouse_control)
+}
+
+task OptionsIn (kind) {
     set pub = [ springs=[] ]                ;; the springs its buttons lend
     val springs = pub.springs
     eng.cursor(true)
     pin ps = tasks()
     spawn @ps Modal()
-    ;; the game stops in 0.25s, and comes back in 0.25s
-    pin st = [ v=1 ]
-    spawn @ps PauseTime(st)
-    spawn @ps TweenReal(0.25, st, [v=0], linear)
     if kind == :arena {
         spawn @ps Text2(W/2, H/2 - 108, text([ [text="[bg10]<-, a or m1       ->, d or m2", font=fat_font, alignment=:center] ]), 0.6, 0.6)
         spawn @ps Text2(W/2, H/2 - 92, text([ [text="[bg10]turn left                                            turn right", font=pixul_font, alignment=:center] ]))
@@ -161,8 +174,6 @@ task Options (kind) {
         state_save()
         emit @me :Options.changed
     }
-    await TweenReal(0.25, st, [v=1], linear)
-    eng.cursor((kind != :arena) || STATE.mouse_control)
 }
 
 ;; Escape opens the options, and Escape (or resume) closes them. While

@@ -62,6 +62,8 @@ par {
     state_load()
     ;; the run, and the next screen: [task, argument, name]
     pin g = [ run=new_run(), screen=[ Menu, nil, "mainmenu" ] ]
+    ;; the input of the screens may be taken by a modal (`Options`)
+    grabbable :mouse.motion, :mouse.button.dn, :mouse.button.up, :key.dn, :key.up {
     loop {
         val next = do {
             trace("go", g.screen@2)
@@ -109,6 +111,7 @@ par {
             }
             else => [ Menu, nil, "mainmenu" ]
         }
+    }
     }
 } with {
     ;; the transitions, over the screens

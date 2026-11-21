@@ -13,9 +13,16 @@ set STATE.run_timer = true
 set STATE.cooldown_snake = true
 set STATE.arrow_snake = true
 pin run = [ level=2, loop=0, gold=3, time=100, units=[ ["vagrant", 1], ["swordsman", 1], ["archer", 1] ], passives=[], pool=[] ]
-pin A = new_arena(2)
-set A.run = run
-spawn Arena(A, [[440, 240, 1]])
+pin GA = []                     ;; the arena, lent by the block of the grabbable
+spawn {
+    grabbable :mouse.motion, :mouse.button.dn, :mouse.button.up, :key.dn, :key.up {
+        pin A = new_arena(2)
+        set A.run = run
+        set :out GA.a = A
+        await Arena(A, [[440, 240, 1]])
+    }
+}
+val A = GA.a
 spawn {
     loop on :mouse.button.up {
         await :frame

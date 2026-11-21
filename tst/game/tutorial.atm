@@ -18,4 +18,4 @@ spawn {
         print("key", eng.tick(), e.key, "gold", run.gold, "units", #run.units)
     }
 }
-await Shop(run)
+grabbable :mouse.motion, :mouse.button.dn, :mouse.button.up, :key.dn, :key.up { await Shop(run) }

@@ -8,9 +8,16 @@ spawn SlowMotion()
 spawn Input()
 
 pin run = [ level=1, loop=0, gold=3, units=[ ["vagrant", 1] ], passives=[], pool=[] ]
-pin A = new_arena(1)
-set A.run = run
-spawn Arena(A)
+pin GA = []                     ;; the arena, lent by the block of the grabbable
+spawn {
+    grabbable :mouse.motion, :mouse.button.dn, :mouse.button.up, :key.dn, :key.up {
+        pin A = new_arena(1)
+        set A.run = run
+        set :out GA.a = A
+        await Arena(A)
+    }
+}
+val A = GA.a
 spawn {
     await :key.dn until it.key == "Escape"
     val t0 = A.time
