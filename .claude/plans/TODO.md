@@ -10,7 +10,7 @@ session, `session#N` (this session: `sdl-snxkx`, for the repository
 | # | Title | Kind | State |
 |---|-------|------|-------|
 | #1 | Second migration to the rules of `pin` | decision | done at `c4e99c4`, by the session, to be confirmed |
-| #2 | Contacts sent only to their two tasks, with `set :out` | decision | done on the branch `contacts`, not merged: waits for the author |
+| #2 | Contacts sent only to their two tasks, with `set :out` | decision | branches `contacts` and `contacts-pinout`, 40 tests identical on `a80a77f`: waits for the author |
 | #3 | Finding 8: step the physics once per frame | decision | done on the branch `step`, not merged: waits for the author |
 | #4 | Relax exactness for expressiveness | decision | waits for the author |
 | #5 | A clock per task or pool | remark | answered; not needed by the port |
@@ -41,7 +41,13 @@ one workaround of the first migration gone (`X.copy` in `Attack`). The
 of the stress takes about 12% more (3.60 s to 4.04 s, medians of 5);
 `doc/compiler.md`, 10. Reported to `atmos-pin`.
 
-**#2 Contacts sent only to their two tasks.** Done on the branch
+**#2 Contacts sent only to their two tasks.** Update (2026-11-21):
+`set :out` lasts until the value ends on `ia-atmos/lang` main since
+`a80a77f` (`atmos-pin#16b`, approved); the branch `contacts-pinout`
+(`contacts` plus the springs lent with a conditional `set :out`, so
+`SHARED_SPRINGS` goes) passes the 40 tests identical on it. Recommended:
+merge `contacts-pinout` with the compiler at `a80a77f` or later.
+Earlier: done on the branch
 `contacts` (`cd9689a`, `dc0e805`), not merged (asked by `atmos-pin`:
 not without the author). Each task of a body writes
 `set :out A.w.objs@(b).task = task`; `phys_step` emits each contact to
