@@ -23,7 +23,7 @@ mkdir -p ext
 # the compiler, at a commit: the port follows the rules of `pin` of
 # 98ad03a (see doc/compiler.md, 9)
 ATMOS_REV=7db3c99
-ENVSDL_REV=94cb414
+ENVSDL_REV=e0aba7b
 BOX2D_REV=v3.1.1
 SNKRX_REV=6b93a64
 

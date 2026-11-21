@@ -34,7 +34,7 @@ include "../ext/env-sdl/sdl.atm"
 do {
     val sc = `:number.float eg_init_pre()`
     sdl.window [ title="SNKRX", width=math.floor(480*sc + 0.5), height=math.floor(270*sc + 0.5),
-                 fps=60, fixed=true, passes=[:draw, :overlay] ]
+                 fps=60, fixed=true, passes=[:draw, :overlay], clear=false ]
     `eg_init_post();`
 }
 defer {
