@@ -5,11 +5,11 @@
 ;;
 ;;      :key.dn [name]          a key was pressed  (names of SDL: 'A', 'Left')
 ;;      :key.up [name]          a key was released
-;;      :mouse.mv [x,y]         the mouse moved    (in game pixels)
-;;      :mouse.dn [x,y,but]     a button was pressed (1 left, 3 right)
-;;      :mouse.up [x,y,but]     a button was released
+;;      :mouse.motion [x,y]         the mouse moved    (in game pixels)
+;;      :mouse.button.dn [x,y,but]     a button was pressed (1 left, 3 right)
+;;      :mouse.button.up [x,y,but]     a button was released
 ;;      :quit                   the window was closed
-;;      :tick [us]              the real time of the tick (1/60 s, in us)
+;;      :frame [us]              the real time of the tick (1/60 s, in us)
 ;;      (time)                  the game time, which `await 1s` and `:clock`
 ;;                              follow: the real time scaled by `eng.slow`
 ;;      :draw                   to draw the frame

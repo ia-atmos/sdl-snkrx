@@ -306,7 +306,7 @@ func gold_lines (A, step) {
 task SlowDown (dur) {
     pin st = [ v=1 ]
     spawn {
-        loop on :tick {
+        loop on :frame {
             eng.slow(st.v)
         }
     }
@@ -491,7 +491,7 @@ task Died (A, ui) {
     par :any {
         await :Button.click until it.id == :restart
     } with {
-        await :key.dn until it.name == "R"
+        await :key.dn until it.key == "R"
     }
     play(ui_transition2, [pitch=rfloat(0.95, 1.05), volume=0.5])
     play(ui_switch2, [pitch=rfloat(0.95, 1.05), volume=0.5])

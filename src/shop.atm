@@ -76,7 +76,7 @@ task ShopButton (owner, id, x, y, look, info) {
     loop {
         if !inside() {
             par :any {
-                await :mouse.mv until inside()
+                await :mouse.motion until inside()
             } with {
                 loop on :draw {
                     draw(false)
@@ -87,10 +87,10 @@ task ShopButton (owner, id, x, y, look, info) {
         play(pop2, [pitch=rfloat(0.95, 1.05), volume=0.5])
         spring_pull(s, 0.2, 200, 10)
         par :any {
-            await :mouse.mv until !inside()
+            await :mouse.motion until !inside()
         } with {
-            loop e on :mouse.dn {
-                emit @owner :Button.click [ id=id, but=e.but ]
+            loop e on :mouse.button.dn {
+                emit @owner :Button.click [ id=id, but=e.button ]
             }
         } with {
             ;; after the click above, which the owner handles at once
@@ -100,7 +100,7 @@ task ShopButton (owner, id, x, y, look, info) {
                     par :any {
                         await InfoText(W/2, H/2 - 45, info())
                     } with {
-                        await :mouse.dn until info()@(0).text != k
+                        await :mouse.button.dn until info()@(0).text != k
                     }
                 }
             } else {
@@ -158,7 +158,7 @@ task ClassIcon (x, y, class, units, next, s, party, tut) {
     spawn {
         loop {
             if !inside() {
-                await :mouse.mv until inside()
+                await :mouse.motion until inside()
             }
             play(ui_hover1, [pitch=rfloat(1.3, 1.5), volume=0.5])
             spring_pull(s, 0.2, 200, 10)
@@ -166,7 +166,7 @@ task ClassIcon (x, y, class, units, next, s, party, tut) {
                 emit @:global :Shop.highlight [ class=class, on=true ]
             }
             par :any {
-                await :mouse.mv until !inside()
+                await :mouse.motion until !inside()
             } with {
                 if tut {
                     await InfoText(W/2 - 25, H/2 + 25, info_class(class, units, true), false, tut)
@@ -310,12 +310,12 @@ task ShopCard (shop, i, x, y, character, units) {
     spawn {
         loop {
             if !inside_icon() {
-                await :mouse.mv until inside_icon()
+                await :mouse.motion until inside_icon()
             }
             play(ui_hover1, [pitch=rfloat(1.3, 1.5), volume=0.5])
             spring_pull(is, 0.2, 200, 10)
             par :any {
-                await :mouse.mv until !inside_icon()
+                await :mouse.motion until !inside_icon()
             } with {
                 await InfoText(W/2, H/2 + 10, info_character(character, 1, nil, cost))
             }
@@ -329,7 +329,7 @@ task ShopCard (shop, i, x, y, character, units) {
                 ;; out: back to its size, unless the mouse comes back first
                 ;; (the original cancels the tween by its tag, `pulse`)
                 par :any {
-                    await :mouse.mv until inside()
+                    await :mouse.motion until inside()
                 } with {
                     await Tween(0.1, p, [sx=1], linear)
                     await(false)
@@ -344,9 +344,9 @@ task ShopCard (shop, i, x, y, character, units) {
                 spring_pull(sp, 0.1, 200, 10)
             }
             par :any {
-                await :mouse.mv until !inside()
+                await :mouse.motion until !inside()
             } with {
-                loop on :mouse.dn until it.but == 1 {
+                loop on :mouse.button.dn until it.button == 1 {
                     emit @shop :Shop.buy [ i=i ]
                 }
             } with {
@@ -440,12 +440,12 @@ task CharacterPart (shop, row, x, u, copy, sc) {
         ;; the drag, of the square of a unit in the shop
         if shop && !copy {
             loop {
-                await :mouse.dn until (it.but == 1) && inside()
+                await :mouse.button.dn until (it.button == 1) && inside()
                 set row.grabbed = true
                 par :any {
-                    await :mouse.up until it.but == 1
+                    await :mouse.button.up until it.button == 1
                 } with {
-                    loop on :tick {
+                    loop on :frame {
                         val _, my = eng.mouse()
                         val to = ifs {
                             my < (y() - 19) => row.i - 1
@@ -471,7 +471,7 @@ task CharacterPart (shop, row, x, u, copy, sc) {
     loop {
         if !inside() {
             loop {
-                await <:mouse.mv || :Shop.move>
+                await <:mouse.motion || :Shop.move>
                 until inside()
             }
         }
@@ -480,14 +480,14 @@ task CharacterPart (shop, row, x, u, copy, sc) {
         val price = if copy => sale_price(c, copy) => sale_price(c, level, shop && u.reserve)
         par :any {
             loop {
-                await <:mouse.mv || :Shop.move>
+                await <:mouse.motion || :Shop.move>
                 until !inside()
             }
         } with {
             await InfoText(W/2, H/2 + 10, info_character(c, level, price), !shop)
         } with {
             if shop {
-                loop on :mouse.dn until (it.but == 3) && !created {
+                loop on :mouse.button.dn until (it.button == 3) && !created {
                     emit @shop :Shop.sell [ i=row.i, copy=copy ]
                 }
             } else {
@@ -583,20 +583,20 @@ task ItemCard (shop, i, x, y, p, sc) {
     }
     loop {
         if !inside() {
-            await :mouse.mv until inside()
+            await :mouse.motion until inside()
         }
         set selected = true
         play(ui_hover1, [pitch=rfloat(1.3, 1.5), volume=0.5])
         spring_pull(s, 0.2, 200, 10)
         par :any {
-            await :mouse.mv until !inside()
+            await :mouse.motion until !inside()
         } with {
             if shop {
-                loop e on :mouse.dn {
-                    if (e.but == 1) && !fixed && (p.level < 3) {
+                loop e on :mouse.button.dn {
+                    if (e.button == 1) && !fixed && (p.level < 3) {
                         emit @shop :Shop.item_up [ i=i ]
                     }
-                    if e.but == 3 {
+                    if e.button == 3 {
                         emit @shop :Shop.item_sell [ i=i ]
                     }
                 }
@@ -611,7 +611,7 @@ task ItemCard (shop, i, x, y, p, sc) {
                 par :any {
                     await InfoText(W/2, H/2 + 10, info_item(p, fixed), true)
                 } with {
-                    await :mouse.dn until (p.level != lv) || (p.xp != xp)
+                    await :mouse.button.dn until (p.level != lv) || (p.xp != xp)
                 }
             }
         }
@@ -894,14 +894,14 @@ task ShopMain (run, shop) {
         }
         val id = ifs {
             e ?? :Button.click => e.id
-            e ?? :key.dn => match e.name {
+            e ?? :key.dn => match e.key {
                 "R" => :reroll ; "Return" => :go ; else => nil
             }
             else => nil
         }
         val buy = ifs {
             e ?? :Shop.buy => e.i
-            (e ?? :key.dn) && X.in(e.name, ["1", "2", "3"]) => tonumber(e.name) - 1
+            (e ?? :key.dn) && X.in(e.key, ["1", "2", "3"]) => tonumber(e.key) - 1
             else => nil
         }
         val but = (e ?? :Button.click) && e.but || 1

@@ -1086,13 +1086,14 @@ static AStatus eg_emit (const char* tag, const char* name, double x, double y, i
     AVal evt = a_tab();
     a_tag(evt, t);
     if (name != NULL) {
-        eg_field(evt, "name", a_strz(name));
+        eg_field(evt, "key", a_strz(name));
     } else if (but == -2) {
+        eg_field(evt, "n", a_int(EG_TICK));
         eg_field(evt, "us", a_int((int64_t)x));
     } else if (but >= 0) {
         eg_field(evt, "x", a_num(x));
         eg_field(evt, "y", a_num(y));
-        eg_field(evt, "but", a_int(but));
+        eg_field(evt, "button", a_int(but));
     }
     AStatus st = atm_emit(evt);
     a_dec(evt);
@@ -1231,12 +1232,12 @@ static AStatus eg_script (const char* var, int tick) {
         } else if (!strncmp(arg, "mv:", 3)) {
             double x=0, y=0;
             sscanf(arg+3, "%lf:%lf", &x, &y);
-            st = eg_mouse("mouse.mv", x, y, 0);
+            st = eg_mouse("mouse.motion", x, y, 0);
         } else if (!strncmp(arg, "dn:", 3) || !strncmp(arg, "up:", 3)) {
             int dn = (arg[0] == 'd');
             const char* k = arg+3;
             if (k[0]=='m' && k[1]>='1' && k[1]<='3' && k[2]=='\0') {
-                st = eg_mouse(dn ? "mouse.dn" : "mouse.up", EG_MX, EG_MY, k[1]-'0');
+                st = eg_mouse(dn ? "mouse.button.dn" : "mouse.button.up", EG_MX, EG_MY, k[1]-'0');
             } else {
                 st = eg_emit(dn ? "key.dn" : "key.up", k, 0, 0, -1);
             }
@@ -1358,14 +1359,14 @@ int main (int argc, char** argv) {
                     break;
                 case SDL_MOUSEMOTION:
                     if (!EG_TEST) {
-                        st = eg_mouse("mouse.mv", (double)e.motion.x/EG_SCALE,
+                        st = eg_mouse("mouse.motion", (double)e.motion.x/EG_SCALE,
                                       (double)e.motion.y/EG_SCALE, 0);
                     }
                     break;
                 case SDL_MOUSEBUTTONDOWN:
                 case SDL_MOUSEBUTTONUP:
                     if (!EG_TEST) {
-                        st = eg_mouse(e.type==SDL_MOUSEBUTTONDOWN ? "mouse.dn" : "mouse.up",
+                        st = eg_mouse(e.type==SDL_MOUSEBUTTONDOWN ? "mouse.button.dn" : "mouse.button.up",
                                       (double)e.button.x/EG_SCALE,
                                       (double)e.button.y/EG_SCALE, e.button.button);
                     }
@@ -1379,7 +1380,7 @@ int main (int argc, char** argv) {
         // real time: 1/60 s, rounded so that 60 ticks are exactly 1 s
         int64_t us = (int64_t)tick*1000000/60 - (int64_t)(tick-1)*1000000/60;
         if (st == A_OK) {
-            st = eg_emit("tick", NULL, (double)us, 0, -2);
+            st = eg_emit("frame", NULL, (double)us, 0, -2);
         }
         // game time: the real time, scaled by the slow motion
         if (st == A_OK) {

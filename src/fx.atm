@@ -52,7 +52,7 @@ func shake_amp (s, xs, t) {
 
 ;; Moves the camera in every real tick, as `Camera:update`.
 task Camera () {
-    loop e on :tick {
+    loop e on :frame {
         val dt = e.us / 1000000
         val now = 1000*eng.tick()/60
         var ax, ay = 0, 0

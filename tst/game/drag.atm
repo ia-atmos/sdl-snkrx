@@ -18,12 +18,12 @@ func loop_chars_of (us) {
     out
 }
 spawn {
-    loop e on :mouse.dn {
+    loop e on :mouse.button.dn {
         print("dn", eng.tick(), order())
     }
 }
 spawn {
-    loop e on :mouse.up {
+    loop e on :mouse.button.up {
         print("up", eng.tick(), order())
         await 100ms
         pin r = run_load()

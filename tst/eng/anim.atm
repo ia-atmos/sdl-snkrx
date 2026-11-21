@@ -11,7 +11,7 @@ spring_pull(s, 0.2)
 spawn Springs(s)
 spawn {
     loop i in 12 {
-        await :tick
+        await :frame
         print(:spring, eng.tick(), f(s.x))
     }
 }

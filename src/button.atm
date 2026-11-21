@@ -39,7 +39,7 @@ task Button (owner, id, x, y, label, opts) {
         ;; out
         if !inside() {
             par :any {
-                await :mouse.mv until inside()
+                await :mouse.motion until inside()
             } with {
                 loop on :draw {
                     draw(bg_color@0, t_out)
@@ -51,9 +51,9 @@ task Button (owner, id, x, y, label, opts) {
         play(pop2, [pitch=rfloat(0.95, 1.05), volume=0.5])
         spring_pull(s, opts && opts.pull || 0.2, 200, 10)
         par :any {
-            await :mouse.mv until !inside()
+            await :mouse.motion until !inside()
         } with {
-            loop on :mouse.dn until it.but == 1 {
+            loop on :mouse.button.dn until it.button == 1 {
                 emit @owner :Button.click [ id=id ]
             }
         } with {

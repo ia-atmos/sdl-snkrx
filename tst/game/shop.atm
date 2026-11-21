@@ -4,8 +4,9 @@ spawn Background()
 spawn Input()
 pin run = [ level=1, loop=0, gold=3, units=[], passives=[], shop_level=1, shop_xp=0 ]
 spawn {
-    loop e on :mouse.dn {
-        print("click", e.x, e.y, "gold", run.gold, "units", #run.units)
+    loop e on :mouse.button.dn {
+        val mx, my = eng.mouse()
+        print("click", mx, my, "gold", run.gold, "units", #run.units)
     }
 }
 spawn {

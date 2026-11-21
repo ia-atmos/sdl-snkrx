@@ -38,7 +38,7 @@ task Music () {
             await(false)        ;; no sound (SNX_MUTE): one song, as at the start
         }
         par :any {
-            loop on :tick {
+            loop on :frame {
                 set_volume(inst, st.v*VOLUME.music)
                 until !playing(inst)
             }

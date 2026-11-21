@@ -29,12 +29,12 @@ task TutorialPart (x, y, character, level, list) {
                          "[fg] - [yellow]Lv." ++ tostring(level)
     loop {
         if !inside() {
-            await :mouse.mv until inside()
+            await :mouse.motion until inside()
         }
         play(ui_hover1, [pitch=rfloat(1.3, 1.5), volume=0.5])
         spring_pull(s, 0.2, 200, 10)
         par :any {
-            await :mouse.mv until !inside()
+            await :mouse.motion until !inside()
         } with {
             await InfoText(W/2, H/2 + H/4 - 12, lines, false, list)
         }
@@ -87,7 +87,7 @@ task Tutorial () {
         await :Button.click until it.id == :close
         :close
     } with {
-        await :key.dn until it.name == "Escape"
+        await :key.dn until it.key == "Escape"
         :escape
     }
 }

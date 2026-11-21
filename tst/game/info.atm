@@ -9,13 +9,15 @@ pin run = [ level=2, loop=0, gold=2, shop_level=1, shop_xp=0,
             units=[ [character="swordsman", level=2, reserve=[1, 0]], [character="archer", level=1, reserve=[0, 0]] ],
             passives=[ [passive="amplify", level=1, xp=0] ] ]
 spawn {
-    loop e on :mouse.mv {
-        print("mv", e.x, e.y, "tick", eng.tick())
+    loop e on :mouse.motion {
+        val mx, my = eng.mouse()
+        print("mv", mx, my, "tick", eng.tick())
     }
 }
 spawn {
-    loop e on :mouse.dn {
-        print("dn", e.x, e.y, "gold", run.gold)
+    loop e on :mouse.button.dn {
+        val mx, my = eng.mouse()
+        print("dn", mx, my, "gold", run.gold)
     }
 }
 await Shop(run)

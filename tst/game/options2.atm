@@ -17,14 +17,14 @@ pin A = new_arena(2)
 set A.run = run
 spawn Arena(A, [[440, 240, 1]])
 spawn {
-    loop on :mouse.up {
-        await :tick
+    loop on :mouse.button.up {
+        await :frame
         print("click", eng.tick(), "mouse", STATE.mouse_control, "movement", STATE.screen_movement, "sx", STATE.sx)
     }
 }
 spawn {
-    await :key.dn until it.name == "K"
-    await :tick
+    await :key.dn until it.key == "K"
+    await :frame
     print("K", "sx", STATE.sx)
 }
 spawn {

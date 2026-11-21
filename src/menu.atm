@@ -64,7 +64,7 @@ task Menu () {
 
     loop {
         val e = await <:Button.click || :key.dn>
-        val id = if e ?? :key.dn => (if e.name == "Escape" => :options => nil) => e.id
+        val id = if e ?? :key.dn => (if e.key == "Escape" => :options => nil) => e.id
         match id {
             :arena_run => {
                 play(ui_transition2, [pitch=rfloat(0.95, 1.05), volume=0.5])

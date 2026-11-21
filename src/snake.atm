@@ -79,7 +79,7 @@ task SlowMotion () {
             pin st = [ v=e.amount ]
             eng.slow(st.v)
             spawn {
-                loop on :tick {
+                loop on :frame {
                     eng.slow(st.v)
                 }
             }

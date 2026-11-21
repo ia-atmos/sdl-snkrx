@@ -7,14 +7,15 @@ spawn Background()
 spawn Input()
 pin run = [ level=1, loop=0, gold=3, units=[], passives=[], shop_level=1, shop_xp=0 ]
 spawn {
-    loop e on :mouse.dn {
-        print("dn", eng.tick(), e.x, e.y, "gold", run.gold, "units", #run.units)
+    loop e on :mouse.button.dn {
+        val mx, my = eng.mouse()
+        print("dn", eng.tick(), mx, my, "gold", run.gold, "units", #run.units)
     }
 }
 spawn {
     loop e on :key.dn {
-        await :tick
-        print("key", eng.tick(), e.name, "gold", run.gold, "units", #run.units)
+        await :frame
+        print("key", eng.tick(), e.key, "gold", run.gold, "units", #run.units)
     }
 }
 await Shop(run)

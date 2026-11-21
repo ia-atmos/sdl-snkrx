@@ -24,7 +24,7 @@ func volume_step (v, down) {
 
 ;; The game time follows `st.v` while the options are open.
 task PauseTime (st) {
-    loop on :tick {
+    loop on :frame {
         eng.slow(st.v)
     }
 }
@@ -108,7 +108,7 @@ task Options (kind) {
     }
     loop {
         val e = await <:Button.click || :key.dn>
-        val id = if e ?? :key.dn => (match e.name { "Escape" => :resume ; "R" => (if kind == :menu => nil => :restart) ; else => nil }) => e.id
+        val id = if e ?? :key.dn => (match e.key { "Escape" => :resume ; "R" => (if kind == :menu => nil => :restart) ; else => nil }) => e.id
         if id {
             option_sound(id, springs@(e.id))
         }
@@ -170,7 +170,7 @@ task Options (kind) {
 task Pause (kind, run) {
     loop {
         par :any {
-            await :key.dn until it.name == "Escape"
+            await :key.dn until it.key == "Escape"
         } with {
             await :Pause.open
         } with {
@@ -186,7 +186,7 @@ task Pause (kind, run) {
 ;; the win).
 task RunClock (run) {
     if run {
-        loop e on :tick {
+        loop e on :frame {
             set run.time = (run.time || 0) + e.us/1000000
         }
     }
@@ -234,7 +234,7 @@ func window_step (d) {
 ;; The keys K and L, anywhere, as the update of `main.lua`.
 task WindowKeys () {
     loop e on :key.dn {
-        match e.name {
+        match e.key {
             "K" => if (STATE.sx || 2) > 1 { window_step(-0.5) ; state_save() }
             "L" => { window_step(0.5) ; state_save() }
         }

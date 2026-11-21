@@ -50,22 +50,22 @@ pin BUT_ACTION = [ @1=:left, @3=:right ]
 task Input () {
     par {
         loop e on :key.dn {
-            val a = KEY_ACTION@(e.name)
+            val a = KEY_ACTION@(e.key)
             if a { held_press(a) }
         }
     } with {
         loop e on :key.up {
-            val a = KEY_ACTION@(e.name)
+            val a = KEY_ACTION@(e.key)
             if a { held_release(a) }
         }
     } with {
-        loop e on :mouse.dn {
-            val a = BUT_ACTION@(e.but)
+        loop e on :mouse.button.dn {
+            val a = BUT_ACTION@(e.button)
             if a { held_press(a) }
         }
     } with {
-        loop e on :mouse.up {
-            val a = BUT_ACTION@(e.but)
+        loop e on :mouse.button.up {
+            val a = BUT_ACTION@(e.button)
             if a { held_release(a) }
         }
     }

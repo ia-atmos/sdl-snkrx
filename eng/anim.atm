@@ -113,7 +113,7 @@ task TweenReal (dur, target, source, method) {
     val f = method || linear
     val end = math.floor(dur*1000000 + 0.5)    ;; in whole microseconds
     var timer = 0
-    loop e on :tick {
+    loop e on :frame {
         set timer = math.min(timer + e.us, end)
         val t = if end > 0 => f(timer / end) => 1
         loop k, v in source {
@@ -127,7 +127,7 @@ task TweenReal (dur, target, source, method) {
 ;; moving in slow motion (`force_update` of the original).
 task UISprings (...) {
     pin ss = [...]
-    loop e on :tick {
+    loop e on :frame {
         val dt = e.us / 1000000
         loop _, s in ss {
             spring_update(s, dt)
@@ -140,5 +140,5 @@ task UISprings (...) {
 ;; ends such a wait a tick later for most `s` (it tests `timer > s` on a
 ;; sum of floats); the port no longer copies that (`doc/relaxed.md`).
 task WaitReal (s) {
-    await(math.floor(s*60 + 0.5), :tick)
+    await(math.floor(s*60 + 0.5), :frame)
 }

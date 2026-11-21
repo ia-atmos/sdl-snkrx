@@ -5,12 +5,13 @@ include "../../eng/eng.atm"
 
 spawn {
     loop e on :mouse {
-        print(eng.tick(), e.tag, e.x, e.y, e.but)
+        val mx, my = eng.mouse()
+        print(eng.tick(), e.tag, mx, my, e.button)
     }
 }
 spawn {
     loop e on :key {
-        print(eng.tick(), e.tag, e.name)
+        print(eng.tick(), e.tag, e.key)
     }
 }
 spawn {
@@ -24,7 +25,7 @@ spawn {
     eng.slow(1)
 }
 spawn {
-    val e = await :tick
+    val e = await :frame
     print(eng.tick(), e.tag, e.us)
 }
 await(false)

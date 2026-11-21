@@ -86,7 +86,7 @@ task Credits () {
             url_click(springs@(e.id), urls@(e.id))
         }
     } with {
-        await :key.dn until it.name == "Escape"
+        await :key.dn until it.key == "Escape"
     }
 }
 
