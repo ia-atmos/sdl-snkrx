@@ -29,7 +29,7 @@ session, `session#N` (this session: `sdl-snxkx`, for the repository
 | #18 | The benchmark ran the port with no sound; rerun with it | work | done |
 | #19 | Two latent errors of `pin` in the elites, found by the timing of #3 | work | done |
 | #20 | The clear of the window by env-sdl costs 0.82 s of a stress run that the port covers anyway | remark | closed: `clear=false` (env-sdl `e0aba7b`) adopted; measured 18.42 s against 18.62 s, within the spread (`bench.md`) |
-| #21 | On env-sdl the stress is 1.45 s slower on the clock; 0.63 s is not the clear and is not explained | work | open |
+| #21 | On env-sdl the stress is 1.45 s slower on the clock; 0.63 s is not the clear and is not explained | work | closed: measured again on one compiler, builds alternated (`bench.md`, "Where the 1.45 s went"): the gap was the clear (0.70 s of it recovered by `clear=false`); 0.13 to 0.21 s remain, at the edge of the spread, in rendering and presenting |
 | #22 | The frame loop on the rules of 2026-11-21 (`atmos-pin#17`, `#18`) | remark | done: lang `95b0d0b` 2.985 s against `7db3c99` 2.937 s of stress logic, within the spread; 40 identical, no ASAN leak; setup at `95b0d0b` (`4b2219f`) |
 | #23 | `grab`: the options take the input of the screen behind them (`atmos-lang#112a`) | experiment | branch `exp-grab` (`1167084`, lang `grab` `c66c735`), not to merge: 40 identical plus a new test; reported to `atmos-grab`; the merge of `grab` into the language is the author's |
 | #24 | `context`: the stars and the background draw in their canvas by a context (`atmos-lang#112a`) | experiment | branch `exp-context` (`88da713`, lang `context` `46703cd`), not to merge: 40 identical, 24.72 -> 4.86 canvas switches per frame; reported to `atmos-context`; the merge is the author's |

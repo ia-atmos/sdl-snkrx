@@ -211,6 +211,35 @@ alternated, the same machine: 18.76, 18.42, 17.38 against 19.22, 18.58,
 0.82 s of the local patch above and within the spread of the runs. The
 outputs of the 40 tests are the same.
 
+### Where the 1.45 s went (TODO #21)
+
+The same stress, with the window, three runs of each build alternated
+on the same machine, each build with the same compiler. `SNX_PROFILE`
+splits logic, drawing and rendering; "other" is the clock minus the
+three (the input, the present, and the rest of the loop: on env-sdl the
+present is no longer inside "render").
+
+| compiler | build | clock (s) | logic | draw | render | other |
+|----------|-------|----------:|------:|-----:|-------:|------:|
+| `7db3c99` | before the move (`ad37d31`) | 16.94 | 3.30 | 0.62 | 7.42 | 5.57 |
+| `7db3c99` | on env-sdl, with the clear (`82ce653`) | 17.85 | 3.59 | 0.65 | 5.79 | 7.83 |
+| `7db3c99` | on env-sdl, `clear=false` (`main`) | 17.15 | 3.26 | 0.60 | 4.61 | 8.63 |
+| `95b0d0b` | before the move (`ad37d31`) | 16.28 | 3.26 | 0.59 | 7.07 | 5.41 |
+| `95b0d0b` | on env-sdl, `clear=false` (`main`) | 16.41 | 3.17 | 0.58 | 4.37 | 8.31 |
+
+(medians; the ranges of the clock: 16.48 to 16.99, 17.40 to 18.04,
+16.81 to 17.16, 16.16 to 16.50, 16.12 to 16.65.)
+
+The gap was real at the move (0.91 s here), and `clear=false` took 0.70
+s of it: the clear made the composition of the canvases slower (render
+5.79 s against 4.61 s), more than the 0.20 s that one pair of runs had
+shown above. What is left is 0.13 s to 0.21 s, at the edge of the
+spread of the runs, in rendering and presenting (render plus other:
+13.0 s before, 13.2 s on env-sdl with `7db3c99`); the logic is the same
+(3.17 s to 3.30 s). The 0.63 s that seemed not to be the clear was the
+clear too: one measure of it, by a local patch, had found less than the
+whole.
+
 ## Size of the code
 
 Lines of code (no blanks, no comments) and tokens, with
