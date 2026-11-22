@@ -100,7 +100,7 @@ task WinButtons (last) {
     set pub = [ springs=[] ]                ;; the springs its buttons lend
     val springs = pub.springs
     par {
-        toggle on :Win.on with :draw {
+        mute <!:draw> on :Win.mute {
             pin bs = tasks()
             val me = task
             pin follow = [ fg_color="greenm5", bg_color=green, w=text_width(pixul_font, "follow me on steam!") + 12, pull=0.05, dy=0 ]
@@ -131,9 +131,9 @@ task WinButtons (last) {
     } with {
         loop {
             await :Credits.open
-            emit @:task :Win.on [false]
+            emit @:task :Win.mute [true]
             await Credits()
-            emit @:task :Win.on [true]
+            emit @:task :Win.mute [false]
         }
     }
 }

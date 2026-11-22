@@ -192,7 +192,7 @@ task PauseKey (run) {
 }
 
 ;; In the shop, the shop itself opens the options (`:Shop.options`), so
-;; that it is toggled off behind them: the original does not update the
+;; that it is muted behind them: the original does not update the
 ;; shop while it is `paused`, so a click behind the options buys nothing.
 task ShopPause (run, shop) {
     loop {

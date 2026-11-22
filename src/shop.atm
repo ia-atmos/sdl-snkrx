@@ -731,7 +731,7 @@ func shop_sell (run, i, copy) {
 
 ;; The shop. It emits `:goto` to the arena on GO.
 ;; The shop, and its tutorial over it. While the tutorial is open, the
-;; shop is toggled off but for `:draw`: it stays on the screen as it was,
+;; shop is muted but for `:draw`: it stays on the screen as it was,
 ;; and nothing in it moves or answers the mouse (the original stops
 ;; updating its groups `main` and `effects` while `in_tutorial`).
 ;; The same while the options are open (`paused`).
@@ -739,19 +739,19 @@ task Shop (run) {
     val me = task
     eng.cursor(true)
     par {
-        toggle on :Shop.on with :draw {
+        mute <!:draw> on :Shop.mute {
             await ShopMain(run, task)
         }
     } with {
         loop {
             await :Tutorial.open
-            emit @:task :Shop.on [false]
+            emit @:task :Shop.mute [true]
             val how = par :any {
                 await Tutorial()
             } with {
                 await RunClock(run)     ;; not paused (`BuyScreen:update`)
             }
-            emit @:task :Shop.on [true]
+            emit @:task :Shop.mute [false]
             if how == :escape {
                 ;; the same Escape opens the options: the original quits
                 ;; the tutorial, then sees the key again in the same frame
@@ -759,15 +759,15 @@ task Shop (run) {
             }
         }
     } with {
-        ;; the options, over the shop toggled off (`ShopPause`)
+        ;; the options, over the shop muted (`ShopPause`)
         loop {
             await :Shop.options
-            emit @me :Shop.on [false]
+            emit @me :Shop.mute [true]
             par :all {
                 await Options(:shop, me)
             } with {
                 await :Options.closing
-                emit @me :Shop.on [true]
+                emit @me :Shop.mute [false]
             }
             emit @me :Shop.resumed
         }
