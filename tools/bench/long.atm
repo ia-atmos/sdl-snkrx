@@ -1,0 +1,18 @@
+;; One level with one sentry and no input, as the original's run2
+;; (`tools/bench/check.sh`): the level of SNX_LEVEL (1 or 2), traced
+;; with SNX_TRACE=1, to compare the port with the original
+;; (`doc/compiler.md`, 8).
+include "../../src/game.atm"
+
+spawn Background()
+spawn Camera()
+spawn Input()
+spawn SlowMotion()
+
+val L = tonumber(os.getenv("SNX_LEVEL") || "1")
+pin run = [ level=L, loop=0, gold=3, units=[["sentry", 1]] ]
+pin A = new_arena(L)
+set A.run = run
+spawn Arena(A)
+val e = await :goto
+print(eng.tick(), e.screen, run.gold)
