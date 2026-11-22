@@ -100,6 +100,19 @@ pin eng = [
     target = func (c) {
         `eg_canvas_set(eg_int($c));`
     },
+    ;; eng.on(c): [enter, leave] of a `context` that draws in the canvas `c`
+    on = func (c) {
+        [
+            func () {
+                val old = `:number EG_CUR`
+                `eg_canvas_set(eg_int($c));`
+                old
+            },
+            func (old) {
+                `eg_canvas_set(eg_int($old));`
+            },
+        ]
+    },
     canvas_draw = func (c, x, y, color) {
         `eg_canvas_draw(eg_int($c), eg_dbl($x), eg_dbl($y), eg_color($color));`
     },

@@ -18,8 +18,7 @@ pin pixul_font = font("PixulBrush", 8)
 ;; The background: a checkerboard of 22-pixel cells and a vertical
 ;; gradient, drawn while it lives.
 task Background () {
-    val enter, leave = eng.on(BACK)
-    context (enter, leave) {
+    context eng.on(BACK) {
         loop on :draw {
             loop i in (1, 32) {
                 loop j in (1, 18) {
@@ -60,7 +59,8 @@ task Star (p) {
     val dr = rfloat(0, math.pi/4)
     val v  = rfloat(30, 42)
     par :any {
-        loop us on :clock {
+        loop st_ on :step {
+            val us = st_.us
             val dt = us / 1000000
             set x += v*math.cos(-math.pi/4)*dt
             set y += v*math.sin(-math.pi/4)*dt
@@ -78,8 +78,7 @@ task Star (p) {
 ;; The stars draw in their canvas: one switch to STARS and back for all
 ;; of them in a frame, by the `context` around their pool.
 task Stars () {
-    val enter, leave = eng.on(STARS)
-    context (enter, leave) {
+    context eng.on(STARS) {
         pin ss = tasks()
         loop {
             await 375ms
