@@ -13,6 +13,8 @@
 --   SNKRX_DUMP=file         dumps the data of the game (see dump.lua), quits
 --   SNKRX_TRACE_POS=Class   traces the position and velocity of the objects
 --                           of a class of the main group, in every tick
+--   SNKRX_TRACE_HITS=1      with SNKRX_TRACE_GAME, also each hit on a
+--                           seeker: enemy.hit source damage hp
 --   SNKRX_TRACE_GAME=1      also traces the events of the game, as the
 --                           port's SNX_TRACE: enemy.die, unit.hit, wave
 --   SNKRX_STRESS=n          n more seekers when an arena starts, and the
@@ -207,12 +209,41 @@ function bench.install ()
     function Seeker:hit (...)
       local was = self.dead
       local r = shit(self, ...)
+      if os.getenv("SNKRX_TRACE_HITS") and not was then
+        local damage, projectile, dot, from_enemy = ...
+        local src = (projectile and projectile.character) or (dot and "dot") or (from_enemy and "enemy") or "other"
+        bench.trace("enemy.hit", string.format("%s %.1f %.1f", src, damage or 0, self.hp or 0))
+      end
       if self.dead and not was then
         bench.trace("enemy.die", self.boss or (self.speed_booster and "speed_booster") or (self.exploder and "exploder")
           or (self.headbutter and "headbutter") or (self.tank and "tank") or (self.shooter and "shooter")
           or (self.spawner and "spawner") or "seeker")
       end
       return r
+    end
+    if os.getenv("SNKRX_TRACE_HITS") then
+      -- each push of a seeker: its force, and when it ends, its ticks and top speed
+      local spush = Seeker.push
+      function Seeker:push (f, r, ...)
+        local r2 = spush(self, f, r, ...)
+        self.bench_push = { t = tick, f = f, vmax = 0 }
+        return r2
+      end
+      local supd = Seeker.update
+      function Seeker:update (dt)
+        local p = self.bench_push
+        local r = supd(self, dt)
+        if p and self.body and not self.dead then
+          local vx, vy = self:get_velocity()
+          local v = math.sqrt(vx*vx + vy*vy)
+          if v > p.vmax then p.vmax = v end
+          if not self.being_pushed then
+            bench.trace("push", string.format("%.1f %d %.1f", p.f, tick - p.t, p.vmax))
+            self.bench_push = nil
+          end
+        end
+        return r
+      end
     end
     local phit = Player.hit
     function Player:hit (...)
