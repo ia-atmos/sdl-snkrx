@@ -362,6 +362,28 @@ In level 2, the sentry dies earlier in the port than in the original,
 on both branches and in all ten runs (1671 to 2513 against 2945): a
 difference of its own, out of the reach of the step (TODO #26).
 
+### Merged, on env-sdl (2026-11-22)
+
+By the author's decision, the step is on `main` since the branch `step2`
+(`6ba11e3`), made again on env-sdl, which declined to emit a step of its
+own: the engine sums the pieces of the clock of a frame (`loop us on
+:clock` in `eng/eng.atm`) and emits their sum once, `:step [us]`, in the
+first pass of env-sdl (`:advance`, after the time and before `:draw`),
+so the step carries exactly the game time of the frame, even when a timer
+changes the factor of the clock in the middle of it. The 44 uses of
+`:clock` of the game (and those of 5 tests) step on it; `await d` stays
+on the clock.
+
+The long scenes (`tools/bench/long.atm`, one sentry, five seeds) give the
+same numbers as above on env-sdl: `main` before the merge as the column
+`main`, and `step2` as the column `step`, measure for measure. 20 tests
+changed their expected outputs. `chars2` no longer shows a barrage of
+the cannoneer (one shot per 6 s, and a chance per shot), but the path
+(the class chance of a barrage) stays shown by the archer in `classes`.
+The logic of the stress (`SNX_PROFILE=1`, no window, three runs each,
+alternated) took 3.107 s against 2.976 s before (3.229, 3.034, 3.107
+against 3.170, 2.976, 2.935).
+
 ## 9. The new rules of `pin`
 
 Seen at `3a6ffe9` (the rules since `98ad03a`). The port moved to them

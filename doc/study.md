@@ -563,14 +563,14 @@ it (`src/snake.atm:175-206`):
 if A.units@0 != u {
     par :any {
         ;; first, until there is a place for it on the path
-        loop on :clock {
+        loop on :step {
             ...
             until snake_place(A, u)
         }
         play(spawn1, [pitch=rfloat(0.8, 1.2), volume=0.15])
         ...
         ;; then along the path of the leader
-        loop on :clock {
+        loop on :step {
             ...
         }
     } with {
@@ -579,7 +579,8 @@ if A.units@0 != u {
 }
 ;; the leader
 par {
-    loop us on :clock {
+    loop st_ on :step {
+        val us = st_.us
         ...
     }
 } with {
@@ -907,7 +908,7 @@ end
 
 ```
 "headbutter" => loop {
-    loop on :clock {
+    loop on :step {
         val l = A.units@0
         until l && (math.sqrt((e.x - l.x)*(e.x - l.x) + (e.y - l.y)*(e.y - l.y)) < 76)
     }
