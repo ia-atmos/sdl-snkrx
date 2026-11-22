@@ -16,36 +16,42 @@
 0	add	Seeker 272.0 170.0
 0	add	Seeker 336.0 170.0
 0	add	Seeker 400.0 170.0
-26	unit.hit	cleric 109.3
-48	unit.hit	swordsman 129.5
-89	unit.hit	swordsman 118.9
-101	unit.hit	swordsman 108.4
-126	unit.hit	squire 158.0
-126	unit.hit	cleric 98.7
+25	unit.hit	swordsman 129.5
+25	unit.hit	cleric 109.3
+54	unit.hit	swordsman 118.9
+103	unit.hit	squire 158.0
+104	unit.hit	cleric 98.7
+179	unit.hit	swordsman 108.4
 201	enemy.die	seeker
 201	enemy.die	seeker
-203	unit.hit	swordsman 97.8
-205	unit.hit	cleric 88.0
 205	enemy.die	seeker
-205	unit.hit	squire 148.0
-208	enemy.die	seeker
-217	unit.hit	cleric 64.5
-229	unit.hit	swordsman 7.3
-232	unit.hit	swordsman -83.3
-232	unit.die	swordsman
-259	enemy.die	forcer
-259	add	EnemyCritter 199.9 129.8
-259	add	EnemyCritter 199.9 129.8
-259	add	EnemyCritter 199.9 129.8
-259	add	EnemyCritter 199.9 129.8
-259	add	EnemyCritter 199.9 129.8
-259	add	EnemyCritter 199.9 129.8
-259	enemy.die	tank
-279	unit.hit	squire 138.0
-323	unit.hit	cleric -3.2
-323	unit.die	cleric
-367	unit.hit	squire 115.9
-371	unit.hit	squire 52.5
-372	unit.hit	squire -11.0
-372	unit.die	squire
-372	died	12
+205	unit.hit	swordsman 97.8
+213	unit.hit	swordsman 74.5
+224	unit.hit	squire 148.0
+241	enemy.die	exploder
+241	add	EnemyCritter 239.9 175.0
+241	add	EnemyCritter 239.9 175.0
+241	add	EnemyCritter 239.9 175.0
+241	add	EnemyCritter 239.9 175.0
+295	unit.hit	squire 138.0
+297	unit.hit	swordsman -27.3
+297	unit.die	swordsman
+311	unit.hit	cleric -4.3
+311	unit.die	cleric
+344	unit.hit	squire 128.0
+538	add	EnemyCritter 311.4 190.6
+538	add	EnemyCritter 311.4 190.6
+538	add	EnemyCritter 311.4 190.6
+538	add	EnemyCritter 311.4 190.6
+538	add	EnemyCritter 311.4 190.6
+538	enemy.die	seeker
+548	unit.hit	squire 119.0
+549	enemy.die	seeker
+549	unit.hit	squire 109.0
+555	unit.hit	squire 99.0
+565	enemy.die	seeker
+565	unit.hit	squire 89.0
+638	unit.hit	squire 80.1
+656	unit.hit	squire -16.5
+656	unit.die	squire
+656	died	12

@@ -115,7 +115,8 @@ func random_enemy (A, x, y, rs, exclude) {
 ;; the time (`u.cooldown`, from 0 to 1).
 task Cooldown (u, d, ready) {
     var timer = 0
-    loop us on :clock {
+    loop st_ on :step {
+        val us = st_.us
         set timer += us / 1000000
         set u.cooldown = math.min(timer / (d*u.aspd_m), 1)
         until (timer > d*u.aspd_m) && ready()
@@ -128,7 +129,8 @@ task Cooldown (u, d, ready) {
 ;; (`set_every_multiplier`): `d` seconds times `u.aspd_m`. The timer `tk`
 ;; keeps what passes beyond the delay, as `every` does.
 task Every (u, d, tk) {
-    loop us on :clock {
+    loop st_ on :step {
+        val us = st_.us
         set tk.t += us / 1000000
         until tk.t > d*u.aspd_m
     }
@@ -282,7 +284,8 @@ task Projectile (A, p, fx) {
     val dx, dy, n = par :any {
         ;; flies
         var px, py = p.x, p.y
-        loop us on :clock {
+        loop st_ on :step {
+            val us = st_.us
             val dt = us / 1000000
             set p.x, p.y = body_pos(p.b)
             ifs {
@@ -664,7 +667,8 @@ task WallKnife (A, x, y, r, v, color, fx) {
         }
     }
     spawn {
-        loop us on :clock {
+        loop st_ on :step {
+            val us = st_.us
             set k.x, k.y = body_pos(k.b)
             body_set(k.b, :angle, k.r)
             body_set(k.b, :velocity, k.v*math.cos(k.r), k.v*math.sin(k.r))
@@ -871,7 +875,8 @@ task DotArea (A, a, fx) {
         }
     }
     spawn {
-        loop us on :clock {
+        loop st_ on :step {
+            val us = st_.us
             val dt = us / 1000000
             set st.vr += dvr*dt
             if follows && X.in(a.parent, A.units) {
@@ -938,7 +943,7 @@ task DotArea (A, a, fx) {
                 set shown = !shown
             }
         } else {
-            loop on :clock {
+            loop on :step {
                 until a.parent && X.nin(a.parent, A.units)
             }
         }
@@ -996,7 +1001,8 @@ task ForceArea (A, a, fx) {
     }
     spawn {
         var t = 0
-        loop us on :clock {
+        loop st_ on :step {
+            val us = st_.us
             set t += us / 1000000
             set st.vr += sp.dvr*(us / 1000000)
             ;; as `during(d, ...)`: the elapsed fraction lowers the force

@@ -40,7 +40,7 @@ task Quiet (A, foes, spawns) {
         ;; the critters of the enemies count too (they are not in `foes`)
         loop {
             until #A.enemies == 0
-            await :clock
+            await :step
         }
         until (#spawns == 0) && (#foes == 0)
     }
@@ -140,7 +140,7 @@ task BossWaves (A, foes, spawns, fx, shots) {
     val n = 8 + math.floor(A.level/2)
     loop {
         ;; only the boss left, or nobody, and no spawning
-        loop on :clock {
+        loop on :step {
             val alive = X.in(boss, A.enemies)
             until (#spawns == 0) && ((alive && (#foes <= 1)) || (!alive && (#foes == 0)))
         }

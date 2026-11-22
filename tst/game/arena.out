@@ -1,7 +1,7 @@
 0	add	Seeker 200.0 60.0
 0	add	Seeker 300.0 200.0
 0	add	Seeker 100.0 200.0
-117	enemy.die	seeker
-217	enemy.die	seeker
-256	enemy.die	seeker
-256	clear	1
+116	enemy.die	seeker
+218	enemy.die	seeker
+264	enemy.die	seeker
+264	clear	1
