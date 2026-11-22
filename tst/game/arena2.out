@@ -11,11 +11,19 @@
 0	add	Seeker 350.0 80.0
 0	add	Seeker 375.0 90.0
 30	unit.hit	vagrant 137.1
-39	unit.hit	vagrant 124.2
-100	unit.hit	vagrant 111.3
-241	unit.hit	vagrant 98.4
-315	unit.hit	vagrant 85.6
-340	enemy.die	seeker
-431	enemy.die	seeker
-549	enemy.die	seeker
-549	unit.hit	vagrant 72.7
+51	unit.hit	vagrant 124.2
+99	unit.hit	vagrant 111.3
+118	unit.hit	vagrant 98.4
+124	unit.hit	vagrant 85.6
+135	unit.hit	vagrant 72.7
+138	enemy.die	seeker
+138	unit.hit	vagrant 59.8
+171	unit.hit	vagrant 46.9
+176	unit.hit	vagrant 34.0
+182	unit.hit	vagrant 21.1
+197	enemy.die	seeker
+199	unit.hit	vagrant 8.2
+325	enemy.die	seeker
+325	unit.hit	vagrant -4.7
+325	unit.die	vagrant
+325	died	1

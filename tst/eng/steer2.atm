@@ -22,7 +22,8 @@ body(w, wr, :dynamic, 240, 200, :enemy, [:rect, 14, 6])
 pin ws = steerable(wr.b, 50, 1000, 2*math.pi, 2)
 body_set(wr.b, :velocity, 30, 0)    ;; a heading to start from
 
-loop us on :clock {
+loop st_ on :step {
+    val us = st_.us
     loop _, r in rs {
         set r.x, r.y = body_pos(r.b)
     }

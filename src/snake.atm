@@ -193,7 +193,7 @@ task Unit (A, u, fx, shots) {
 
     ;; the stats with the buffs of the others, in every tick
     spawn {
-        loop on :clock {
+        loop on :step {
             unit_buffs(A, u)
             unit_stats(u, false, A.ng)
         }
@@ -331,7 +331,7 @@ task Unit (A, u, fx, shots) {
         if A.units@0 != u {
             par :any {
                 ;; first, until there is a place for it on the path
-                loop on :clock {
+                loop on :step {
                     set u.x, u.y = body_pos(u.b)
                     set u.r = body_angle(u.b)
                     until snake_place(A, u)
@@ -343,7 +343,7 @@ task Unit (A, u, fx, shots) {
                 spawn @fx HitCircle(u.x, u.y, [rs=10, color=fg@0, scale_down=true,
                                                duration=0.3, change_color=[0.5, u.color]])
                 ;; then along the path of the leader
-                loop on :clock {
+                loop on :step {
                     set u.x, u.y = body_pos(u.b)
                     val p = snake_place(A, u)
                     if p {
@@ -359,7 +359,8 @@ task Unit (A, u, fx, shots) {
         }
         ;; the leader
         par {
-            loop us on :clock {
+            loop st_ on :step {
+                val us = st_.us
                 val dt = us / 1000000
                 ;; the path, as `previous_positions` (every 0.01s: every tick)
                 set A.path = [ [x=u.x, y=u.y, r=u.r] ] ++ A.path

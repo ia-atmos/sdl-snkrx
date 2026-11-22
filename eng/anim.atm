@@ -70,7 +70,8 @@ func spring_animate (s, x, k, d) {
 ;; Updates springs in every tick of game time, while it lives.
 task Springs (...) {
     pin ss = [...]
-    loop us on :clock {
+    loop st_ on :step {
+        val us = st_.us
         val dt = us / 1000000
         loop _, s in ss {
             spring_update(s, dt)
@@ -91,7 +92,8 @@ task Tween (dur, target, source, method) {
     }
     val f = method || linear
     var timer = 0
-    loop us on :clock {
+    loop st_ on :step {
+        val us = st_.us
         set timer += us / 1000000
         val t = f(timer / dur)
         loop k, v in source {

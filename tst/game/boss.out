@@ -1,33 +1,32 @@
-247	add	SpawnMarker 240.0 135.0
-315	add	Seeker 240.0 135.0
-315	wave	boss
-345	add	SpawnMarker 400.0 135.0
-425	add	Seeker 388.0 123.0
-431	add	Seeker 412.0 123.0
-437	add	Seeker 412.0 147.0
-443	add	Seeker 388.0 147.0
-449	add	Seeker 400.0 135.0
-455	add	Seeker 388.0 123.0
-461	add	Seeker 412.0 123.0
-467	add	Seeker 412.0 147.0
-479	add	Seeker 400.0 135.0
-516	enemy.die	speed_booster
-586	enemy.die	seeker
-590	enemy.die	speed_booster
-596	enemy.die	seeker
-596	unit.hit	vagrant 582.7
-606	enemy.die	seeker
-606	unit.hit	vagrant 565.3
-611	enemy.die	seeker
-611	unit.hit	vagrant 548.0
-612	enemy.die	seeker
-612	unit.hit	vagrant 530.7
-615	enemy.die	seeker
-615	unit.hit	vagrant 513.3
-616	enemy.die	seeker
-616	unit.hit	vagrant 496.0
-620	enemy.die	seeker
-620	unit.hit	vagrant 478.7
-620	clear	6
-620	achievement	speed_booster
-800	buy_screen	11
+246	add	SpawnMarker 240.0 135.0
+314	add	Seeker 240.0 135.0
+314	wave	boss
+344	add	SpawnMarker 400.0 135.0
+424	add	Seeker 388.0 123.0
+430	add	Seeker 412.0 123.0
+436	add	Seeker 412.0 147.0
+442	add	Seeker 388.0 147.0
+448	add	Seeker 400.0 135.0
+454	add	Seeker 388.0 123.0
+460	add	Seeker 412.0 123.0
+466	add	Seeker 412.0 147.0
+472	add	Seeker 388.0 147.0
+477	enemy.die	speed_booster
+478	add	Seeker 400.0 135.0
+489	enemy.die	seeker
+500	add	Seeker 388.0 123.0
+507	enemy.die	seeker
+509	enemy.die	seeker
+519	enemy.die	seeker
+588	enemy.die	seeker
+603	enemy.die	seeker
+603	enemy.die	seeker
+603	enemy.die	speed_booster
+603	enemy.die	seeker
+622	enemy.die	seeker
+622	unit.hit	vagrant 582.7
+628	enemy.die	seeker
+628	unit.hit	vagrant 565.3
+628	clear	6
+628	achievement	speed_booster
+808	buy_screen	11

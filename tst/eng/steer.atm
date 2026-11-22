@@ -16,7 +16,8 @@ val b = body(w, rec, :dynamic, 100, 100, :enemy, [:rect, 14, 6]).b
 pin st = steerable(b, 100, 2000, 2*math.pi, 2)
 pin f = \(v) { string.format("%.1f", v) }
 
-loop us on :clock {
+loop st_ on :step {
+    val us = st_.us
     steer_update(st)
     seek_point(st, 300, 150)
     phys_step(w, us/1000000)

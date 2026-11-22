@@ -68,7 +68,7 @@ task EnemyProjectile (A, p, fx) {
         }
     }
     val dx, dy = par :any {
-        loop on :clock {
+        loop on :step {
             set p.x, p.y = body_pos(p.b)
             body_set(p.b, :angle, p.r)
             body_set(p.b, :velocity, p.v*math.cos(p.r), p.v*math.sin(p.r))
@@ -147,7 +147,8 @@ task SpeedBoosts (e) {
         } with {
             val k = 3 + 0.015*e.level
             var t = 0
-            loop us on :clock {
+            loop st_ on :step {
+                val us = st_.us
                 set t += us / 1000000
                 set e.boost = k*remap(t, 0, k, 1, 0.5)
                 until t > b.duration
@@ -215,14 +216,14 @@ task EliteAttack (A, e, fx, shots) {
             val f_r, f_g, f_b = comps(fg@0)
             pin c = [ r=o_r, g=o_g, b=o_b ]
             spawn {
-                loop on :clock {
+                loop on :step {
                     set e.color = rgba(c.r, c.g, c.b)
                 }
             }
             loop {
                 ;; near the leader, and 10s after the last headbutt (not while
                 ;; silenced or stunned)
-                loop on :clock {
+                loop on :step {
                     val l = A.units@0
                     until l && (math.sqrt((e.x - l.x)*(e.x - l.x) + (e.y - l.y)*(e.y - l.y)) < 76) &&
                           !e.silenced && !e.stunned
@@ -251,7 +252,7 @@ task EliteAttack (A, e, fx, shots) {
                     par :any {
                         await 750ms
                     } with {
-                        loop on :clock {
+                        loop on :step {
                             until !e.headbutting
                         }
                     } with {
@@ -313,7 +314,8 @@ task BossAttack (A, e, fx, shots) {
     }
     loop {
         var t = 0
-        loop us on :clock {
+        loop st_ on :step {
+            val us = st_.us
             set t += us / 1000000
             set e.attack_ratio = t/d
             until t > d
@@ -461,7 +463,8 @@ task ForcerPull (A, e, fx) {
     par :any {
         await 2s
     } with {
-        loop us on :clock {
+        loop st_ on :step {
+            val us = st_.us
             loop _, o in enemies_in_circle(A, px, py, 160) {
                 val dd = math.sqrt((o.x - px)*(o.x - px) + (o.y - py)*(o.y - py))
                 if o.st {
@@ -552,7 +555,7 @@ task EnemyCritter (A, x, y, r, v, dmg, from, fx) {
                 body_set(c.b, :damping, 1.5)
                 body_set(c.b, :angular_damping, 1.5)
                 val e = par :any {
-                    loop on :clock {
+                    loop on :step {
                         set c.x, c.y = body_pos(c.b)
                         set c.r = body_angle(c.b)
                         val vx, vy = body_vel(c.b)
@@ -569,7 +572,7 @@ task EnemyCritter (A, x, y, r, v, dmg, from, fx) {
             body_set(c.b, :damping, 0)
             body_set(c.b, :angular_damping, 0)
             val e = par :any {
-                loop on :clock {
+                loop on :step {
                     set c.x, c.y = body_pos(c.b)
                     set c.r = body_angle(c.b)
                     set c.buff_mvspd_m = (c.slowed || 1)*(c.temporal_chains_mvspd_m || 1)

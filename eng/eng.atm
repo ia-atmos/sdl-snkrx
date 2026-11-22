@@ -13,7 +13,12 @@
 ;;      :quit                   the window was closed
 ;;      :frame [n,us]           the real time of the frame (1/60 s, in us)
 ;;      (time)                  the game time, which `await 1s` and `:clock`
-;;                              follow: the real time scaled by `eng.slow`
+;;                              follow: the real time scaled by `eng.slow`,
+;;                              in pieces (`compiler.md`, 8)
+;;      :step [us]              once per frame, after its time: the game time
+;;                              of the frame, on which the physics, the
+;;                              movements, and the springs step (none when
+;;                              the game time does not pass)
 ;;      :draw                   to draw the frame
 ;;      :overlay                to draw over the frame (after all of :draw)
 ;;
@@ -34,11 +39,33 @@ include "../ext/env-sdl/sdl.atm"
 do {
     val sc = `:number.float eg_init_pre()`
     sdl.window [ title="SNKRX", width=math.floor(480*sc + 0.5), height=math.floor(270*sc + 0.5),
-                 fps=60, fixed=true, passes=[:draw, :overlay], clear=false ]
+                 fps=60, fixed=true, passes=[:advance, :draw, :overlay], clear=false ]
     `eg_init_post();`
 }
 defer {
     `eg_quit();`
+}
+;; The step of the game time of a frame (`:step [us]`), once, after all of
+;; its time has passed: the runtime passes the time in pieces, cut where a
+;; timer expires, so a step on `:clock` would step twice in such a frame
+;; (`compiler.md`, 8); the original steps once per frame, with its `dt`.
+;; The pieces of the clock of the frame are summed, and the first pass of
+;; env-sdl (`:advance`, after the time and before `:draw`) emits their sum.
+spawn {
+    var game = 0
+    par {
+        loop us on :clock {
+            set game += us
+        }
+    } with {
+        loop on :advance {
+            if game > 0 {
+                val us = game
+                set game = 0
+                emit @:global :step [ us=us ]
+            }
+        }
+    }
 }
 ;; the mouse in game pixels, at each of its events (`eng.mouse()`)
 spawn {

@@ -25,7 +25,7 @@ task Pet (A, x, y, r, v, parent, fx) {
         }
     }
     par :any {
-        loop on :clock {
+        loop on :step {
             set o.x, o.y = body_pos(o.b)
             body_set(o.b, :angle, o.r)
             body_set(o.b, :velocity, o.v*math.cos(o.r), o.v*math.sin(o.r))
@@ -137,7 +137,7 @@ task Critter (A, x, y, r, v, dmg, parent, fx) {
                 body_set(c.b, :damping, 1.5)
                 body_set(c.b, :angular_damping, 1.5)
                 val e = par :any {
-                    loop on :clock {
+                    loop on :step {
                         set c.x, c.y = body_pos(c.b)
                         set c.r = body_angle(c.b)
                         val vx, vy = body_vel(c.b)
@@ -154,7 +154,7 @@ task Critter (A, x, y, r, v, dmg, parent, fx) {
             body_set(c.b, :damping, 0)
             body_set(c.b, :angular_damping, 0)
             val e = par :any {
-                loop on :clock {
+                loop on :step {
                     set c.x, c.y = body_pos(c.b)
                     set c.r = body_angle(c.b)
                     if !target || X.nin(target, A.enemies) {
@@ -223,7 +223,7 @@ task Automaton (A, x, y, parent, fx, shots) {
     par :any {
         await((18*(parent.conjurer_buff_m || 1)) * 1s)
     } with {
-        loop on :clock {
+        loop on :step {
             set a.x, a.y = body_pos(a.b)
             unit_stats(a, false, 0)
             set st.max_v = a.max_v
@@ -321,7 +321,7 @@ task Saboteur (A, x, y, parent, crit, fx) {
     }
     var target = if #A.enemies > 0 => rtable(A.enemies) => nil
     par :any {
-        loop on :clock {
+        loop on :step {
             set o.x, o.y = body_pos(o.b)
             set o.buff_area_size_m = parent.buff_area_size_m
             set o.buff_area_dmg_m = parent.buff_area_dmg_m
@@ -431,7 +431,7 @@ task Turret (A, x, y, parent, fx, shots) {
     par :any {
         await((24*(parent.conjurer_buff_m || 1)) * 1s)
     } with {
-        loop on :clock {
+        loop on :step {
             val e = closest_enemy(A, o.x, o.y, 256)
             if e {
                 rotate_towards_point(o.b, e.x, e.y, 0.2)
@@ -489,7 +489,8 @@ task Tree (A, x, y, parent, fx) {
     var vr = 0
     var shown = true
     spawn {
-        loop us on :clock {
+        loop st_ on :step {
+            val us = st_.us
             set vr += dvr*(us / 1000000)
         }
     }
@@ -548,7 +549,8 @@ task Volcano (A, x, y, parent, fx) {
     var vr = 0
     var shown = true
     spawn {
-        loop us on :clock {
+        loop st_ on :step {
+            val us = st_.us
             set vr += dvr*(us / 1000000)
         }
     }
@@ -614,7 +616,7 @@ task ForceField (A, u, fx) {
         }
     }
     par :any {
-        loop on :clock {
+        loop on :step {
             until X.nin(u, A.units)
             set o.x = u.x
             set o.y = u.y
@@ -679,7 +681,7 @@ task Gold (A, x, y, fx, shots) {
         }
     }
     spawn {
-        loop on :clock {
+        loop on :step {
             magnet(A, o)
         }
     }
