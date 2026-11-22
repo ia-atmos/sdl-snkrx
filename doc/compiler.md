@@ -384,6 +384,54 @@ The logic of the stress (`SNX_PROFILE=1`, no window, three runs each,
 alternated) took 3.107 s against 2.976 s before (3.229, 3.034, 3.107
 against 3.170, 2.976, 2.935).
 
+### Why the sentry dies sooner in level 2 (TODO #26, 2026-11-22)
+
+The rules match the original, checked one by one: the turrets of the
+sentry (one every 7 s, 15 s, four arrows every 2.75 to 3.5 s, a turn of
+pi per second), the seekers of level 2 (hp 20.8, damage 7, 5.7 per hit
+on the sentry after its defense, three contacts kill one), the push of a
+contact (25 to 35, and a pushed seeker faster than 60 hits the others
+for a quarter and a half of the push), the elites (6% per seeker), the
+filters of the world, the steering, the damping (0.9753 per tick in
+both, `1/(1 + 1.5/60)`). The opt-in traces of the original
+(`SNKRX_TRACE_HITS` of `tools/bench/bench.lua`) give the hits on the
+seekers by source; in level 2, until the sentry dies:
+
+| | original | port (5 seeds) |
+|-|---------:|---------------:|
+| seekers alive, mean | 2.88 | 2.65 to 4.05 |
+| contacts per 1000 ticks of a seeker | 2.12 | 1.82 to 3.56 |
+| hits of the arrows of the turrets per 1000 ticks | 4.75 | 1.58 to 4.09 |
+| hits between seekers, per contact of the sentry | 1.53 | 0.67 to 1.33 |
+| ticks of a push of force 25 or more, mean | 106 | 55 to 76 |
+
+So the seekers die more slowly in the port, mostly because a pushed
+seeker stops sooner and hits fewer others. One cause found: the
+friction. The original never sets one, so its fixtures have the default
+of LÖVE 11, 0.2 (measured: `Fixture:getFriction()`); the port had the
+0.6 of Box2D 3, and a pushed seeker that grazed a wall lost most of its
+speed (284 to 33 px/s in two ticks). With 0.2 (`c17ce1e`, test
+`eng/friction`), a push lasts 63 to 78 ticks (seeds 1 to 3), still short
+of the 106 of the original. On the long scenes (five seeds each, main
+before and after):
+
+| measure | original | before | friction 0.2 |
+|---------|---------:|-------:|-------------:|
+| level 1, second wave starts | 1693 | 1464 (1190 to 1764) | 1456 (1032 to 2223) |
+| level 1, cleared | 2450 | 2441 (1427 to 3073) | 2905 (2687 to 3481) |
+| level 1, seekers of the first wave | 8 | 8 (7 to 8) | 8 (7 to 8) |
+| level 1, hits on the sentry | 13 | 18 (16 to 23) | 18 (17 to 20) |
+| level 2, second wave starts | 1400 | 1710 (1464 to 2057) | 1970 (1435 to 2221) |
+| level 2, the sentry dies | 2945 | 2221 (1903 to 2447) | 2162 (1848 to 2756) |
+
+The fix does not bring the scenes nearer to the original (the one run
+of the original against five seeds, ranges that overlap): the sentry
+still dies sooner, and the rest of the gap is open. Left to look at:
+the solver of Box2D 3, which applies the restitution after the friction
+(the bounce of `eng/friction` keeps 160 of the 200 along the wall,
+LÖVE 140), and why the arrows of the turrets hit fewer seekers per
+arrow (10% against 16%).
+
 ## 9. The new rules of `pin`
 
 Seen at `3a6ffe9` (the rules since `98ad03a`). The port moved to them
