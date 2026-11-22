@@ -32,7 +32,7 @@ task Pet (A, x, y, r, v, parent, fx) {
         }
     } with {
         loop c on :collision.enter until (it.b == o.b) && (it.other.kind == :wall) {
-            loop _ in rint(3, 4) {
+            loop in rint(3, 4) {
                 spawn @fx HitParticle(c.x, c.y, [r=rfloat(0, 2*math.pi), color=o.color])
             }
             spawn @fx HitCircle(c.x, c.y, [scale_down=true])
@@ -51,7 +51,7 @@ task Pet (A, x, y, r, v, parent, fx) {
             until o.pierce <= 0
             set o.pierce -= 1
         }
-        loop _ in rint(3, 4) {
+        loop in rint(3, 4) {
             spawn @fx HitParticle(o.x, o.y, [r=rfloat(0, 2*math.pi), color=o.color])
         }
         spawn @fx HitCircle(o.x, o.y, [scale_down=true])
@@ -178,7 +178,7 @@ task Critter (A, x, y, r, v, dmg, parent, fx) {
         }
     }
     ;; as `Critter:die`
-    loop _ in rint(2, 3) {
+    loop in rint(2, 3) {
         spawn @fx HitParticle(c.x, c.y, [r=rfloat(0, 2*math.pi), color=c.color])
     }
     spawn @fx HitCircle(c.x, c.y, [scale_down=true])
@@ -262,7 +262,7 @@ task Automaton (A, x, y, parent, fx, shots) {
             taunt(A, a, parent, fx)
         }
     }
-    loop _ in rint(3, 4) {
+    loop in rint(3, 4) {
         spawn @fx HitParticle(a.x, a.y, [r=rfloat(0, 2*math.pi), color=a.color])
     }
     spawn @fx HitCircle(a.x, a.y, [scale_down=true])
@@ -422,7 +422,7 @@ task Turret (A, x, y, parent, fx, shots) {
         loop on :Upgrade until it.to == o {
             set o.upgrade_dmg_m += 0.5
             set o.upgrade_aspd_m += 0.5
-            loop _ in 6 {
+            loop in 6 {
                 spawn @fx HitParticle(o.x, o.y, [r=rfloat(0, 2*math.pi), color=o.color])
             }
             spawn @fx HitCircle(o.x, o.y, [scale_down=true])
@@ -460,7 +460,7 @@ task Turret (A, x, y, parent, fx, shots) {
         }
     }
     set o.alive = false
-    loop _ in rint(3, 4) {
+    loop in rint(3, 4) {
         spawn @fx HitParticle(o.x, o.y, [r=rfloat(0, 2*math.pi), color=o.color])
     }
     spawn @fx HitCircle(o.x, o.y, [scale_down=true])
@@ -568,7 +568,7 @@ task Volcano (A, x, y, parent, fx) {
     play(earth1, [pitch=rfloat(0.95, 1.05), volume=0.5])
     play(fire1, [pitch=rfloat(0.95, 1.05), volume=0.5])
     spawn {
-        loop _ in (if parent.level == 3 => 8 => 4) {
+        loop in (if parent.level == 3 => 8 => 4) {
             await((if parent.level == 3 => 0.5 => 1) * 1s)
             shake(4, 0.5)
             play(rtable([earth1, earth2, earth3]), [pitch=rfloat(0.95, 1.05), volume=0.25])
@@ -628,10 +628,10 @@ task ForceField (A, u, fx) {
             push(e, rfloat(15, 20)*(u.knockback_m || 1), angle_to(u, e.x, e.y))
             hit(e, 0)
             spawn @fx HitCircle(c.x, c.y, [rs=6, color=fg@0, duration=0.1])
-            loop _ in 2 {
+            loop in 2 {
                 spawn @fx HitParticle(c.x, c.y, [color=o.color])
             }
-            loop _ in 2 {
+            loop in 2 {
                 spawn @fx HitParticle(c.x, c.y, [color=e.color])
             }
             spawn @fxs HfxUse(o.hit, 0.2)
@@ -690,7 +690,7 @@ task Gold (A, x, y, fx, shots) {
     set A.gold_picked_up += 1
     trace("gold", tostring(A.gold_picked_up))
     spawn @fx HitCircle(o.x, o.y, [rs=4, color=fg@0, duration=0.1])
-    loop _ in 2 {
+    loop in 2 {
         spawn @fx HitParticle(o.x, o.y, [color=o.color])
     }
     play(rtable([gold2, coins1, coins2, coins3]), [pitch=rfloat(0.9, 1.1), volume=0.3])
@@ -705,7 +705,7 @@ task Gold (A, x, y, fx, shots) {
         spawn @fx HitCircle(o.x, o.y, [rs=6])
         var a = rfloat(0, 2*math.pi)
         val n = if th.level == 3 => 8 => 4
-        loop _ in n {
+        loop in n {
             spawn @shots Projectile(A, [x=o.x + 8*math.cos(a), y=o.y + 8*math.sin(a), v=250, r=a, color=yellow2@0,
                 dmg=th.dmg, character=th.character, parent=th, level=th.level], fx)
             set a += 2*math.pi/n
@@ -741,7 +741,7 @@ task AutomatonShot (A, a, parent, d, fx, shots) {
 task TurretRearm (A, o, parent, fx, shots) {
     await 1s
     pin fxs = tasks()
-    loop _ in 3 {
+    loop in 3 {
         await((rfloat(0.1, 0.2)) * 1s)
         spawn @fxs HfxUse(o.hit, 0.25, 200, 10)
         spawn @fx HitCircle(o.x + 0.8*14*math.cos(o.r), o.y + 0.8*14*math.sin(o.r), [rs=6])

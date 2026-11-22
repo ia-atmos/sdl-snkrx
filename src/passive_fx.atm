@@ -69,7 +69,7 @@ task Passives (A, fx, shots) {
     val enchanted = passive_level(A, "enchanted")
     if enchanted && (enchanters >= 2) {
         ;; every unit does it, so as many units may get it
-        loop _ in #A.units {
+        loop in #A.units {
             val o = attacking_unit(A)
             if o {
                 set o.enchanted_aspd_m = lv(enchanted, 1.33, 1.66, 1.99)

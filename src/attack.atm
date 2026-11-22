@@ -441,7 +441,7 @@ task Projectile (A, p, fx) {
         }
     }
     ;; as `Projectile:die`
-    loop _ in n {
+    loop in n {
         spawn @fx HitParticle(dx, dy, [r=rfloat(0, 2*math.pi), color=p.color])
     }
     spawn @fx HitCircle(dx, dy, [scale_down=true])
@@ -517,7 +517,7 @@ task ArcanistShots (A, p, fx) {
 ;; place, 0.3s apart (`every(0.3, ..., 7)`).
 task Bombard (A, p, fx) {
     val pp = p.parent
-    loop _ in 7 {
+    loop in 7 {
         await 300ms
         play(rtable([cannoneer1, cannoneer2]), [pitch=rfloat(0.95, 1.05), volume=0.5])
         spawn @fx Area(A, [x=p.x + rfloat(-32, 32), y=p.y + rfloat(-32, 32), r=p.r + rfloat(0, 2*math.pi),
@@ -548,7 +548,7 @@ task ProjectileHit (A, p, o, fx) {
             }
         }
         var src = o
-        loop _ in (2 + (if sw == 3 => 2 => 0)) {
+        loop in (2 + (if sw == 3 => 2 => 0)) {
             play(rtable([spark1, spark2, spark3]), [pitch=rfloat(0.9, 1.1), volume=0.3])
             set p.infused_hit@+ = src
             val dst = random_enemy(A, src.x, src.y, if sw == 3 => 128 => 64, p.infused_hit)
@@ -563,10 +563,10 @@ task ProjectileHit (A, p, o, fx) {
         shake(5, 0.25)
         play(rogue_crit1, [pitch=rfloat(0.95, 1.05), volume=0.5])
         play(rogue_crit2, [pitch=rfloat(0.95, 1.05), volume=0.15])
-        loop _ in 3 {
+        loop in 3 {
             spawn @fx HitParticle(o.x, o.y, [color=p.color, v=rfloat(100, 400)])
         }
-        loop _ in 3 {
+        loop in 3 {
             spawn @fx HitParticle(o.x, o.y, [color=o.color, v=rfloat(100, 400)])
         }
         spawn @fx HitCircle(o.x, o.y, [rs=12, color=fg@0, duration=0.3, scale_down=true, change_color=[0.5, p.color]])
@@ -607,7 +607,7 @@ task LightningStrike (A, p, o, fx) {
             await 100ms
         }
         play(rtable([spark1, spark2, spark3]), [pitch=rfloat(0.9, 1.1), volume=0.3])
-        loop _ in 3 {
+        loop in 3 {
             set p.infused_hit@+ = src
             val dst = random_enemy(A, src.x, src.y, 64, p.infused_hit)
             if dst {
@@ -817,7 +817,7 @@ task Area (A, a, fx) {
 ;; The areas of an echo barrage: as many as its level, 0.3s apart.
 task Echoes (A, a, fx) {
     val pa = a.parent
-    loop _ in pa.echo_barrage {
+    loop in pa.echo_barrage {
         await 300ms
         play(rtable([cannoneer1, cannoneer2]), [pitch=rfloat(0.95, 1.05), volume=0.5])
         spawn @fx Area(A, [x=a.x + rfloat(-32, 32), y=a.y + rfloat(-32, 32), r=(a.r || 0) + rfloat(0, 2*math.pi),

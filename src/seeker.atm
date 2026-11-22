@@ -234,7 +234,7 @@ task Seeker (A, e, fx, shots) {
                 val pj = h.projectile
                 if pj && pj.spawn_critters_on_hit {
                     play(critter1, [pitch=rfloat(0.95, 1.05), volume=0.5])
-                    loop _ in pj.spawn_critters_on_hit {
+                    loop in pj.spawn_critters_on_hit {
                         spawn @shots Critter(A, e.x, e.y, rfloat(0, 2*math.pi), 10, pj.parent.dmg, pj.parent, fx)
                     }
                 }
@@ -340,7 +340,7 @@ task Seeker (A, e, fx, shots) {
                             hit(e, math.floor(e.push_force/2), [from_enemy=true])
                             push(o, math.floor(e.push_force/2), angle_to(o, e.x, e.y))
                             spawn @fx HitCircle(c.x, c.y, [rs=6, color=fg@0, duration=0.1])
-                            loop _ in 2 {
+                            loop in 2 {
                                 spawn @fx HitParticle(c.x, c.y, [color=e.color])
                             }
                             play(hit2, [pitch=rfloat(0.95, 1.05), volume=0.35])
@@ -370,7 +370,7 @@ task Seeker (A, e, fx, shots) {
         play(rtable([scout1, scout2]), [pitch=rfloat(0.95, 1.05), volume=0.35])
         spawn @fx HitCircle(e.x, e.y, [rs=6])
         var r = rfloat(0, 2*math.pi)
-        loop _ in 4 {
+        loop in 4 {
             spawn @shots Projectile(A, [x=e.x + 8*math.cos(r), y=e.y + 8*math.sin(r), v=250, r=r, color=red@0,
                 dmg=j.ref.dmg, pierce=(if j.lvl3 => 2 => 0), homing=j.lvl3, character=j.ref.character, parent=j.ref], fx)
             set r += math.pi/2
@@ -384,7 +384,7 @@ task Seeker (A, e, fx, shots) {
     if e.infested {
         val f = e.infested.v
         play(critter1, [pitch=rfloat(0.95, 1.05), volume=0.5])
-        loop _ in f.n {
+        loop in f.n {
             spawn @shots Critter(A, e.x, e.y, rfloat(0, 2*math.pi), 10, f.dmg, f.ref, fx)
         }
     }
@@ -399,7 +399,7 @@ task Seeker (A, e, fx, shots) {
     val pj = last && last.projectile
     if pj && pj.spawn_critters_on_kill {
         play(critter1, [pitch=rfloat(0.95, 1.05), volume=0.5])
-        loop _ in pj.spawn_critters_on_kill {
+        loop in pj.spawn_critters_on_kill {
             spawn @shots Critter(A, e.x, e.y, rfloat(0, 2*math.pi), 5, pj.parent.dmg, pj.parent, fx)
         }
     }
@@ -413,7 +413,7 @@ task Seeker (A, e, fx, shots) {
     }
     if (e.elite == "spawner") && !quiet {
         play(critter1, [pitch=rfloat(0.95, 1.05), volume=0.35])
-        loop _ in rint(5, 8) {
+        loop in rint(5, 8) {
             spawn @shots EnemyCritter(A, e.x, e.y, rfloat(0, 2*math.pi), 10 + 0.1*e.level, 2*e.dmg,
                 last && last.projectile, fx)
         }
@@ -422,7 +422,7 @@ task Seeker (A, e, fx, shots) {
         play(mine1, [pitch=rfloat(0.95, 1.05), volume=0.5])
         spawn @shots ExploderMine(A, e.x, e.y, e, fx, shots)
     }
-    loop _ in rint(4, 6) {
+    loop in rint(4, 6) {
         spawn @fx HitParticle(e.x, e.y, [color=e.color])
     }
     spawn @fx HitCircle(e.x, e.y, [rs=12, scale_down=true, duration=0.3, change_color=[0.5, e.color]])
@@ -451,7 +451,7 @@ task SeekerSlows (e) {
 ;; A damage over time on a seeker (`Seeker:apply_dot`): a quarter of `dmg`
 ;; every 0.25s, `duration/0.2` times.
 task Dot (e, dmg, duration, color, fx) {
-    loop _ in math.floor(duration/0.2) {
+    loop in math.floor(duration/0.2) {
         await 250ms
         play(hit2, [pitch=rfloat(0.8, 1.2), volume=0.2])
         hit(e, dmg/4, [dot=true])
@@ -504,7 +504,7 @@ task CritFx (e, fx) {
     shake(2.5, 0.25)
     play(rogue_crit1, [pitch=rfloat(0.95, 1.05), volume=0.5])
     play(rogue_crit2, [pitch=rfloat(0.95, 1.05), volume=0.15])
-    loop _ in 2 {
+    loop in 2 {
         spawn @fx HitParticle(e.x, e.y, [color=e.color, v=rfloat(100, 400)])
     }
     spawn @fx HitCircle(e.x, e.y, [rs=12, color=fg@0, duration=0.3, scale_down=true, change_color=[0.5, e.color]])
@@ -573,7 +573,7 @@ task DeathPassives (A, e, fx, shots) {
     val is = passive_level(A, "infesting_strike")
     if is && l && rbool(lv(is, 10, 20, 30)) {
         play(critter1, [pitch=rfloat(0.95, 1.05), volume=0.5])
-        loop _ in 2 {
+        loop in 2 {
             spawn @shots Critter(A, e.x, e.y, rfloat(0, 2*math.pi), 5, l.dmg, l, fx)
         }
     }

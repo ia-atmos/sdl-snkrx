@@ -80,7 +80,7 @@ task Waves (A, foes, spawns, fx, shots) {
     set A.wave = 0
     set A.start_time = 3
     await 1s
-    loop _ in 3 {
+    loop in 3 {
         await 1s
         if A.start_time > 1 {
             play(alert1, [volume=0.5])
@@ -118,7 +118,7 @@ task BossWaves (A, foes, spawns, fx, shots) {
     set A.boss_level = true
     set A.start_time = 3
     await 1s
-    loop _ in 3 {
+    loop in 3 {
         await 1s
         if A.start_time > 1 {
             play(alert1, [volume=0.5])

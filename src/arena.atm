@@ -173,10 +173,10 @@ task Arena (A, enemies) {
             loop _, u in ps {
                 spawn @shots Projectile(A, orb(u), effects)
             }
-            loop _ in (match A.cl.psyker { 2 => 4 ; 1 => 2 ; else => 0 }) {
+            loop in (match A.cl.psyker { 2 => 4 ; 1 => 2 ; else => 0 }) {
                 spawn @shots Projectile(A, orb(rtable(if #ps > 0 => ps => A.units)), effects)
             }
-            loop _ in lv(passive_level(A, "psyker_orbs"), 1, 2, 4, 0) {
+            loop in lv(passive_level(A, "psyker_orbs"), 1, 2, 4, 0) {
                 spawn @shots Projectile(A, orb(rtable(if #ps > 0 => ps => A.units)), effects)
             }
         }

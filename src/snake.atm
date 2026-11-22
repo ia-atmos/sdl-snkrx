@@ -242,10 +242,10 @@ task Unit (A, u, fx, shots) {
                 hit(u, o.dmg)
             }
             spawn @fx HitCircle(e.x, e.y, [rs=6, color=fg@0, duration=0.1])
-            loop _ in 2 {
+            loop in 2 {
                 spawn @fx HitParticle(e.x, e.y, [color=u.color])
             }
-            loop _ in 2 {
+            loop in 2 {
                 spawn @fx HitParticle(e.x, e.y, [color=o.color])
             }
         }
@@ -264,7 +264,7 @@ task Unit (A, u, fx, shots) {
             val dmg = if STRESS => 0 => math.max(unit_damage(u, e.dmg), 0)
             if (u.character == "beastmaster") && (u.level == 3) {
                 play(critter1, [pitch=rfloat(0.95, 1.05), volume=0.5])
-                loop _ in 4 {
+                loop in 4 {
                     spawn @shots Critter(A, u.x, u.y, rfloat(0, 2*math.pi), 20, u.dmg, u, fx)
                 }
             }
@@ -279,7 +279,7 @@ task Unit (A, u, fx, shots) {
                 if u.stored_heal > (0.25*u.max_hp) {
                     set u.stored_heal = 0
                     val x, y = free_place(A)
-                    loop _ in 3 {
+                    loop in 3 {
                         spawn @fx HealAt(A, x, y, fx)
                     }
                 }
@@ -312,7 +312,7 @@ task Unit (A, u, fx, shots) {
                 set u.hp = u.max_hp
                 play(heal1, [pitch=rfloat(0.95, 1.05), volume=0.5])
                 play(buff1, [pitch=rfloat(0.95, 1.05), volume=0.5])
-                loop _ in rint(4, 6) {
+                loop in rint(4, 6) {
                     spawn @fx HitParticle(u.x, u.y, [color=u.color])
                 }
                 spawn @fx HitCircle(u.x, u.y, [rs=12, scale_down=true, duration=0.3, change_color=[0.5, u.color]])
@@ -337,7 +337,7 @@ task Unit (A, u, fx, shots) {
                     until snake_place(A, u)
                 }
                 play(spawn1, [pitch=rfloat(0.8, 1.2), volume=0.15])
-                loop _ in rint(3, 4) {
+                loop in rint(3, 4) {
                     spawn @fx HitParticle(u.x, u.y, [color=u.color])
                 }
                 spawn @fx HitCircle(u.x, u.y, [rs=10, color=fg@0, scale_down=true,
@@ -435,7 +435,7 @@ task Unit (A, u, fx, shots) {
     trace("unit.die", u.character)
     play(hit4, [pitch=rfloat(0.95, 1.05), volume=0.5])
     slow(0.25, 1)
-    loop _ in rint(4, 6) {
+    loop in rint(4, 6) {
         spawn @fx HitParticle(u.x, u.y, [color=u.color])
     }
     spawn @fx HitCircle(u.x, u.y, [rs=12, scale_down=true, duration=0.3, change_color=[0.5, u.color]])
@@ -459,7 +459,7 @@ task UnitDeathPassives (A, u, fx, shots) {
     }
     if u.porcupine_technique {
         var r = 0
-        loop _ in 8 {
+        loop in 8 {
             play(archer1, [pitch=rfloat(0.95, 1.05), volume=0.35])
             spawn @fx HitCircle(u.x + 0.8*9*math.cos(r), u.y + 0.8*9*math.sin(r), [rs=6])
             spawn @shots Projectile(A, [x=u.x + 1.6*9*math.cos(r), y=u.y + 1.6*9*math.sin(r), v=250, r=r,

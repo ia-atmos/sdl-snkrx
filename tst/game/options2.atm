@@ -29,7 +29,7 @@ spawn {
 }
 spawn {
     await 3s
-    loop _ in 6 {
+    loop in 6 {
         val l = A.units@0
         print("tick", eng.tick(), "r", string.format("%.2f", l.r), "time", math.floor(run.time + 0.5),
               "cam", string.format("%.1f %.1f", CAM.x, CAM.y))

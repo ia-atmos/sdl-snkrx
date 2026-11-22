@@ -68,7 +68,7 @@ task SpawnCircle (x, y, target, fx) {
     }
     await Tween(0.1, st, [rs=6], cubic_in_out)
     spring_pull(s, 1)
-    loop _ in rint(6, 8) {
+    loop in rint(6, 8) {
         spawn @fx HitParticle(x, y, [color=target, duration=rfloat(0.3, 0.5), w=rfloat(5, 8), v=rfloat(150, 200)])
     }
     spawn {
@@ -153,7 +153,7 @@ task MarkAndSpawn (A, p, n, pass, foes, fx, shots) {
 ;; Groups at `k` places, each one after 0 to 0.2s, `n` enemies each.
 task MarkAndSpawnK (A, ps, k, n, pass, foes, fx, shots) {
     pin gs = tasks()
-    loop _ in k {
+    loop in k {
         spawn @gs MarkLater(A, ps, n, pass, foes, fx, shots)
     }
     await :all gs

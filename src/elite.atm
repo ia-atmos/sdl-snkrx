@@ -13,7 +13,7 @@
 task LightningLine (src, dst, color, fx) {
     pin ls = [ lines=[ [src.x, src.y, dst.x, dst.y] ] ]
     var off = 8
-    loop _ in 3 {
+    loop in 3 {
         set ls.lines = do {
           val next = []
           loop _, l in ls.lines {
@@ -36,7 +36,7 @@ task LightningLine (src, dst, color, fx) {
     }
     pin st = [ w=3 ]
     spawn @fx HitCircle(src.x, src.y, [rs=6, color=fg@0, duration=0.1])
-    loop _ in 2 {
+    loop in 2 {
         spawn @fx HitParticle(src.x, src.y, [color=color])
     }
     spawn @fx HitCircle(dst.x, dst.y, [rs=6, color=fg@0, duration=0.1])
@@ -95,7 +95,7 @@ task EnemyProjectile (A, p, fx) {
             }
         }
     }
-    loop _ in rint(2, 3) {
+    loop in rint(2, 3) {
         spawn @fx HitParticle(dx, dy, [r=rfloat(0, 2*math.pi), color=p.color])
     }
     spawn @fx HitCircle(dx, dy, [scale_down=true])
@@ -126,7 +126,7 @@ task ExploderMine (A, x, y, src, fx, shots) {
     }
     play(shoot1, [pitch=rfloat(0.95, 1.05), volume=0.4])
     play(cannoneer1, [pitch=rfloat(0.95, 1.05), volume=0.4])
-    loop _ in 4 {
+    loop in 4 {
         spawn @fx HitParticle(x, y, [r=rfloat(0, 2*math.pi), color=blue@0])
     }
     spawn @fx HitCircle(x, y, [])
@@ -260,7 +260,7 @@ task EliteAttack (A, e, fx, shots) {
                         val vx, vy = body_vel(e.b)
                         push(c.other, math.sqrt(vx*vx + vy*vy)/4, angle_to(c.other, e.x, e.y))
                         spawn @fx HitCircle(c.x, c.y, [rs=6, color=fg@0, duration=0.1])
-                        loop _ in 2 {
+                        loop in 2 {
                             spawn @fx HitParticle(c.x, c.y, [color=e.color])
                         }
                         play(hit2, [pitch=rfloat(0.95, 1.05), volume=0.35])
@@ -369,7 +369,7 @@ task Sacrifice (A, e, es, what, fx, shots) {
         :swarm => {
             play(critter1, [pitch=rfloat(0.95, 1.05), volume=0.5])
             play(critter3, [pitch=rfloat(0.95, 1.05), volume=0.6])
-            loop _ in rint(4, 6) {
+            loop in rint(4, 6) {
                 spawn @shots EnemyCritter(A, o.x, o.y, rfloat(0, 2*math.pi), 8 + 0.1*o.level, 2*o.dmg, nil, fx)
             }
         }
@@ -445,7 +445,7 @@ task ForcerPull (A, e, fx) {
         }
     }
     spawn {
-        loop _ in math.floor(2/0.08) {
+        loop in math.floor(2/0.08) {
             await 80ms
             spawn @fx HitParticle(px, py, [color=yellow@0])
         }
@@ -594,7 +594,7 @@ task EnemyCritter (A, x, y, r, v, dmg, from, fx) {
             set p.r = e.r
         }
     }
-    loop _ in rint(2, 3) {
+    loop in rint(2, 3) {
         spawn @fx HitParticle(c.x, c.y, [r=rfloat(0, 2*math.pi), color=c.color])
     }
     spawn @fx HitCircle(c.x, c.y, [scale_down=true])

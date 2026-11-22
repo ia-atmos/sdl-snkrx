@@ -513,7 +513,7 @@ task Party (shop, run, fx) {
             spawn @ps CharacterPart(shop, row, px, u, 2)
             set px -= 20
         }
-        loop _ in u.reserve@0 {
+        loop in u.reserve@0 {
             spawn @ps CharacterPart(shop, row, px, u, 1, 0.9)
             set px -= 20
         }
@@ -652,7 +652,7 @@ func roll_cards (run) {
     val cs = []
     loop {
         vector.clear(cs)
-        loop _ in 3 {
+        loop in 3 {
             val tier = rweighted(odds) + 1
             set cs@+ = rtable(tier_to_characters@(tier))
         }
