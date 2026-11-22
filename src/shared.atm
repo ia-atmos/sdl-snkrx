@@ -18,17 +18,18 @@ pin pixul_font = font("PixulBrush", 8)
 ;; The background: a checkerboard of 22-pixel cells and a vertical
 ;; gradient, drawn while it lives.
 task Background () {
-    loop on :draw {
-        eng.target(BACK)
-        loop i in (1, 32) {
-            loop j in (1, 18) {
-                if (j%2 == 0) == (i%2 == 1) {
-                    eng.rect2((i-1)*22, (j-1)*22, 22, 22, nil, nil, bg_off)
+    val enter, leave = eng.on(BACK)
+    context (enter, leave) {
+        loop on :draw {
+            loop i in (1, 32) {
+                loop j in (1, 18) {
+                    if (j%2 == 0) == (i%2 == 1) {
+                        eng.rect2((i-1)*22, (j-1)*22, 22, 22, nil, nil, bg_off)
+                    }
                 }
             }
+            eng.gradient(0, 0, W, H, rgba(128/255, 128/255, 128/255, 0), rgba(0, 0, 0, 0.3))
         }
-        eng.gradient(0, 0, W, H, rgba(128/255, 128/255, 128/255, 0), rgba(0, 0, 0, 0.3))
-        eng.target(MAIN)
     }
 }
 
@@ -59,8 +60,7 @@ task Star (p) {
     val dr = rfloat(0, math.pi/4)
     val v  = rfloat(30, 42)
     par :any {
-        loop st_ on :step {
-            val us = st_.us
+        loop us on :clock {
             val dt = us / 1000000
             set x += v*math.cos(-math.pi/4)*dt
             set y += v*math.sin(-math.pi/4)*dt
@@ -69,19 +69,22 @@ task Star (p) {
         }
     } with {
         loop on :draw {
-            eng.target(STARS)
-            draw_image(star_image, x, y, r, 0.35, 0.35, bg@1)
-            eng.target(MAIN)
+            draw_image(star_image, x, y, r, 0.35, 0.35, bg@1)    ;; in STARS (`Stars`)
         }
     }
 }
 
 ;; Spawns a star every 0.375s, while it lives.
+;; The stars draw in their canvas: one switch to STARS and back for all
+;; of them in a frame, by the `context` around their pool.
 task Stars () {
-    pin ss = tasks()
-    loop {
-        await 375ms
-        spawn @ss Star(rtable(STAR_POSITIONS))
+    val enter, leave = eng.on(STARS)
+    context (enter, leave) {
+        pin ss = tasks()
+        loop {
+            await 375ms
+            spawn @ss Star(rtable(STAR_POSITIONS))
+        }
     }
 }
 
