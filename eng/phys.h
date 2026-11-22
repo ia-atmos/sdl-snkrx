@@ -96,6 +96,9 @@ static int pw_of_shape (b2ShapeId s) {
 
 static b2ShapeDef pw_def (uint64_t cat, uint64_t mask, int sensor) {
     b2ShapeDef sd = b2DefaultShapeDef();
+    // the default friction of LÖVE 11 (Box2D 2.3, `b2FixtureDef`), which
+    // the original never changes: Box2D 3 defaults to 0.6
+    sd.material.friction = 0.2f;
     sd.enableContactEvents = true;
     sd.enableSensorEvents  = true;
     if (sensor) {

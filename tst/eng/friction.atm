@@ -1,0 +1,27 @@
+;; The friction of the fixtures is that of LÖVE 11 (0.2, the default of
+;; `b2FixtureDef`, which the original never changes), not the 0.6 of
+;; Box2D 3 (TODO #26). A box (14x6, restitution 0.5) thrown at 45 degrees
+;; at a wall: LÖVE gives -100 140 after the bounce, this port -100 160
+;; (with 0.6 it gave -100 80). The 20 left is of Box2D 3, which applies
+;; the restitution after the friction: the friction works against the
+;; impulse that stops the box (m*200), not against the whole (m*300).
+
+include "../../eng/eng.atm"
+include "../../eng/phys.atm"
+
+pin w = phys_world(32, [:player])
+pin f = \(v) { string.format("%.1f", v) }
+
+val wall = body(w, [ name=:wall ], :static, 200, 100, :solid, [:rect, 10, 200]).b
+val box = body(w, [ name=:box ], :dynamic, 150, 100, :player, [:rect, 14, 6]).b
+body_restitution(box, 0.5)
+body_set(box, :fixed_rotation, 1)
+body_set(box, :velocity, 200, 200)
+
+loop i in (1, 30) {
+    phys_step(w, 1/60)
+    if i % 5 == 0 {
+        val vx, vy = body_vel(box)
+        print(i, f(vx), f(vy))
+    }
+}
