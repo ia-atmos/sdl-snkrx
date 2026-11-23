@@ -432,6 +432,56 @@ the solver of Box2D 3, which applies the restitution after the friction
 LÖVE 140), and why the arrows of the turrets hit fewer seekers per
 arrow (10% against 16%).
 
+Further, measured (2026-11-23):
+
+- **The arrows are not the cause.** In level 2 until the sentry dies,
+  the original fires 88 arrows, 14 hit (15.9%) and 70 end on a wall.
+  The port with seed 3 fires 88 too and hits 13 (14.8%), and its sentry
+  dies at 2756; the seeds whose sentry dies early hit 4% to 9%. The
+  rate follows how long the sentry lives. The seekers near the sentries
+  match (sampled every 30 ticks: within 64 px 0.78 in the original,
+  0.44 to 0.89 in the port; within 128 px 1.75, 1.21 to 2.16;
+  `SNKRX_TRACE_NEAR` of the bench). The rules of the sentry and of its
+  arrows match the original (`Sentry`, `player.lua:3099-3170`).
+- **The spin of a push was three times too fast** (`9f11a0d`, test
+  `eng/spin`). LÖVE divides an angular impulse (and a torque) by
+  meter^2; the port gave it to Box2D unscaled, and a pushed seeker spun
+  at the limit of Box2D 3, a quarter turn per step (47 rad/s), against
+  15.85 rad/s in LÖVE for 8pi. A spinning seeker lost its bounce on a
+  wall by its corners (in one push, 284 to 32 px/s in two ticks). An
+  isolated push, with no wall, lasts 109 ticks in LÖVE and 108 in the
+  port; against a wall over 400 angles and spins, 79.1 ticks in LÖVE
+  and 77.9 in the port after the fix. Nine arena tests changed (`arena2`
+  now runs 1500 frames so that its unit dies, and the second shot of
+  `bosses` moved to tick 500, before the snake dies).
+
+The long scenes after the fix (five seeds, median and range):
+
+| measure | original | friction 0.2 | the spin fixed |
+|---------|---------:|-------------:|---------------:|
+| level 1, second wave starts | 1693 | 1456 | 1476 (966 to 1645) |
+| level 1, cleared | 2450 | 2905 | 2470 (1842 to 2729) |
+| level 1, seekers of the first wave | 8 | 8 | 8 (7 to 8) |
+| level 1, hits on the sentry | 13 | 18 | 17 (16 to 20) |
+| level 2, second wave starts | 1400 | 1970 | 1593 (1436 to 1833; seed 4 died before it) |
+| level 2, the sentry dies | 2945 | 2162 | 1657 (1509 to 2170) |
+
+Level 1 and the second wave of level 2 came near the original; the
+sentry of level 2 dies sooner still. In the game, a push of force 25 or
+more still lasts 62 to 93 ticks (means of seeds 1 to 3, against 106),
+with a top speed of 376 to 434 px/s against 331: almost every push of
+the port reaches a wall.
+
+Left, not verified: the time of the begin of a contact. LÖVE (Box2D
+2.3) calls it inside the step, before the solver, so a push from a
+contact starts from the velocity of before the contact (top 331, under
+the 357 of the impulse alone); Box2D 3 reports it after the step, when
+the solver has already bounced the seeker off the unit, and the push
+adds to the bounce. A try is on the branch `wip-26` (`19f7ee6`): the
+engine keeps the velocity of each body before the step (`body_vel0`),
+and the four pushes from contacts start from it. Its suite: 37 ok, 6
+changed, not yet reviewed; its long scenes not yet run.
+
 ## 9. The new rules of `pin`
 
 Seen at `3a6ffe9` (the rules since `98ad03a`). The port moved to them
