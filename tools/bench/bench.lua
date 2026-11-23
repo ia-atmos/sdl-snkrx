@@ -15,6 +15,8 @@
 --                           of a class of the main group, in every tick
 --   SNKRX_TRACE_HITS=1      with SNKRX_TRACE_GAME, also each hit on a
 --                           seeker: enemy.hit source damage hp
+--   SNKRX_TRACE_NEAR=1      every 30 ticks, for each sentry, the seekers
+--                           within 64 and 128 pixels, and all of them
 --   SNKRX_TRACE_GAME=1      also traces the events of the game, as the
 --                           port's SNX_TRACE: enemy.die, unit.hit, wave
 --   SNKRX_STRESS=n          n more seekers when an arena starts, and the
@@ -285,6 +287,22 @@ function bench.frame ()
         if o.body then vx, vy = o.body:getLinearVelocity() end
         bench.trace("pos", string.format("%s %s %.2f %.2f %.2f %.2f", os.getenv("SNKRX_TRACE_POS"), o.id:sub(1, 4), o.x, o.y, vx, vy))
       end
+    end
+  end
+  if os.getenv("SNKRX_TRACE_NEAR") and main and main.current and main.current.main and main.current.main.objects and tick % 30 == 0 then
+    local ss, es = {}, {}
+    for _, o in ipairs(main.current.main.objects) do
+      if getmetatable(o) == Sentry and not o.dead then ss[#ss+1] = o end
+      if o.is and o:is(Seeker) and not o.dead then es[#es+1] = o end
+    end
+    for _, o in ipairs(ss) do
+      local n64, n128 = 0, 0
+      for _, e in ipairs(es) do
+        local d = math.sqrt((e.x-o.x)^2 + (e.y-o.y)^2)
+        if d < 64 then n64 = n64 + 1 end
+        if d < 128 then n128 = n128 + 1 end
+      end
+      bench.trace("near", string.format("%d %d %d", n64, n128, #es))
     end
   end
   if os.getenv("SNKRX_TRACE_GAME") and main and main.current then
