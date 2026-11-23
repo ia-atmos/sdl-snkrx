@@ -135,7 +135,7 @@
 877	add	Seeker 228.0 123.0
 877	enemy.die	speed_booster
 883	add	Seeker 252.0 123.0
-883	enemy.die	seeker
+884	enemy.die	seeker
 889	add	Seeker 252.0 147.0
 889	enemy.die	seeker
 889	unit.hit	psykeeper 699.1
@@ -144,14 +144,13 @@
 901	add	Critter 357.3 150.8
 901	add	Critter 357.3 150.8
 901	add	Seeker 240.0 135.0
-901	enemy.die	speed_booster
+901	enemy.die	seeker
 907	add	Seeker 228.0 123.0
 907	enemy.die	seeker
 913	add	Seeker 252.0 123.0
 913	enemy.die	seeker
 919	add	Seeker 252.0 147.0
-920	enemy.die	seeker
-920	add	Gold 252.0 147.0
+919	enemy.die	speed_booster
 925	add	Seeker 228.0 147.0
 925	enemy.die	seeker
 931	add	Seeker 240.0 135.0
@@ -160,9 +159,8 @@
 937	enemy.die	seeker
 943	add	Seeker 252.0 123.0
 943	enemy.die	seeker
-953	gold	2
 957	clear	3
-961	add	Tree 406.0 150.8
+960	add	Tree 407.2 150.8
 961	add	Critter 426.4 150.8
 961	add	Critter 426.4 150.8
 961	unit.hit	flagellant 1342.6

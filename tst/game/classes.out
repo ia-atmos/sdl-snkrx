@@ -113,7 +113,7 @@ enemy def	10
 1462	add	Seeker 228.0 123.0
 1468	add	Seeker 252.0 123.0
 1469	unit.hit	wizard 40.7
-1471	enemy.die	seeker
+1472	enemy.die	seeker
 1486	enemy.die	seeker
 1520	enemy.die	seeker
 1520	wave	5
@@ -138,11 +138,9 @@ enemy def	10
 1730	enemy.die	speed_booster
 1730	enemy.die	seeker
 1730	enemy.die	seeker
-1736	enemy.die	seeker
+1735	enemy.die	seeker
+1737	enemy.die	seeker
+1740	enemy.die	seeker
 1755	enemy.die	seeker
-1761	barrage	archer
-1768	enemy.die	seeker
-1773	enemy.die	seeker
-1852	crit	outlaw
-1856	enemy.die	exploder
-1856	clear	7
+1823	enemy.die	exploder
+1823	clear	7

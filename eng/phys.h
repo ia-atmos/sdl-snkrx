@@ -196,8 +196,10 @@ static void pw_set (int b, int what, double x, double y) {
         case 7: b2Body_SetBullet(id, x != 0); break;
         case 8: b2Body_ApplyForceToCenter(id, (b2Vec2){ (float)(x/PW_M), (float)(y/PW_M) }, true); break;
         case 9: b2Body_ApplyLinearImpulseToCenter(id, (b2Vec2){ (float)(x/PW_M), (float)(y/PW_M) }, true); break;
-        case 10: b2Body_ApplyAngularImpulse(id, (float)x, true); break;
-        case 11: b2Body_ApplyTorque(id, (float)x, true); break;
+        // as LÖVE 11, an angular impulse or a torque crosses in px^2
+        // (kg*px^2/s, kg*px^2/s^2), and Box2D sees it divided by m^2
+        case 10: b2Body_ApplyAngularImpulse(id, (float)(x/(PW_M*PW_M)), true); break;
+        case 11: b2Body_ApplyTorque(id, (float)(x/(PW_M*PW_M)), true); break;
     }
 }
 

@@ -13,12 +13,12 @@
 222	enemy.die	seeker
 245	unit.hit	cleric 460.5
 275	unit.hit	vagrant 474.7
-279	unit.hit	vagrant 453.3
-304	enemy.die	speed_booster
-304	unit.hit	swordsman 545.1
-322	enemy.die	shooter
-454	enemy.die	speed_booster
-454	clear	6
-454	achievement	speed_booster
-454	unit.hit	vagrant 432.0
-634	buy_screen
+287	unit.hit	vagrant 453.3
+321	enemy.die	speed_booster
+321	enemy.die	shooter
+346	unit.hit	wizard 195.8
+375	unit.hit	cleric 442.0
+423	enemy.die	speed_booster
+423	clear	6
+423	achievement	speed_booster
+603	buy_screen

@@ -1,0 +1,14 @@
+;; An angular impulse crosses in pixels, as in LÖVE 11, which divides it
+;; by meter^2 (TODO #26): a seeker (14x6) given 8*pi spins at 15.8
+;; rad/s in LÖVE. Unscaled, Box2D 3 spun it at its limit of a quarter
+;; turn per step (47 rad/s), three times as fast as the original, and a
+;; pushed seeker lost its bounce on a wall by its corners.
+
+include "../../eng/eng.atm"
+include "../../eng/phys.atm"
+
+pin w = phys_world(32, [:enemy])
+val b = body(w, [ name=:s ], :dynamic, 240, 135, :enemy, [:rect, 14, 6]).b
+body_set(b, :angular_impulse, 8*math.pi)
+phys_step(w, 1/60)
+print("omega", string.format("%.2f", body_angle(b)*60))
