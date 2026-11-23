@@ -29,6 +29,14 @@ static int      PW_DEAD[PW_BODIES];     // freed in this step: reused after it
 static int      PW_DEAD_N = 0;
 static int      PW_TOP = 0;
 
+// The velocity of each body before the last step (`body_vel0`). LÖVE
+// (Box2D 2.3) calls the begin of a contact inside the step, before the
+// solver: a reaction to it sees the velocity of before the contact.
+// Box2D 3 reports it after the step, when the solver has already
+// bounced the bodies. A reaction that sets a velocity from a contact
+// (a push) starts from this one, as in the original.
+static b2Vec2 PW_V0[PW_BODIES];
+
 static void pw_world (double meter) {
     if (PW_OK) {
         b2DestroyWorld(PW_WORLD);
@@ -74,6 +82,7 @@ static int pw_body (int type, double x, double y) {
     bd.userData = (void*)(intptr_t)(b + 1);
     PW_BODY[b] = b2CreateBody(PW_WORLD, &bd);
     PW_USED[b] = 1;
+    PW_V0[b] = (b2Vec2) { 0, 0 };
     return b;
 }
 
@@ -178,6 +187,8 @@ static double pw_get (int b, int what) {
         case 4: return b2Rot_GetAngle(b2Body_GetRotation(id));
         case 5: return b2Body_GetAngularVelocity(id);
         case 6: return b2Body_GetMass(id);
+        case 7: return PW_V0[b].x*PW_M;
+        case 8: return PW_V0[b].y*PW_M;
     }
     return 0;
 }
@@ -223,12 +234,18 @@ static int pw_ev (int k, int a, int b) {
     return -1;
 }
 
+
 // A step of the world, as `World:update(dt)` of LÖVE.
 static void pw_step (double dt) {
     memset(PW_EV_N, 0, sizeof(PW_EV_N));
     if (!PW_OK) return;
     while (PW_DEAD_N > 0) {
         PW_FREE[PW_FREE_N++] = PW_DEAD[--PW_DEAD_N];
+    }
+    for (int i=0; i<PW_TOP; i++) {
+        if (PW_USED[i] && b2Body_IsValid(PW_BODY[i])) {
+            PW_V0[i] = b2Body_GetLinearVelocity(PW_BODY[i]);
+        }
     }
     b2World_Step(PW_WORLD, (float)dt, 4);
     b2ContactEvents ce = b2World_GetContactEvents(PW_WORLD);
