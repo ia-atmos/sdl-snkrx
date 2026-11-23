@@ -9,7 +9,7 @@
 
 ;; As `Seeker:push(f, r)`: an impulse, a spin, and damping (a boss is
 ;; pushed less).
-func seeker_push (e, f, r) {
+func seeker_push (e, f, r, contact) {
     val n = ifs {
         e.boss && (e.level % 25 == 0) => 0.7
         e.boss => 0.2
@@ -17,6 +17,11 @@ func seeker_push (e, f, r) {
         else => 1
     }
     set e.push_force = n*f
+    if contact {
+        ;; LÖVE pushes inside the step, before the solver bounces it
+        val vx, vy = body_vel0(e.b)
+        body_set(e.b, :velocity, vx, vy)
+    }
     body_set(e.b, :impulse, n*f*math.cos(r), n*f*math.sin(r))
     body_set(e.b, :angular_impulse,
         rtable([rfloat(-12*math.pi, -4*math.pi), rfloat(4*math.pi, 12*math.pi)]))
@@ -315,7 +320,7 @@ task Seeker (A, e, fx, shots) {
             ;; pushed: tumbling with no steering, pushed again or not
             loop {
                 set e.push_invulnerable = p.inv
-                seeker_push(e, p.f, p.r)
+                seeker_push(e, p.f, p.r, p.contact)
                 set p = par :any {
                     loop on :step {
                         val vx, vy = body_vel(e.b)
@@ -338,7 +343,7 @@ task Seeker (A, e, fx, shots) {
                             val o = c.other
                             hit(o, math.floor(e.push_force/4), [from_enemy=true])
                             hit(e, math.floor(e.push_force/2), [from_enemy=true])
-                            push(o, math.floor(e.push_force/2), angle_to(o, e.x, e.y))
+                            push(o, math.floor(e.push_force/2), angle_to(o, e.x, e.y), nil, true)
                             spawn @fx HitCircle(c.x, c.y, [rs=6, color=fg@0, duration=0.1])
                             loop in 2 {
                                 spawn @fx HitParticle(c.x, c.y, [color=e.color])
