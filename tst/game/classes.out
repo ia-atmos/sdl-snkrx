@@ -83,19 +83,19 @@ enemy def	10
 1097	add	Seeker 412.0 71.0
 1103	add	Seeker 388.0 71.0
 1201	barrage	archer
-1212	unit.hit	magician 42.8
+1211	unit.hit	magician 42.8
 1218	unit.hit	scout 63.0
-1230	enemy.die	seeker
+1231	enemy.die	seeker
+1233	enemy.die	seeker
 1235	add	Seeker 388.0 47.0
 1241	add	Seeker 412.0 47.0
-1241	enemy.die	seeker
 1247	add	Seeker 412.0 71.0
-1249	enemy.die	seeker
+1247	enemy.die	seeker
+1252	enemy.die	seeker
+1252	enemy.die	seeker
 1253	add	Seeker 388.0 71.0
-1255	enemy.die	seeker
 1264	enemy.die	seeker
-1285	enemy.die	seeker
-1285	enemy.die	speed_booster
+1266	enemy.die	seeker
 1292	enemy.die	seeker
 1292	wave	4
 1322	add	SpawnMarker 240.0 135.0
@@ -105,42 +105,54 @@ enemy def	10
 1409	enemy.die	seeker
 1426	add	Seeker 240.0 135.0
 1432	add	Seeker 228.0 123.0
-1432	enemy.die	speed_booster
+1432	enemy.die	seeker
 1438	add	Seeker 252.0 123.0
 1440	enemy.die	seeker
 1443	enemy.die	seeker
 1456	add	Seeker 240.0 135.0
 1462	add	Seeker 228.0 123.0
 1468	add	Seeker 252.0 123.0
-1469	unit.hit	wizard 40.7
-1472	enemy.die	seeker
-1486	enemy.die	seeker
+1483	enemy.die	seeker
+1490	enemy.die	seeker
 1520	enemy.die	seeker
 1520	wave	5
-1550	add	SpawnMarker 240.0 135.0
-1630	add	Seeker 228.0 123.0
-1631	enemy.die	seeker
-1636	add	Seeker 252.0 123.0
-1639	enemy.die	seeker
-1654	add	Seeker 240.0 135.0
-1660	add	Seeker 228.0 123.0
-1666	add	Seeker 252.0 123.0
-1678	add	Seeker 228.0 147.0
-1678	unit.hit	magician 29.5
-1680	enemy.die	seeker
-1690	add	Seeker 228.0 123.0
-1696	add	Seeker 252.0 123.0
-1702	add	Seeker 252.0 147.0
-1708	add	Seeker 228.0 147.0
-1714	add	Seeker 240.0 135.0
-1720	add	Seeker 228.0 123.0
-1730	enemy.die	seeker
-1730	enemy.die	speed_booster
-1730	enemy.die	seeker
-1730	enemy.die	seeker
-1736	enemy.die	seeker
-1755	enemy.die	seeker
-1768	enemy.die	seeker
-1778	enemy.die	seeker
-1829	enemy.die	exploder
-1829	clear	7
+1550	add	SpawnMarker 80.0 59.0
+1630	add	Seeker 68.0 47.0
+1636	add	Seeker 92.0 47.0
+1642	add	Seeker 92.0 71.0
+1648	add	Seeker 68.0 71.0
+1666	enemy.die	seeker
+1670	add	SpawnMarker 80.0 59.0
+1750	add	Seeker 68.0 47.0
+1756	add	Seeker 92.0 47.0
+1762	add	Seeker 92.0 71.0
+1768	add	Seeker 68.0 71.0
+1793	add	SpawnMarker 400.0 59.0
+1793	add	SpawnMarker 240.0 135.0
+1798	add	SpawnMarker 80.0 211.0
+1801	add	SpawnMarker 400.0 211.0
+1827	enemy.die	seeker
+1829	enemy.die	seeker
+1843	enemy.die	seeker
+1848	enemy.die	seeker
+1860	enemy.die	seeker
+1864	enemy.die	seeker
+1872	add	Seeker 388.0 47.0
+1873	add	Seeker 228.0 123.0
+1876	enemy.die	seeker
+1878	add	Seeker 412.0 47.0
+1878	add	Seeker 68.0 199.0
+1879	add	Seeker 252.0 123.0
+1881	add	Seeker 388.0 199.0
+1884	enemy.die	seeker
+1884	enemy.die	seeker
+1884	add	Seeker 92.0 199.0
+1887	add	Seeker 412.0 199.0
+1909	enemy.die	seeker
+1965	enemy.die	seeker
+2007	barrage	archer
+2016	enemy.die	seeker
+2020	enemy.die	seeker
+2022	enemy.die	seeker
+2053	enemy.die	speed_booster
+2053	clear	7

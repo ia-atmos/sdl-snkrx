@@ -57,11 +57,11 @@
 420	add	Critter 323.0 150.8
 420	add	Critter 323.0 150.8
 449	add	SpawnMarker 240.0 135.0
-480	add	Critter 251.1 150.8
-480	add	Critter 251.1 150.8
+480	add	Critter 251.0 150.8
+480	add	Critter 251.0 150.8
 480	unit.hit	flagellant 633.0
-486	add	Bomb 219.9 150.8
-486	add	Turret 241.5 150.8
+486	add	Bomb 219.8 150.8
+486	add	Turret 241.4 150.8
 529	add	Seeker 228.0 123.0
 529	enemy.die	seeker
 535	add	Seeker 252.0 123.0
@@ -118,24 +118,24 @@
 754	add	Seeker 388.0 123.0
 755	enemy.die	seeker
 760	add	Seeker 412.0 123.0
-767	enemy.die	seeker
-767	add	Critter 411.0 124.9
-767	add	Critter 411.0 124.9
-767	add	Critter 411.0 124.9
-767	add	Critter 411.0 124.9
-767	add	Critter 411.0 124.9
-767	add	Critter 411.0 124.9
+767	enemy.die	speed_booster
+767	add	Critter 411.4 125.1
+767	add	Critter 411.4 125.1
+767	add	Critter 411.4 125.1
+767	add	Critter 411.4 125.1
+767	add	Critter 411.4 125.1
+767	add	Critter 411.4 125.1
 767	wave	4
 781	add	Critter 214.5 150.8
 781	add	Critter 214.5 150.8
 797	add	SpawnMarker 240.0 135.0
-807	add	Volcano 259.7 142.9
+819	add	Volcano 259.1 142.9
 841	add	Critter 285.3 150.8
 841	add	Critter 285.3 150.8
 877	add	Seeker 228.0 123.0
-877	enemy.die	speed_booster
+877	enemy.die	seeker
 883	add	Seeker 252.0 123.0
-884	enemy.die	seeker
+883	enemy.die	speed_booster
 889	add	Seeker 252.0 147.0
 889	enemy.die	seeker
 889	unit.hit	psykeeper 699.1
@@ -148,25 +148,27 @@
 907	add	Seeker 228.0 123.0
 907	enemy.die	seeker
 913	add	Seeker 252.0 123.0
-913	enemy.die	seeker
+913	enemy.die	speed_booster
 919	add	Seeker 252.0 147.0
-919	enemy.die	speed_booster
+919	enemy.die	seeker
 925	add	Seeker 228.0 147.0
 925	enemy.die	seeker
+925	add	Gold 228.0 147.0
 931	add	Seeker 240.0 135.0
 931	enemy.die	seeker
 937	add	Seeker 228.0 123.0
-937	enemy.die	seeker
+938	enemy.die	seeker
 943	add	Seeker 252.0 123.0
 943	enemy.die	seeker
 957	clear	3
-960	add	Tree 407.2 150.8
-961	add	Critter 426.4 150.8
-961	add	Critter 426.4 150.8
+961	add	Tree 406.1 150.8
+961	add	Critter 426.5 150.8
+961	add	Critter 426.5 150.8
 961	unit.hit	flagellant 1342.6
-967	add	Bomb 395.2 150.8
-967	add	Turret 415.6 150.8
-1021	add	Critter 354.4 150.8
-1021	add	Critter 354.4 150.8
-1081	add	Critter 282.4 150.8
-1081	add	Critter 282.4 150.8
+967	add	Bomb 395.3 150.8
+967	add	Turret 415.7 150.8
+1021	add	Critter 354.5 150.8
+1021	add	Critter 354.5 150.8
+1081	add	Critter 282.5 150.8
+1081	add	Critter 282.5 150.8
+1082	add	Volcano 239.6 142.9

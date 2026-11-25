@@ -483,21 +483,40 @@ the port reaches a wall.
   in their ticks (`arena2`, `arena3`, `bosses`, `classes`, `elites`,
   `run`); each still shows what it exists to show.
 
-The long scenes with fifteen seeds (1 to 15), before and after, median
-and range:
+- **The bounce of the leader on a wall** (`#26`). For the same reason,
+  LÖVE turns the leader inside the step of the contact, and that step
+  already moves it away from the wall; Box2D 3 stops it at the wall, and
+  it leaves one step later. A probe of one unit at 75 px/s against a
+  wall (a chain in LÖVE, the walls of the port): after the bounce the
+  port ran 1.40 px behind LÖVE for good (after 30 steps, 226.36 69.86
+  against 226.52 68.46). The leader now moves that step along the
+  normal of the wall when it bounces (`src/snake.atm`): 0.52 px behind.
+  Fifteen arena tests changed in their ticks; each still shows what it
+  exists to show.
 
-| measure | original | before | contact before the solver |
-|---------|---------:|-------:|--------------------------:|
-| level 1, second wave starts | 1693 | 1222 (755 to 1645) | 1279 (754 to 2012) |
-| level 1, cleared | 2450 | 2470 (1605 to 3194) | 2459 (1880 to 3020) |
-| level 1, hits on the sentry | 13 | 18 (14 to 20) | 17 (14 to 21) |
-| level 2, second wave starts | 1400 | 1472 (999 to 1990) | 1666 (1025 to 2484) |
-| level 2, the sentry dies | 2945 | 1897 (1509 to 2668) | 2014 (1669 to 3203) |
+The long scenes with fifteen seeds (1 to 15), median and range:
 
-Four of the five measures moved toward the original, one away; the
-ranges are wide, and the original is one run, so the gain is small and
-uncertain. The change is kept since it is the order of the original's
-engine. The sentry of level 2 still dies sooner than in the original.
+| measure | original | before | contact before the solver | and the leader's bounce |
+|---------|---------:|-------:|--------------------------:|------------------------:|
+| level 1, second wave starts | 1693 | 1222 (755 to 1645) | 1279 (754 to 2012) | 1462 (754 to 1873) |
+| level 1, cleared | 2450 | 2470 (1605 to 3194) | 2459 (1880 to 3020) | 2442 (1840 to 3272) |
+| level 1, hits on the sentry | 13 | 18 (14 to 20) | 17 (14 to 21) | 17 (15 to 23) |
+| level 2, second wave starts | 1400 | 1472 (999 to 1990) | 1666 (1025 to 2484) | 1643 (1191 to 2053) |
+| level 2, the sentry dies | 2945 | 1897 (1509 to 2668) | 2014 (1669 to 3203) | 2182 (1853 to 2950) |
+
+With both, four of the five measures are nearer the original and one
+(the second wave of level 2) is farther; the ranges are wide and the
+original is one run, so the gain is small. Both are kept since they are
+the order of the original's engine. The sentry of level 2 still dies
+sooner than in the original (2182 against 2945).
+
+Left: the solver of Box2D 3 applies the restitution after the friction,
+and no setting of the world changes it (`contactHertz` 60 or 120,
+`contactDampingRatio` 0 or 1, `maxContactPushSpeed` 100,
+`restitutionThreshold` 0 or 5, no continuous collision: the box of
+`eng/friction` leaves at -100 160 in all, against -100 140 in LÖVE). It
+would need a friction scaled by the restitution in a callback, which is
+not the original's rule for a contact at rest.
 
 ## 9. The new rules of `pin`
 

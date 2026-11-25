@@ -10,20 +10,20 @@
 125	barrage	swordsman
 145	barrage	swordsman
 165	barrage	swordsman
-180	add	Critter 369.1 150.7
-180	add	Critter 369.1 150.7
+180	add	Critter 369.2 150.7
+180	add	Critter 369.2 150.7
 185	barrage	swordsman
 186	unit.hit	squire 633.2
 204	barrage	swordsman
 224	barrage	swordsman
-240	add	Critter 239.1 150.7
-240	add	Critter 239.1 150.7
+240	add	Critter 239.2 150.7
+240	add	Critter 239.2 150.7
 244	barrage	swordsman
 246	add	SpawnMarker 240.0 135.0
 264	barrage	swordsman
 284	barrage	swordsman
-300	add	Critter 111.3 150.7
-300	add	Critter 111.3 150.7
+300	add	Critter 111.4 150.7
+300	add	Critter 111.4 150.7
 303	barrage	swordsman
 314	add	Seeker 240.0 135.0
 314	enemy.die	speed_booster

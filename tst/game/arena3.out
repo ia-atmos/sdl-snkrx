@@ -9,12 +9,11 @@
 68	unit.die	vagrant
 190	unit.hit	swordsman 104.2
 259	unit.hit	swordsman 68.4
-500	unit.hit	swordsman 32.6
-524	unit.hit	swordsman -3.2
-524	unit.die	swordsman
-578	unit.hit	archer 61.6
-658	enemy.die	seeker
-658	unit.hit	archer 23.3
-658	unit.hit	archer -15.1
-658	unit.die	archer
-658	died	1
+519	unit.hit	archer 61.6
+523	unit.hit	swordsman 32.6
+536	unit.hit	swordsman -3.2
+536	unit.die	swordsman
+787	unit.hit	archer 23.3
+821	unit.hit	archer -15.1
+821	unit.die	archer
+821	died	1
