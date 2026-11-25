@@ -27,43 +27,40 @@
 201	enemy.die	seeker
 201	enemy.die	seeker
 210	unit.hit	swordsman 64.0
-217	enemy.die	seeker
 222	unit.hit	swordsman 40.7
 226	enemy.die	seeker
 226	unit.hit	cleric 88.0
+228	enemy.die	seeker
 228	unit.hit	swordsman -49.8
 228	unit.die	swordsman
-261	enemy.die	spawner
-261	add	EnemyCritter 304.0 137.9
-261	add	EnemyCritter 304.0 137.9
-261	add	EnemyCritter 304.0 137.9
-261	add	EnemyCritter 304.0 137.9
-261	add	EnemyCritter 304.0 137.9
-261	add	EnemyCritter 304.0 137.9
-261	add	EnemyCritter 304.0 137.9
-261	add	EnemyCritter 304.0 137.9
-261	add	EnemyCritter 304.0 137.9
-261	add	EnemyCritter 304.0 137.9
+261	enemy.die	forcer
+261	add	EnemyCritter 294.9 123.1
+261	add	EnemyCritter 294.9 123.1
+261	add	EnemyCritter 294.9 123.1
+261	add	EnemyCritter 294.9 123.1
+261	add	EnemyCritter 294.9 123.1
 261	enemy.die	seeker
-268	unit.hit	cleric 41.0
-289	unit.hit	cleric -50.6
-289	unit.die	cleric
-341	unit.hit	squire 143.2
-353	unit.hit	squire 133.2
-390	unit.hit	squire 108.3
-526	add	EnemyCritter 265.7 93.8
-526	add	EnemyCritter 265.7 93.8
-526	add	EnemyCritter 265.7 93.8
-526	add	EnemyCritter 265.7 93.8
-526	add	EnemyCritter 265.7 93.8
-527	enemy.die	seeker
-532	enemy.die	seeker
-532	enemy.die	seeker
-534	unit.hit	squire 99.4
-536	unit.hit	squire 90.4
-537	unit.hit	squire 81.4
-541	enemy.die	seeker
-541	unit.hit	squire 71.4
-558	unit.hit	squire -100.3
-558	unit.die	squire
-558	died	12
+291	unit.hit	cleric -117.9
+291	unit.die	cleric
+333	unit.hit	squire 158.0
+349	unit.hit	squire 135.9
+357	unit.hit	squire 111.1
+376	unit.hit	squire 101.1
+379	unit.hit	squire 76.3
+386	unit.hit	squire 66.3
+424	enemy.die	seeker
+424	add	EnemyCritter 259.7 147.8
+424	add	EnemyCritter 259.7 147.8
+424	add	EnemyCritter 259.7 147.8
+424	add	EnemyCritter 259.7 147.8
+489	unit.hit	squire 57.3
+544	add	EnemyCritter 196.2 151.2
+544	add	EnemyCritter 196.2 151.2
+544	add	EnemyCritter 196.2 151.2
+544	add	EnemyCritter 196.2 151.2
+544	enemy.die	seeker
+600	unit.hit	squire 47.3
+606	unit.hit	squire 38.3
+609	unit.hit	squire -47.5
+609	unit.die	squire
+609	died	12

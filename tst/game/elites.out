@@ -17,9 +17,9 @@
 311	unit.hit	cleric 445.5
 322	enemy.die	shooter
 487	enemy.die	speed_booster
-547	unit.hit	wizard 195.8
-567	enemy.die	speed_booster
-567	clear	6
-567	achievement	speed_booster
-567	unit.hit	wizard 175.6
-747	buy_screen
+536	unit.hit	archer 364.5
+542	enemy.die	speed_booster
+542	clear	6
+542	achievement	speed_booster
+542	unit.hit	wizard 195.8
+722	buy_screen

@@ -419,6 +419,13 @@ task Unit (A, u, fx, shots) {
                 spawn @fxs HfxUse(u.hit, 0.5, 200, 10, 0.1)
                 spring_shake(2, math.pi - u.r)
                 bounce(u, e.nx, e.ny)
+                do {
+                    ;; LÖVE turns it inside the step, which already moves
+                    ;; it away from the wall: the same step, along the normal
+                    val x, y = body_pos(u.b)
+                    val vx, vy = body_vel(u.b)
+                    body_set(u.b, :position, x + (if e.nx == 0 => 0 => vx/60), y + (if e.ny == 0 => 0 => vy/60))
+                }
                 val p = rfloat(0.9, 1.1)
                 play(player_hit_wall1, [pitch=p, volume=0.1])
                 play(pop1, [pitch=p, volume=0.2])
