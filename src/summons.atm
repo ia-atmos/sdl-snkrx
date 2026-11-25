@@ -625,7 +625,7 @@ task ForceField (A, u, fx) {
     } with {
         loop c on :collision.enter until (it.b == o.b) && (it.other.kind == :enemy) {
             val e = c.other
-            push(e, rfloat(15, 20)*(u.knockback_m || 1), angle_to(u, e.x, e.y))
+            push(e, rfloat(15, 20)*(u.knockback_m || 1), angle_to(u, e.x, e.y), nil, true)
             hit(e, 0)
             spawn @fx HitCircle(c.x, c.y, [rs=6, color=fg@0, duration=0.1])
             loop in 2 {

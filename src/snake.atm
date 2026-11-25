@@ -36,8 +36,10 @@ func send (to, ev) {
 func hit (to, dmg, o) {
     send(to, :Hit ([ to=to, dmg=dmg ] ++ (o || [])))
 }
-func push (to, f, r, inv) {
-    send(to, :Push [ to=to, f=f, r=r, inv=inv ])
+;; `contact`: the push comes from the begin of a contact, so it starts
+;; from the velocity of before the contact (`body_vel0`), as in LÖVE.
+func push (to, f, r, inv, contact) {
+    send(to, :Push [ to=to, f=f, r=r, inv=inv, contact=contact ])
 }
 func slow (amount, duration) {
     emit @:global :Slow [ amount=amount || 0.5, duration=duration || 0.5 ]
@@ -233,7 +235,7 @@ task Unit (A, u, fx, shots) {
     spawn {
         loop e on :collision.enter until (it.b == u.b) && (it.other.kind == :enemy) {
             val o = e.other
-            push(o, rfloat(25, 35)*(u.knockback_m || 1), angle_to(u, o.x, o.y))
+            push(o, rfloat(25, 35)*(u.knockback_m || 1), angle_to(u, o.x, o.y), nil, true)
             hit(o, if (u.character == "vagrant") || (u.character == "psykeeper") => 2*u.dmg => u.dmg)
             if o.headbutting {
                 hit(u, (4 + math.floor(o.level/3))*o.dmg)

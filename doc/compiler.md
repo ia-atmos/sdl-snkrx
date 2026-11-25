@@ -472,15 +472,32 @@ more still lasts 62 to 93 ticks (means of seeds 1 to 3, against 106),
 with a top speed of 376 to 434 px/s against 331: almost every push of
 the port reaches a wall.
 
-Left, not verified: the time of the begin of a contact. LÖVE (Box2D
-2.3) calls it inside the step, before the solver, so a push from a
-contact starts from the velocity of before the contact (top 331, under
-the 357 of the impulse alone); Box2D 3 reports it after the step, when
-the solver has already bounced the seeker off the unit, and the push
-adds to the bounce. A try is on the branch `wip-26` (`19f7ee6`): the
-engine keeps the velocity of each body before the step (`body_vel0`),
-and the four pushes from contacts start from it. Its suite: 37 ok, 6
-changed, not yet reviewed; its long scenes not yet run.
+- **The time of the begin of a contact** (`#26`). LÖVE (Box2D 2.3)
+  calls it inside the step, before the solver, so a push from a contact
+  starts from the velocity of before the contact; Box2D 3 reports it
+  after the step, when the solver has already bounced the seeker off
+  the unit, and the push adds to the bounce. The engine now keeps the
+  velocity of each body before the step (`body_vel0`), and the four
+  pushes from contacts (a unit, a force field, a seeker thrown into
+  another, an elite's charge) start from it. Six arena tests changed
+  in their ticks (`arena2`, `arena3`, `bosses`, `classes`, `elites`,
+  `run`); each still shows what it exists to show.
+
+The long scenes with fifteen seeds (1 to 15), before and after, median
+and range:
+
+| measure | original | before | contact before the solver |
+|---------|---------:|-------:|--------------------------:|
+| level 1, second wave starts | 1693 | 1222 (755 to 1645) | 1279 (754 to 2012) |
+| level 1, cleared | 2450 | 2470 (1605 to 3194) | 2459 (1880 to 3020) |
+| level 1, hits on the sentry | 13 | 18 (14 to 20) | 17 (14 to 21) |
+| level 2, second wave starts | 1400 | 1472 (999 to 1990) | 1666 (1025 to 2484) |
+| level 2, the sentry dies | 2945 | 1897 (1509 to 2668) | 2014 (1669 to 3203) |
+
+Four of the five measures moved toward the original, one away; the
+ranges are wide, and the original is one run, so the gain is small and
+uncertain. The change is kept since it is the order of the original's
+engine. The sentry of level 2 still dies sooner than in the original.
 
 ## 9. The new rules of `pin`
 

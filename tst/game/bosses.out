@@ -19,53 +19,51 @@
 25	unit.hit	swordsman 129.5
 25	unit.hit	cleric 109.3
 54	unit.hit	swordsman 118.9
-103	unit.hit	cleric 98.7
-182	unit.hit	cleric 88.0
-183	unit.hit	swordsman 108.4
+102	unit.hit	cleric 98.7
+184	unit.hit	swordsman 108.4
+189	unit.hit	swordsman 97.8
+192	unit.hit	swordsman 87.3
 201	enemy.die	seeker
-206	unit.hit	swordsman 85.1
-211	enemy.die	seeker
-221	unit.hit	swordsman 74.5
-227	unit.hit	squire 158.0
-234	unit.hit	swordsman 64.0
-241	enemy.die	seeker
-241	add	EnemyCritter 394.0 84.7
-241	add	EnemyCritter 394.0 84.7
-241	add	EnemyCritter 394.0 84.7
-241	add	EnemyCritter 394.0 84.7
-241	enemy.die	seeker
-253	enemy.die	seeker
-253	unit.hit	swordsman 53.5
-260	unit.hit	swordsman 42.9
-285	unit.hit	swordsman 19.6
-291	unit.hit	swordsman 9.1
-314	unit.hit	swordsman -17.1
-314	unit.die	swordsman
-383	enemy.die	exploder
-485	unit.hit	squire 145.0
-527	add	EnemyCritter 302.7 131.5
-527	add	EnemyCritter 302.7 131.5
-527	add	EnemyCritter 302.7 131.5
-527	add	EnemyCritter 302.7 131.5
-539	unit.hit	cleric 64.5
-540	enemy.die	spawner
-540	add	EnemyCritter 86.2 149.8
-540	add	EnemyCritter 86.2 149.8
-540	add	EnemyCritter 86.2 149.8
-540	add	EnemyCritter 86.2 149.8
-540	add	EnemyCritter 86.2 149.8
-540	add	EnemyCritter 86.2 149.8
-540	add	EnemyCritter 86.2 149.8
-540	unit.hit	squire 122.9
+201	enemy.die	seeker
+201	enemy.die	seeker
+210	unit.hit	swordsman 64.0
+217	enemy.die	seeker
+222	unit.hit	swordsman 40.7
+226	enemy.die	seeker
+226	unit.hit	cleric 88.0
+228	unit.hit	swordsman -49.8
+228	unit.die	swordsman
+261	enemy.die	spawner
+261	add	EnemyCritter 304.0 137.9
+261	add	EnemyCritter 304.0 137.9
+261	add	EnemyCritter 304.0 137.9
+261	add	EnemyCritter 304.0 137.9
+261	add	EnemyCritter 304.0 137.9
+261	add	EnemyCritter 304.0 137.9
+261	add	EnemyCritter 304.0 137.9
+261	add	EnemyCritter 304.0 137.9
+261	add	EnemyCritter 304.0 137.9
+261	add	EnemyCritter 304.0 137.9
+261	enemy.die	seeker
+268	unit.hit	cleric 41.0
+289	unit.hit	cleric -50.6
+289	unit.die	cleric
+341	unit.hit	squire 143.2
+353	unit.hit	squire 133.2
+390	unit.hit	squire 108.3
+526	add	EnemyCritter 265.7 93.8
+526	add	EnemyCritter 265.7 93.8
+526	add	EnemyCritter 265.7 93.8
+526	add	EnemyCritter 265.7 93.8
+526	add	EnemyCritter 265.7 93.8
+527	enemy.die	seeker
+532	enemy.die	seeker
+532	enemy.die	seeker
+534	unit.hit	squire 99.4
+536	unit.hit	squire 90.4
+537	unit.hit	squire 81.4
 541	enemy.die	seeker
-541	unit.hit	cleric 53.8
-541	unit.hit	cleric 6.8
-541	unit.hit	cleric -40.3
-541	unit.die	cleric
-541	unit.hit	squire 78.8
-541	unit.hit	squire 34.7
-541	unit.hit	squire -9.5
-541	unit.die	squire
-541	died	12
-555	enemy.die	seeker
-593	enemy.die	seeker
+541	unit.hit	squire 71.4
+558	unit.hit	squire -100.3
+558	unit.die	squire
+558	died	12

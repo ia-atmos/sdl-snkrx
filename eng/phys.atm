@@ -119,6 +119,9 @@ func body_pos (b) {
 func body_vel (b) {
     return `:number.float pw_get(eg_int($b), 2)`, `:number.float pw_get(eg_int($b), 3)`
 }
+func body_vel0 (b) {     ;; the velocity before the last step
+    return `:number.float pw_get(eg_int($b), 7)`, `:number.float pw_get(eg_int($b), 8)`
+}
 func body_angle (b) {
     `:number.float pw_get(eg_int($b), 4)`
 }

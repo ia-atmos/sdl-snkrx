@@ -138,9 +138,9 @@ enemy def	10
 1730	enemy.die	speed_booster
 1730	enemy.die	seeker
 1730	enemy.die	seeker
-1735	enemy.die	seeker
-1737	enemy.die	seeker
-1740	enemy.die	seeker
+1736	enemy.die	seeker
 1755	enemy.die	seeker
-1823	enemy.die	exploder
-1823	clear	7
+1768	enemy.die	seeker
+1778	enemy.die	seeker
+1829	enemy.die	exploder
+1829	clear	7
