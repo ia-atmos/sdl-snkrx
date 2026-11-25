@@ -488,8 +488,8 @@ the port reaches a wall.
   already moves it away from the wall; Box2D 3 stops it at the wall, and
   it leaves one step later. A probe of one unit at 75 px/s against a
   wall (a chain in LÖVE, the walls of the port): after the bounce the
-  port ran 1.40 px behind LÖVE for good (after 30 steps, 226.36 69.86
-  against 226.52 68.46). The leader now moves that step along the
+  port ran 1.40 px behind LÖVE for good (after 30 steps, 226.36 68.46
+  against 226.52 69.86). The leader now moves that step along the
   normal of the wall when it bounces (`src/snake.atm`): 0.52 px behind.
   Fifteen arena tests changed in their ticks; each still shows what it
   exists to show.
