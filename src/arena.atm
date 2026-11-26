@@ -93,7 +93,6 @@ task FloorText (x, y, lines, sx) {
 task Arena (A, enemies) {
     set A.w = arena_world()
     val w = A.w
-    set w.at = task             ;; the events about its objects go to it
     defer {
         phys_world_free()
     }

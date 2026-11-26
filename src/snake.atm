@@ -21,14 +21,12 @@ func lerp_angle_dt (f, dt, src, dst) {
     lerp_angle(1 - math.pow(f, dt), src, dst)
 }
 
-;; Emits an event about `to` to the arena of `to` (`to.at`, set by `body`),
-;; or to the program when it has none: an event that carries objects of an
-;; arena can only go to the arena, whose block owns them.
+;; Emits an event about `to` to the task of `to` (`to.task`, which it
+;; sets with `set :out` and which goes back to nil when it ends): only that
+;; task awaits it, so a dead target gets nothing.
 func send (to, ev) {
-    if to && to.at {
-        emit @(to.at) (ev)
-    } else {
-        emit @:global (ev)
+    if to && to.task {
+        emit @(to.task) (ev)
     }
 }
 

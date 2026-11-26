@@ -102,7 +102,6 @@ func body (w, rec, type, x, y, tag, shape) {
     set rec.b = b
     set rec.tag = tag
     set w.objs@(b) = rec
-    set w.objs@(b).at = w.at    ;; the task of the arena, if any (`send`)
     w.objs@(b)
 }
 
