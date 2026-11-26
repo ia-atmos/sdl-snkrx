@@ -47,6 +47,7 @@ session, `session#N` (this session: `sdl-snxkx`, for the repository
 | #36 | `run_save` builds a clean copy of the run field by field (`src/save.atm`) | excerpt, bad | shown 2026-11-26: live units mix savable data and live objects; the port should keep the savable part apart (`run.data`) |
 | #37 | an action of the input is one record, its count and its start together (`src/input.atm:9`) | excerpt, good | shown 2026-11-26 |
 | #38 | loading the state copies field by field into the tables the engine shares (`src/save.atm:37`) | excerpt, bad | shown 2026-11-26: needs a merge into an existing table (`X.merge`, or a load into a table), or the engine not sharing `STATE.volume`; fixed (author's suggestion): the engine reads `STATE.volume` itself (`state.atm` comes before the engine), `VOLUME` is gone, and loading is `set STATE = load("state.atm") || STATE` |
+| #39 | the stars' pool bound to its context: `pin ss = in eng.on(STARS), tasks()` (`src/shared.atm:79`) | excerpt, good | shown 2026-11-26 |
 
 ## Items
 
