@@ -45,7 +45,7 @@ func held_for (a, s) {
 }
 
 pin KEY_ACTION = [ A=:left, Left=:left, D=:right, E=:right, S=:right, Right=:right ]
-pin BUT_ACTION = [ @1=:left, @3=:right ]
+pin BUT_ACTION = [ left=:left, right=:right ]
 
 task Input () {
     par {

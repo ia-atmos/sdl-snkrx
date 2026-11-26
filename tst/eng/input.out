@@ -1,7 +1,7 @@
 1	frame	16666
 3	mouse.motion	10.5	20.0	nil
-4	mouse.button.dn	10.5	20.0	1
-5	mouse.button.up	10.5	20.0	1
+4	mouse.button.dn	10.5	20.0	left
+5	mouse.button.up	10.5	20.0	left
 6	key.dn	Left
 7	key.up	Left
 60	1s

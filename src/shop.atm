@@ -346,7 +346,7 @@ task ShopCard (shop, i, x, y, character, units) {
             par :any {
                 await :mouse.motion until !inside()
             } with {
-                loop on :mouse.button.dn until it.button == 1 {
+                loop on :mouse.button.dn until it.button == :left {
                     emit @shop :Shop.buy [ i=i ]
                 }
             } with {
@@ -440,10 +440,10 @@ task CharacterPart (shop, row, x, u, copy, sc) {
         ;; the drag, of the square of a unit in the shop
         if shop && !copy {
             loop {
-                await :mouse.button.dn until (it.button == 1) && inside()
+                await :mouse.button.dn until (it.button == :left) && inside()
                 set row.grabbed = true
                 par :any {
-                    await :mouse.button.up until it.button == 1
+                    await :mouse.button.up until it.button == :left
                 } with {
                     loop on :frame {
                         val _, my = eng.mouse()
@@ -487,7 +487,7 @@ task CharacterPart (shop, row, x, u, copy, sc) {
             await InfoText(W/2, H/2 + 10, info_character(c, level, price), !shop)
         } with {
             if shop {
-                loop on :mouse.button.dn until (it.button == 3) && !created {
+                loop on :mouse.button.dn until (it.button == :right) && !created {
                     emit @shop :Shop.sell [ i=row.i, copy=copy ]
                 }
             } else {
@@ -593,10 +593,10 @@ task ItemCard (shop, i, x, y, p, sc) {
         } with {
             if shop {
                 loop e on :mouse.button.dn {
-                    if (e.button == 1) && !fixed && (p.level < 3) {
+                    if (e.button == :left) && !fixed && (p.level < 3) {
                         emit @shop :Shop.item_up [ i=i ]
                     }
-                    if e.button == 3 {
+                    if e.button == :right {
                         emit @shop :Shop.item_sell [ i=i ]
                     }
                 }
@@ -991,7 +991,7 @@ task ShopMain (run, shop) {
                 emit @:task :Shop.party
                 set_party_text()
             }
-            (id == :reroll) && (but == 1) => {
+            (id == :reroll) && (but == :left) => {
                 if run.gold < 2 {
                     error(springs@(e.id))
                     emit @:task :Message [ slot=:reroll, lines=gold_short ]
@@ -1003,11 +1003,11 @@ task ShopMain (run, shop) {
                     emit @:task :Shop.gold
                 }
             }
-            (id == :lock) && (but == 1) => {
+            (id == :lock) && (but == :left) => {
                 set run.locked = !run.locked
                 switch(springs@(e.id))
             }
-            (id == :level) && (but == 1) && (run.shop_level < 5) => {
+            (id == :level) && (but == :left) && (run.shop_level < 5) => {
                 if run.gold < 5 {
                     error(springs@(e.id))
                     emit @:task :Message [ slot=:level, lines=gold_short ]
@@ -1022,7 +1022,7 @@ task ShopMain (run, shop) {
                     emit @:task :Shop.gold
                 }
             }
-            (id == :level) && (but == 3) && (run.shop_level > 1) => {
+            (id == :level) && (but == :right) && (run.shop_level > 1) => {
                 if run.gold < 10 {
                     error(springs@(e.id))
                     emit @:task :Message [ slot=:level, lines=gold_short ]
@@ -1044,7 +1044,7 @@ task ShopMain (run, shop) {
                 emit @:global :goto [ screen=:restart, x=W/2, y=H/2, color=fg@0, text="[wavy, bg]restarting..." ]
                 await false
             }
-            (id == :go) && (but == 1) => {
+            (id == :go) && (but == :left) => {
                 if #run.units == 0 {
                     ;; the sound only when the text opens, as the original
                     emit @:task :Message [ slot=:go, sound=error1,

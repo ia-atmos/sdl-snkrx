@@ -115,10 +115,10 @@ task Options (kind, host) {
         until id == :resume
         match id {
             :sfx => {
-                set STATE.volume.sfx = volume_step(STATE.volume.sfx, e.but == 3)
+                set STATE.volume.sfx = volume_step(STATE.volume.sfx, e.but == :right)
             }
             :music => {
-                set STATE.volume.music = volume_step(STATE.volume.music, e.but == 3)
+                set STATE.volume.music = volume_step(STATE.volume.music, e.but == :right)
             }
             :dark => set STATE.dark_transitions = !STATE.dark_transitions
             :shake => set STATE.screen_shake = !(STATE.screen_shake != false)

@@ -53,7 +53,7 @@ task Button (owner, id, x, y, label, opts) {
         par :any {
             await :mouse.motion until !inside()
         } with {
-            loop on :mouse.button.dn until it.button == 1 {
+            loop on :mouse.button.dn until it.button == :left {
                 emit @owner :Button.click [ id=id ]
             }
         } with {

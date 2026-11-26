@@ -31,7 +31,7 @@ task PassiveCard (screen, i, x, y, passive) {
             par :any {
                 await :mouse.motion until !inside()
             } with {
-                loop on :mouse.button.dn until it.button == 1 {
+                loop on :mouse.button.dn until it.button == :left {
                     emit @screen :Passive.pick [ i=i ]
                 }
             } with {
@@ -98,7 +98,7 @@ task ChoosePassive (A, ui) {
                 val e = await <:Passive.pick || :Button.click>
                 ifs {
                     e ?? :Passive.pick => break(e.i)
-                    (e.id == :reroll) && (e.but == 1) => {
+                    (e.id == :reroll) && (e.but == :left) => {
                         if !free && (run.gold < 5) {
                             play(error1, [pitch=rfloat(0.95, 1.05), volume=0.5])
                             spring_pull(springs@(e.id), 0.2, 200, 10)

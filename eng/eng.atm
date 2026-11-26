@@ -8,7 +8,7 @@
 ;;      :key.up [key,code]      a key was released
 ;;      :mouse.motion [x,y]     the mouse moved    (window pixels: the game
 ;;                              pixels are in `eng.mouse()`)
-;;      :mouse.button.dn [x,y,button]   a button was pressed (1 left, 3 right)
+;;      :mouse.button.dn [x,y,button]   a button was pressed (:left, :middle, :right)
 ;;      :mouse.button.up [x,y,button]   a button was released
 ;;      :quit                   the window was closed
 ;;      :frame [n,us]           the real time of the frame (1/60 s, in us)
