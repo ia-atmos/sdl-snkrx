@@ -41,7 +41,8 @@ session, `session#N` (this session: `sdl-snxkx`, for the repository
 | #30 | a push from a contact reads the velocity before the step (`src/seeker.atm:22`) | excerpt, good | shown 2026-11-26 |
 | #31 | `send`: every game event checks whether its target has an arena (`src/snake.atm:27`) | excerpt, bad | shown 2026-11-26: a leftover of the pin rules on global emits; fixed (author's go): `send` emits to the target's own task (`to.task`, set with `set :out`), the `.at` plumbing removed, 43 tests identical |
 | #32 | `send` after #31: an event goes to the target's own task (`src/snake.atm:27`) | excerpt, good | shown 2026-11-26 |
-| #33 | `send` still guards `to.task`, nil once the target ended (`src/snake.atm:28`) | excerpt, bad | shown 2026-11-26; corrected: `emit @nil` does not raise, nil is the default target (the current task and below), so without the guard a dead target would wake every task under the sender; proposal sent to `atmos-lang` (its #127, prototype branch `emit-nil` 6e9b271: a target that is nil sends to no one); if the author approves, the guard goes |
+| #33 | `send` still guards `to.task`, nil once the target ended (`src/snake.atm:28`) | excerpt, bad | closed: `atmos-lang#127` approved and merged (`emit @nil` sends to no one); the guard is gone, `send` is `emit @(to.task) (ev)`; lang `28a379c`, 43 tests identical |
+| #34 | Answer to the author's general instruction for the ports (fidelity is observable behaviour; idioms; own file formats; bugs) | answer | given 2026-11-26: (a) 1 and 4 mostly, 2 in part, 3 not (the save); (b) the save to `X.load`/`X.dump`, the loose globals into tables, the flags read across tasks, the split of modules; (c) 7/10 |
 
 ## Items
 
