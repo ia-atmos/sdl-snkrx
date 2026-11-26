@@ -184,12 +184,12 @@ task EliteAttack (A, e, fx, shots) {
         "speed_booster" => {
             await((rfloat(16, 24)) * 1s)
             hit(e, 10000)
-            await(false)
+            await false
         }
         "exploder" => {
             await((rfloat(16, 24)) * 1s)
             hit(e, 10000)
-            await(false)
+            await false
         }
         "shooter" => {
             await((rfloat(2, 4)) * 1s)
@@ -283,7 +283,7 @@ task EliteAttack (A, e, fx, shots) {
                 }
             }
         }
-        else => await(false)
+        else => await false
     }
 }
 

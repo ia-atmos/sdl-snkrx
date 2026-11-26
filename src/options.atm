@@ -143,17 +143,17 @@ task Options (kind, host) {
             :restart => {
                 save("state.atm", STATE)
                 emit @:global :goto [ screen=:restart, x=W/2, y=H/2, color=fg@0, text="[wavy, bg]restarting..." ]
-                await(false)
+                await false
             }
             :menu => {
                 save("state.atm", STATE)
                 emit @:global :goto [ screen=:menu, x=W/2, y=H/2, color=fg@0, text="[wavy, bg].." ]
-                await(false)
+                await false
             }
             :quit => {
                 save("state.atm", STATE)
                 emit @:global :goto [ screen=:quit ]
-                await(false)
+                await false
             }
         }
         save("state.atm", STATE)
@@ -209,7 +209,7 @@ task RunClock (run) {
             set run.time = (run.time || 0) + e.us/1000000
         }
     }
-    await(false)
+    await false
 }
 
 ;; The sounds of a click on an option, as the actions of the buttons of

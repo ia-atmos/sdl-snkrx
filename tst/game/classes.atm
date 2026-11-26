@@ -35,4 +35,4 @@ await :step
 print("enemy def", (A.enemies@0).def)
 
 ;; the rangers barrage, the rogues crit (see the trace)
-await(false)
+await false

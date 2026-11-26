@@ -312,7 +312,7 @@ task SlowDown (dur) {
     }
     await TweenReal(dur, st, [v=0], linear)
     eng.slow(0)
-    await(false)
+    await false
 }
 
 ;; The end of a level that is clear, as `Arena:quit`: the text, the gold,
@@ -415,7 +415,7 @@ task Won (A, ui) {
     if e.id == :restart {
         play(ui_transition2, [pitch=rfloat(0.95, 1.05), volume=0.5])
         emit @:global :goto [ screen=:restart, x=W/2, y=H/2, color=fg@0, text="[wavy, bg]restarting..." ]
-        await(false)
+        await false
     }
     ;; loop: the same run, one loop further, at the new game plus before
     set STATE.ng = if STATE.ng >= 5 => 5 => math.max(STATE.ng - 1, 0)
@@ -467,7 +467,7 @@ task ClearGo (A) {
                           color=fg@0, lines=gold_lines(A, -1),
                           ;; the numbers, not the arena: the transition outlives it
                           counting=[ gold_gained=A.gold_gained, gold_picked_up=A.gold_picked_up, interest=A.interest ] ]
-    await(false)
+    await false
 }
 
 ;; The end of a level when the snake dies, as `Arena:die`: the text, the
@@ -497,5 +497,5 @@ task Died (A, ui) {
     play(ui_switch2, [pitch=rfloat(0.95, 1.05), volume=0.5])
     play(ui_switch1, [pitch=rfloat(0.95, 1.05), volume=0.5])
     emit @:global :goto [ screen=:restart, x=W/2, y=H/2, color=fg@0, text="[wavy, bg]restarting..." ]
-    await(false)
+    await false
 }

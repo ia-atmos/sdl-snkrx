@@ -25,7 +25,7 @@ func lerp_angle_dt (f, dt, src, dst) {
 ;; sets with `set :out` and which goes back to nil when it ends): only that
 ;; task awaits it, and a dead target (nil) gets nothing.
 func send (to, ev) {
-    emit @(to.task) (ev)
+    emit @(to.task) ev
 }
 
 ;; Emits a hit, a push, or a slow motion.

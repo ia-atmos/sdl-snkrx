@@ -48,7 +48,7 @@ task Wall (x, y, w2, h2) {
     defer {
         body_free(w, b)
     }
-    await(false)
+    await false
 }
 
 pin ts = tasks()

@@ -29,4 +29,4 @@ spawn {
     val e = await :frame
     print(eng.tick(), e.tag, e.us)
 }
-await(false)
+await false

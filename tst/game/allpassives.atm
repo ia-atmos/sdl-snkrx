@@ -18,4 +18,4 @@ pin run = [ level=6, loop=0, gold=40, units=[
 pin A = new_arena(6)
 set A.run = run
 spawn Arena(A)
-await(false)
+await false

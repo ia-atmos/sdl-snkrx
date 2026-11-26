@@ -83,7 +83,7 @@ task FloorText (x, y, lines, sx) {
     }
     await 8s
     await Tween(0.2, st, [sy=0], linear)
-    await(false)
+    await false
 }
 
 ;; An arena: a level of the run `A.run`, with the snake of its units, its
@@ -217,10 +217,10 @@ task Arena (A, enemies) {
         if !A.menu {
             await Pause(:arena, A.run)
         }
-        await(false)
+        await false
     } with {
         ifs {
-            A.menu => await(false)
+            A.menu => await false
             enemies => {
                 loop _, e in enemies {
                     spawn @foes Seeker(A, [x=e@0, y=e@1, level=e@2, elite=e@3, boss=e@4], effects, shots)

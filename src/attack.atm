@@ -327,7 +327,7 @@ task Projectile (A, p, fx) {
     } with {
         ;; the sage: 4s, blinks, and bursts at level 3
         if c != "sage" {
-            await(false)
+            await false
         }
         set p.dvr = rfloat(-math.pi/4, math.pi/4)
         await 4s
@@ -348,7 +348,7 @@ task Projectile (A, p, fx) {
     } with {
         ;; hits the enemies it crosses, until it cannot cross more
         if c == "sage" {
-            await(false)
+            await false
         }
         loop e on :trigger.enter until (it.b == p.b) && (it.other.kind == :enemy) {
             val o = e.other
@@ -899,7 +899,7 @@ task DotArea (A, a, fx) {
     val dots = cryo || a.void_rift || X.in(c, ["plague_doctor", "pyromancer", "witch", "burning_field"])
     par :any {
         if !dots {
-            await(false)
+            await false
         }
         pin tk = [ t=0 ]
         loop {

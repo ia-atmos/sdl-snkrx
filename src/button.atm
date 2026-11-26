@@ -62,7 +62,7 @@ task Button (owner, id, x, y, label, opts) {
             if opts && opts.info {
                 await InfoText(x, y + 20, opts.info, true)
             } else {
-                await(false)
+                await false
             }
         } with {
             loop on :draw {

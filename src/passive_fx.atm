@@ -96,7 +96,7 @@ task Passives (A, fx, shots) {
     if ouro {
         spawn @ps OuroborosR(A, ouro, fx, shots)
     }
-    await(false)
+    await false
 }
 
 ;; Divine punishment: every 5s, a bolt on every enemy, for 10 times the
@@ -213,7 +213,7 @@ task UnitPassives (A, u) {
     if u.unrelenting_stance {
         set u.unrelenting_stance_def_m = 1
     }
-    await(false)
+    await false
 }
 
 ;; A field of a unit that grows by `v` every `d` seconds.

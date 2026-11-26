@@ -72,7 +72,7 @@ task Menu () {
                 play(ui_switch1, [pitch=rfloat(0.95, 1.05), volume=0.5])
                 emit @:global :goto [ screen=:buy_screen, x=W/2, y=H/2, color=fg@0,
                                       text="[wavy, bg]starting..." ]
-                await(false)
+                await false
             }
             :quit => {
                 return :quit

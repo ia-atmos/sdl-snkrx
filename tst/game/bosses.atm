@@ -14,4 +14,4 @@ loop i in 12 {
     set es@+ = [ 80 + (i % 6)*64, 100 + (i // 6)*70, 5 ]
 }
 spawn Arena(A, es)
-await(false)
+await false

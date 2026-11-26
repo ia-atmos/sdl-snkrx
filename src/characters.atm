@@ -573,12 +573,12 @@ task Character (A, u, fx, shots) {
         "cryomancer" => do {
             spawn @fx DotArea(A, [x=u.x, y=u.y, rs=u.area_size_m*72, color=u.color, dmg=u.area_dmg_m*u.dmg,
                                   character=u.character, level=u.level, parent=u], fx)
-            await(false)
+            await false
         }
         "pyromancer" => do {
             spawn @fx DotArea(A, [x=u.x, y=u.y, rs=u.area_size_m*48, color=u.color, dmg=u.area_dmg_m*u.dmg,
                                   character=u.character, level=u.level, parent=u], fx)
-            await(false)
+            await false
         }
         "psykino" => do {
             pin tk = [ t=0 ]
@@ -648,7 +648,7 @@ task Character (A, u, fx, shots) {
             if u.level == 3 {
                 set A.chronomancer_dot = 0.5
             }
-            await(false)
+            await false
         }
         "fairy" => loop {
             await 6s
@@ -704,7 +704,7 @@ task Character (A, u, fx, shots) {
             await 7s
             spawn @shots Sentry(A, u, fx, shots)
         }
-        else => await(false)       ;; the squire buffs (see `unit_buffs`)
+        else => await false       ;; the squire buffs (see `unit_buffs`)
     }
 }
 
