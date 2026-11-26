@@ -26,7 +26,7 @@ spawn {
     loop e on :mouse.button.up {
         print("up", eng.tick(), order())
         await 100ms
-        pin r = run_load()
+        pin r = load("run.atm")
         print("saved", string.join(loop_chars_of(r.units), " "))
     }
 }

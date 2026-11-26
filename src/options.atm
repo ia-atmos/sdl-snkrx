@@ -143,22 +143,22 @@ task Options (kind, host) {
             :ng_down => set STATE.ng = math.max(0, math.min(STATE.ng - 1, 5))
             :ng_up => set STATE.ng = math.max(0, math.min(STATE.ng + 1, STATE.ng_max))
             :restart => {
-                state_save()
+                save("state.atm", STATE)
                 emit @:global :goto [ screen=:restart, x=W/2, y=H/2, color=fg@0, text="[wavy, bg]restarting..." ]
                 await(false)
             }
             :menu => {
-                state_save()
+                save("state.atm", STATE)
                 emit @:global :goto [ screen=:menu, x=W/2, y=H/2, color=fg@0, text="[wavy, bg].." ]
                 await(false)
             }
             :quit => {
-                state_save()
+                save("state.atm", STATE)
                 emit @:global :goto [ screen=:quit ]
                 await(false)
             }
         }
-        state_save()
+        save("state.atm", STATE)
         emit @me :Options.changed
     }
     ;; the input comes back at once, before the game time does
@@ -256,8 +256,8 @@ func window_step (d) {
 task WindowKeys () {
     loop e on :key.dn {
         match e.key {
-            "K" => if (STATE.sx || 2) > 1 { window_step(-0.5) ; state_save() }
-            "L" => { window_step(0.5) ; state_save() }
+            "K" => if (STATE.sx || 2) > 1 { window_step(-0.5) ; save("state.atm", STATE) }
+            "L" => { window_step(0.5) ; save("state.atm", STATE) }
         }
     }
 }

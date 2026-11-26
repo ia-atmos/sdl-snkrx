@@ -97,13 +97,13 @@ par {
                     set g.run.level += 1
                 } else {
                     ;; "arena run": the run saved, if any (`system.load_run`)
-                    set g.run = run_load() || g.run
+                    set g.run = load("run.atm") || g.run
                 }
                 [ Shop, g.run, "buy_screen" ]
             }
             :arena => [ Play, g.run, "arena" ]
             :restart => do {
-                run_clear()
+                save("run.atm", nil)
                 set g.run = new_run()
                 [ Shop, g.run, "buy_screen" ]
             }

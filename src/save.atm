@@ -21,17 +21,13 @@ func load (name) {
     if s && (#s > 0) => X.load(s) => nil
 }
 
-func state_save () {
-    save("state.atm", STATE)
-}
-
 ;; An achievement, as `state.achievement_x = true; system.save_state()`
 ;; with `steam.userStats.setAchievement`: once, saved with the state.
 func achieve (name) {
     if !STATE.achievements@(name) {
         set STATE.achievements@(name) = true
         trace("achievement", name)
-        state_save()
+        save("state.atm", STATE)
     }
 }
 
@@ -61,13 +57,4 @@ func run_save (run) {
         passives = iter.map(run.passives, \(p) { [ passive=p.passive, level=p.level, xp=p.xp ] }),
         pool = run.pool || [],
     ])
-}
-
-func run_clear () {
-    save("run.atm", nil)
-}
-
-;; The run saved, or nil.
-func run_load () {
-    load("run.atm")
 }

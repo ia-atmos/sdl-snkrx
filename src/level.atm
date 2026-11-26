@@ -374,8 +374,8 @@ task Won (A, ui) {
         set STATE.ng_max += 1
     }
     set STATE.ng += 1
-    run_clear()
-    state_save()
+    save("run.atm", nil)
+    save("state.atm", STATE)
     win_achievements(A)
     spawn @ui Modal()
     spawn @ui TweenReal(4, CAM, [x=W/2, y=H/2, r=0], linear)
@@ -392,7 +392,7 @@ task Won (A, ui) {
             set STATE.ng_max = 5
         }
         set STATE.ng = 5
-        state_save()
+        save("state.atm", STATE)
         spawn @ui Text2(W/2 + 40, H/2 + 20, text([
             [text="[fg]now you've really beaten the game!", font=pixul_font, alignment=:center, height_multiplier=1.24],
             [text="[fg]thanks a lot for playing it and completing it entirely!", font=pixul_font, alignment=:center, height_multiplier=1.24],
@@ -419,7 +419,7 @@ task Won (A, ui) {
     }
     ;; loop: the same run, one loop further, at the new game plus before
     set STATE.ng = if STATE.ng >= 5 => 5 => math.max(STATE.ng - 1, 0)
-    state_save()
+    save("state.atm", STATE)
     set A.run.loop += 1
 }
 
@@ -476,7 +476,7 @@ task ClearGo (A) {
 task Died (A, ui) {
     trace("died", tostring(A.level))
     eng.cursor(true)
-    run_clear()                 ;; as `system.save_run()` in `Arena:die`
+    save("run.atm", nil)                 ;; as `system.save_run()` in `Arena:die`
     spawn @ui Modal()
     spawn @ui Text2(W/2, H/2 - 32, text([ [text="[wavy_mid]you died...", font=fat_font, alignment=:center, height_multiplier=1.25] ]),
                     nil, nil, :cbyc)
