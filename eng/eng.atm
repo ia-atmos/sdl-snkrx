@@ -283,7 +283,8 @@ func draw_image (img, x, y, r, sx, sy, color) {
 ;;; SOUNDS ;;;
 
 ;; The volumes of the tags of sounds of the original (`sfx`, `music`),
-;; which multiply the volume of each instance.
+;; which multiply the volume of each instance; the game saves it as
+;; `STATE.volume`.
 pin VOLUME = [ sfx=0.5, music=0.5 ]
 
 ;; A sound of the original by file name, with its tag, as `Sound(...)`.

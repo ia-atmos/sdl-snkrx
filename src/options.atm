@@ -116,11 +116,9 @@ task Options (kind, host) {
         match id {
             :sfx => {
                 set VOLUME.sfx = volume_step(VOLUME.sfx, e.but == 3)
-                set STATE.sfx_volume = VOLUME.sfx
             }
             :music => {
                 set VOLUME.music = volume_step(VOLUME.music, e.but == 3)
-                set STATE.music_volume = VOLUME.music
             }
             :dark => set STATE.dark_transitions = !STATE.dark_transitions
             :shake => set STATE.screen_shake = !(STATE.screen_shake != false)

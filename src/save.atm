@@ -32,8 +32,16 @@ func achieve (name) {
 }
 
 func state_load () {
+    ;; a table of the state (the volumes, the achievements) gets the
+    ;; fields saved, so that what holds it (the engine, `VOLUME`) sees them
     loop k, v in load("state.atm") || [] {
-        set STATE@(k) = v
+        if type(STATE@(k)) == :table {
+            loop kk, vv in v {
+                set STATE@(k)@(kk) = vv
+            }
+        } else {
+            set STATE@(k) = v
+        }
     }
     ;; as `engine_run`: the size saved, or else the size of the desktop
     ;; (not in the test mode, whose screenshots are at 2 pixels per pixel)
@@ -41,8 +49,6 @@ func state_load () {
         STATE.sx => eng.window(STATE.sx)
         !eng.testing() => set STATE.sx = eng.window(0)
     }
-    set VOLUME.sfx = STATE.sfx_volume
-    set VOLUME.music = STATE.music_volume
 }
 
 func run_save (run) {
