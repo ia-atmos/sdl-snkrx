@@ -1,26 +1,25 @@
 ;; The keys of the original that are held, rather than pressed: turning
 ;; left and right (`input:bind('move_left', {'a', 'left', 'm1'})` and
-;; `('move_right', {'d', 'e', 's', 'right', 'm2'})`). A count per action,
-;; of the keys and buttons held for it.
-
-pin HELD = [ left=0, right=0 ]
-
-;; When an action started to be held, in seconds of real time, as
-;; `move_left_pressed` (not while the other one is held), or nil.
-pin HELD_SINCE = [ left=nil, right=nil ]
+;; `('move_right', {'d', 'e', 's', 'right', 'm2'})`). Per action: `n`, the
+;; count of the keys and buttons held for it, and `since`, when it started
+;; to be held, in seconds of real time, as `move_left_pressed` (not while
+;; the other one is held), or nil.
+pin HELD = [ left=[n=0, since=nil], right=[n=0, since=nil] ]
 
 func held_press (a) {
-    set HELD@(a) += 1
+    val h = HELD@(a)
+    set h.n += 1
     val other = if a == :left => :right => :left
-    if (HELD@(a) == 1) && !HELD_SINCE@(other) {
-        set HELD_SINCE@(a) = eng.tick() / 60
+    if (h.n == 1) && !HELD@(other).since {
+        set h.since = eng.tick() / 60
     }
 }
 
 func held_release (a) {
-    set HELD@(a) = math.max(0, HELD@(a) - 1)
-    if HELD@(a) == 0 {
-        set HELD_SINCE@(a) = nil
+    val h = HELD@(a)
+    set h.n = math.max(0, h.n - 1)
+    if h.n == 0 {
+        set h.since = nil
     }
 }
 
@@ -41,7 +40,8 @@ func mouse_turning (A, dir) {
 
 ;; Whether an action is held for more than `s` seconds.
 func held_for (a, s) {
-    HELD_SINCE@(a) && ((eng.tick()/60 - HELD_SINCE@(a)) > s)
+    val since = HELD@(a).since
+    since && ((eng.tick()/60 - since) > s)
 }
 
 pin KEY_ACTION = [ A=:left, Left=:left, D=:right, E=:right, S=:right, Right=:right ]

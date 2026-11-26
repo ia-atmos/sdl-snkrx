@@ -381,10 +381,10 @@ task Unit (A, u, fx, shots) {
                             set A.mouse_v@(64) = nil
                         }
                     } else {
-                        if HELD.left > 0 {
+                        if HELD.left.n > 0 {
                             set u.r -= 1.66*math.pi*dt
                         }
-                        if HELD.right > 0 {
+                        if HELD.right.n > 0 {
                             set u.r += 1.66*math.pi*dt
                         }
                     }
@@ -402,8 +402,8 @@ task Unit (A, u, fx, shots) {
                     set CAM.x += remap(vx, -100, 100, -24*hd, 24*hd)*dt
                     set CAM.y += remap(vy, -100, 100, -8*vd, 8*vd)*dt
                     set CAM.r = ifs {
-                        HELD.right > 0 => lerp_angle_dt(0.01, dt, CAM.r, math.pi/256)
-                        HELD.left > 0  => lerp_angle_dt(0.01, dt, CAM.r, -math.pi/256)
+                        HELD.right.n > 0 => lerp_angle_dt(0.01, dt, CAM.r, math.pi/256)
+                        HELD.left.n > 0  => lerp_angle_dt(0.01, dt, CAM.r, -math.pi/256)
                         else           => lerp_angle_dt(0.005, dt, CAM.r, 0)
                     }
                 }
