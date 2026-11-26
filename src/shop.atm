@@ -179,8 +179,8 @@ task ClassIcon (x, y, class, units, next, s, party, tut) {
             }
         }
     }
-    val c = class_colors@(class)
-    val ramp = RAMPS@(class_color_strings@(class))
+    val c = CLASSES@(class).color
+    val ramp = RAMPS@(CLASSES@(class).color_string)
     loop on :draw {
         val n = class_counts(units)@(class)
         var next_n = nil
@@ -240,7 +240,7 @@ func owned_marks (character, units) {
 
 ;; The places of the icons of the classes of a card.
 func card_classes (x, y, character) {
-    val cs = character_classes@(character)
+    val cs = CHARACTERS@(character).classes
     val dx = match #cs { 2 => -10 ; 3 => -20 ; else => 0 }
     val out = []
     loop i, c in cs {
@@ -258,10 +258,10 @@ task ShopCard (shop, i, x, y, character, units) {
     pin is = spring(1)          ;; of the icon
     spring_pull(s, 0.2, 200, 10)
     spawn UISprings(s, is)
-    val cost = character_tiers@(character)
-    val name = shop_text("[" ++ character_color_strings@(character) ++ "]" ++ string.lower(character_names@(character)))
-    val ramp = RAMPS@(character_color_strings@(character))
-    val color = character_colors@(character)
+    val cost = CHARACTERS@(character).tier
+    val name = shop_text("[" ++ CHARACTERS@(character).color_string ++ "]" ++ string.lower(CHARACTERS@(character).name))
+    val ramp = RAMPS@(CHARACTERS@(character).color_string)
+    val color = CHARACTERS@(character).color
     pin cs = []
     pin p = [ sx=1 ]            ;; the pulse while selected
     var selected = false
@@ -364,9 +364,9 @@ task ShopCard (shop, i, x, y, character, units) {
 ;; The effects of a card that is bought, as `ShopCard:die`: at its icon
 ;; and at the icons of its classes.
 task CardGone (x, y, character, units, fx) {
-    spawn @fx SpawnEffect(x, y - 22, character_colors@(character), fx)
+    spawn @fx SpawnEffect(x, y - 22, CHARACTERS@(character).color, fx)
     loop _, ci in card_classes(x, y, character) {
-        spawn @fx SpawnEffect(ci@1, ci@2 + 4, if class_lit(ci@0, units) => class_colors@(ci@0) => bg@3, fx)
+        spawn @fx SpawnEffect(ci@1, ci@2 + 4, if class_lit(ci@0, units) => CLASSES@(ci@0).color => bg@3, fx)
     }
 }
 
@@ -375,7 +375,7 @@ task CardGone (x, y, character, units, fx) {
 ;; The price of a unit of the party, or of one copy toward its next
 ;; level (`get_sale_price`).
 func sale_price (character, level, reserve) {
-    val t = character_tiers@(character)
+    val t = CHARACTERS@(character).tier
     val base = match level { 1 => t ; 2 => 2*t ; else => 6*t }
     base + (reserve && (reserve@1*t*2 + reserve@0*t) || 0)
 }
@@ -400,7 +400,7 @@ task CharacterPart (shop, row, x, u, copy, sc) {
     spring_pull(s, 0.2, 200, 10)
     spawn UISprings(s)
     val level = copy || unit_level(u)
-    val ramp = RAMPS@(character_color_strings@(c))
+    val ramp = RAMPS@(CHARACTERS@(c).color_string)
     var lit = false
     pin y = func () {
         40 + row.i*19
@@ -417,7 +417,7 @@ task CharacterPart (shop, row, x, u, copy, sc) {
                 eng.pop()
             } else {
                 eng.push(x, y(), 0, (sc || 1)*s.x)
-                eng.rect(x, y(), 14, 14, 3, 3, if lit => bg@10 => character_colors@(c))
+                eng.rect(x, y(), 14, 14, 3, 3, if lit => bg@10 => CHARACTERS@(c).color)
                 print_centered(pixul_font, tostring(level), x + 0.5, y() + 2, 0, 1, 1, if lit => bg@5 => ramp@(-5))
                 eng.pop()
             }
@@ -425,7 +425,7 @@ task CharacterPart (shop, row, x, u, copy, sc) {
     }
     spawn {
         loop e on :Shop.highlight {
-            if X.in(e.class, character_classes@(c)) {
+            if X.in(e.class, CHARACTERS@(c).classes) {
                 set lit = e.on
                 spring_pull(s, if e.on => 0.2 => 0.05, 200, 10)
             }
@@ -518,7 +518,7 @@ task Party (shop, run, fx) {
             set px -= 20
         }
         if u.spawn_effect {
-            spawn @fx SpawnEffect(x, y, character_colors@(u.character), fx)
+            spawn @fx SpawnEffect(x, y, CHARACTERS@(u.character).color, fx)
             set u.spawn_effect = false
         }
     }
@@ -553,7 +553,7 @@ task ItemCard (shop, i, x, y, p, sc) {
     spawn UISprings(s)
     val w = if shop => 40 => 30
     val h = if shop => 50 => 45
-    val fixed = X.in(p.passive, unlevellable_items)
+    val fixed = X.in(p.passive, UNLEVELLABLE_ITEMS)
     var selected = false
     spawn {
         loop on :draw {
@@ -630,7 +630,7 @@ task Build (run, iy) {
         val c = unit_character(u)
         spawn @ps CharacterPart(nil, [ i=i, n=#run.units ], 20, u)
         spawn @ps Text2(20 + 14 + text_width(pixul_font, c)/2, 40 + i*19,
-                        text([ [text="[" ++ character_color_strings@(c) ++ "]" ++ c, font=pixul_font, alignment=:left] ]))
+                        text([ [text="[" ++ CHARACTERS@(c).color_string ++ "]" ++ c, font=pixul_font, alignment=:left] ]))
     }
     loop i, p in run.passives || [] {
         spawn @ps ItemCard(nil, i, 120 + i*30, iy, p, 0.75)
@@ -648,17 +648,17 @@ func item_max_xp (level) {
 ;; Three characters for the cards, by the odds of the level of the shop,
 ;; not all of them without an attack (`set_cards`).
 func roll_cards (run) {
-    val odds = level_to_shop_odds@(run.shop_level)
+    val odds = SHOP_ODDS@(run.shop_level)
     val cs = []
     loop {
         vector.clear(cs)
         loop in 3 {
             val tier = rweighted(odds) + 1
-            set cs@+ = rtable(tier_to_characters@(tier))
+            set cs@+ = rtable(TIER_CHARACTERS@(tier))
         }
         var all_idle = true
         loop _, c in cs {
-            if X.nin(c, non_attacking_characters) {
+            if CHARACTERS@(c).attacks {
                 set all_idle = false
             }
         }
@@ -671,7 +671,7 @@ func roll_cards (run) {
 ;; the unit of the party, or a new unit. Returns true when it bought, or
 ;; why not (:max_level, :max_units; false when the gold is short).
 func shop_buy (run, character) {
-    val cost = character_tiers@(character)
+    val cost = CHARACTERS@(character).tier
     var u = nil
     loop _, o in run.units {
         if o.character == character {
@@ -1057,7 +1057,7 @@ task ShopMain (run, shop) {
                     play(ui_switch1, [pitch=rfloat(0.95, 1.05), volume=0.5])
                     play(ui_transition1, [pitch=rfloat(0.95, 1.05), volume=0.5])
                     emit @:global :goto [ screen=:arena, x=W - 90, y=H - 20,
-                        color=character_colors@((rtable(run.units)).character),
+                        color=CHARACTERS@((rtable(run.units)).character).color,
                         text="[wavy, bg]level " ++ tostring(run.level) ++ "/" ++ tostring(25*(run.loop + 1)) ]
                     await(false)
                 }

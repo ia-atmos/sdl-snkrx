@@ -103,7 +103,7 @@ func unit_stats (u, first, ng) {
     }
     pin m = [hp=1, dmg=1, aspd=1, area_dmg=1, area_size=1, def=1, mvspd=1]
     loop _, c in u.classes {
-        loop k, v in class_stat_multipliers@(c) {
+        loop k, v in CLASSES@(c).stat_multipliers {
             set m@(k) = m@(k) * v
         }
     }

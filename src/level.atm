@@ -133,7 +133,7 @@ task BossWaves (A, foes, spawns, fx, shots) {
     play(spawn1, [pitch=rfloat(0.8, 1.2), volume=0.15])
     spawn @fx SpawnMarker(W/2, H/2)
     await 1125ms
-    spawn @foes Seeker(A, [ x=W/2, y=H/2, level=A.level, boss=level_to_boss@(A.level) ], fx, shots)
+    spawn @foes Seeker(A, [ x=W/2, y=H/2, level=A.level, boss=LEVELS@(A.level).boss ], fx, shots)
     ;; its record, owned by the world: the seeker adds it to the enemies
     ;; before it first awaits
     val boss = A.enemies@(#A.enemies - 1)
@@ -219,7 +219,7 @@ task CharacterHP (A, u, x, y) {
         val c = ifs {
             dead         => bg@5
             u.chp.f > 0  => fg@0
-            else         => RAMPS@(character_color_strings@(u.character))@(-2)
+            else         => RAMPS@(CHARACTERS@(u.character).color_string)@(-2)
         }
         eng.push(x, y, 0, u.chp.s.x)
         eng.rect(x, y - 2, 14, 4, 2, 2, c, 2)
@@ -231,11 +231,11 @@ task CharacterHP (A, u, x, y) {
         }
         eng.pop()
         ;; the cooldown under the unit itself (`state.cooldown_snake`)
-        if STATE.cooldown_snake && !dead && X.nin(u.character, non_cooldown_characters) {
+        if STATE.cooldown_snake && !dead && CHARACTERS@(u.character).cooldown {
             eng.push(u.x, u.y, 0, u.chp.s.x)
             eng.line(u.x - 4, u.y + 8, u.x + 4, u.y + 8, if u.chp.f > 0 => fg@0 => bg@(-2), 2)
             eng.line(u.x - 4, u.y + 8, u.x - 4 + 8*(u.cooldown || 0), u.y + 8,
-                     if u.chp.f > 0 => fg@0 => RAMPS@(character_color_strings@(u.character))@(-2), 2)
+                     if u.chp.f > 0 => fg@0 => RAMPS@(CHARACTERS@(u.character).color_string)@(-2), 2)
             eng.pop()
         }
     }
@@ -273,7 +273,7 @@ task Modal () {
 ;; the interest (a fifth of the gold, up to 5; and a tenth, up to 10, with
 ;; a merchant).
 func gain_gold (A) {
-    val r = level_to_gold_gained@(A.level)
+    val r = LEVELS@(A.level).gold
     set A.gold_gained = rint(r@0, r@1)
     var merchant = false
     loop _, u in A.run.units {

@@ -8,7 +8,7 @@
 task Pet (A, x, y, r, v, parent, fx) {
     trace("add", string.format("Pet %.1f %.1f", x, y))
     val o = body(A.w, [ kind=:pet, w=8, h=8, x=x, y=y, r=r, v=v, pierce=6, ricochet=1, hit=hfx(1),
-              color=character_colors@("hunter") ], :dynamic, x, y, :projectile, [:rect, 8, 8])
+              color=CHARACTERS@("hunter").color ], :dynamic, x, y, :projectile, [:rect, 8, 8])
     set :out A.w.objs@(o.b).task = task   ;; its contacts come to this task
     defer {
         body_free(A.w, o.b)
@@ -200,7 +200,7 @@ task Critter (A, x, y, r, v, dmg, parent, fx) {
 task Automaton (A, x, y, parent, fx, shots) {
     trace("add", string.format("Automaton %.1f %.1f", x, y))
     val a = body(A.w, [ kind=:automaton, w=8, h=8, x=x, y=y, r=0, level=parent.level, stats=:automaton,
-              classes=[:sorcerer, :conjurer], color=character_colors@("artificer"), hit=hfx(1), alive=true ], :dynamic, x, y, :player, [:rect, 8, 8])
+              classes=[:sorcerer, :conjurer], color=CHARACTERS@("artificer").color, hit=hfx(1), alive=true ], :dynamic, x, y, :player, [:rect, 8, 8])
     set :out A.w.objs@(a.b).task = task   ;; its contacts come to this task
     unit_stats(a, true, 0)
     defer {
@@ -278,7 +278,7 @@ task Automaton (A, x, y, parent, fx, shots) {
 ;; The damage of a character of a level with no buffs, as
 ;; `get_character_stat(character, level, 'dmg')` (a new unit, rounded).
 func character_dmg (character, level) {
-    pin u = [ character=character, level=level, stats=:player, classes=character_classes@(character) ]
+    pin u = [ character=character, level=level, stats=:player, classes=CHARACTERS@(character).classes ]
     unit_stats(u, true, 0)
     math.floor(u.dmg*100 + 0.5) / 100
 }
@@ -300,8 +300,8 @@ task Unstable (A, o, parent, k, fx) {
 task Saboteur (A, x, y, parent, crit, fx) {
     trace("add", string.format("Saboteur %.1f %.1f", x, y))
     val o = body(A.w, [ kind=:saboteur, w=8, h=8, x=x, y=y, r=0, level=parent.level, stats=:player,
-              character="saboteur", classes=character_classes@("saboteur"),
-              color=character_colors@("saboteur"), hit=hfx(1) ], :dynamic, x, y, :player, [:rect, 8, 8])
+              character="saboteur", classes=CHARACTERS@("saboteur").classes,
+              color=CHARACTERS@("saboteur").color, hit=hfx(1) ], :dynamic, x, y, :player, [:rect, 8, 8])
     set :out A.w.objs@(o.b).task = task   ;; its contacts come to this task
     unit_stats(o, true, 0)
     body_restitution(o.b, 0.5)

@@ -113,17 +113,17 @@ func capitalize (s) {
 func info_character (c, level, price, cost) {
     val lv3 = level == 3
     val head = if cost
-        => "[" ++ character_color_strings@(c) ++ "]" ++ capitalize(c) ++ "[fg] - cost: [yellow]" ++ tostring(cost)
-        => "[" ++ character_color_strings@(c) ++ "]" ++ capitalize(c) ++ "[fg] - [yellow]Lv." ++ tostring(level) ++
-           "[fg], tier [yellow]" ++ tostring(character_tiers@(c)) ++ "[fg] - sells for [yellow]" ++ tostring(price)
+        => "[" ++ CHARACTERS@(c).color_string ++ "]" ++ capitalize(c) ++ "[fg] - cost: [yellow]" ++ tostring(cost)
+        => "[" ++ CHARACTERS@(c).color_string ++ "]" ++ capitalize(c) ++ "[fg] - [yellow]Lv." ++ tostring(level) ++
+           "[fg], tier [yellow]" ++ tostring(CHARACTERS@(c).tier) ++ "[fg] - sells for [yellow]" ++ tostring(price)
     [
         [text=head, font=pixul_font, alignment=:center, height_multiplier=1.25],
-        [text="[fg]Classes: " ++ character_class_strings@(c), font=pixul_font, alignment=:center, height_multiplier=1.25],
-        [text=character_descriptions@(c)@(level), font=pixul_font, alignment=:center, height_multiplier=2],
+        [text="[fg]Classes: " ++ CHARACTERS@(c).class_string, font=pixul_font, alignment=:center, height_multiplier=1.25],
+        [text=CHARACTERS@(c).description@(level), font=pixul_font, alignment=:center, height_multiplier=2],
         [text="[" ++ (if lv3 => "yellow" => "light_bg") ++ "]Lv.3 [" ++ (if lv3 => "fg" => "light_bg") ++ "]Effect - " ++
-              (if lv3 => character_effect_names@(c) => character_effect_names_gray@(c)),
+              (if lv3 => CHARACTERS@(c).effect_name => CHARACTERS@(c).effect_name_gray),
          font=pixul_font, alignment=:center, height_multiplier=1.25],
-        [text=(if lv3 => character_effect_descriptions@(c) => character_effect_descriptions_gray@(c))@(level),
+        [text=(if lv3 => CHARACTERS@(c).effect_description => CHARACTERS@(c).effect_description_gray)@(level),
          font=pixul_font, alignment=:center],
     ]
 }
@@ -132,13 +132,13 @@ func info_character (c, level, price, cost) {
 ;; experience, cost, and price when it may level up; and what it does.
 func info_item (p, fixed) {
     val head = if (p.level == 3) || fixed
-        => "[fg]" ++ passive_names@(p.passive) ++ ", [yellow]Lv." ++ tostring(p.level)
-        => "[fg]" ++ passive_names@(p.passive) ++ ", [yellow]Lv." ++ tostring(p.level) ++ "[fg], XP: [yellow]" ++
+        => "[fg]" ++ PASSIVES@(p.passive).name ++ ", [yellow]Lv." ++ tostring(p.level)
+        => "[fg]" ++ PASSIVES@(p.passive).name ++ ", [yellow]Lv." ++ tostring(p.level) ++ "[fg], XP: [yellow]" ++
            tostring(p.xp) ++ "/" ++ tostring(match p.level { 1 => 2 ; 2 => 3 ; else => 0 }) ++
            "[fg], +1 XP cost: [yellow]5[fg], sells for: [yellow]" ++ tostring(match p.level { 1 => 10 ; 2 => 20 ; else => 30 })
     [
         [text=head, font=pixul_font, alignment=:center, height_multiplier=1.25],
-        [text=passive_descriptions_level@(p.passive)@(p.level), font=pixul_font, alignment=:center, height_multiplier=1.25],
+        [text=PASSIVES@(p.passive).description_level@(p.level), font=pixul_font, alignment=:center, height_multiplier=1.25],
     ]
 }
 
@@ -164,15 +164,15 @@ func info_class (class, units, tut) {
     val name = if (class == "conjurer") && !tut => "Builder" => capitalize(class)
     ;; the level 0 is as the level 3 of a class of two sets: all gray
     val desc = ifs {
-        lv > 0 => class_descriptions@(class)@(lv)
+        lv > 0 => CLASSES@(class).description@(lv)
         class == "sorcerer" => do {
-            val d = class_descriptions@(class)@(3)
+            val d = CLASSES@(class).description@(3)
             string.join(string.split(d, "[yellow]"), "[light_bg]")
         }
-        else => class_descriptions@(class)@(3)
+        else => CLASSES@(class).description@(3)
     }
     [
-        [text="[" ++ class_color_strings@(class) ++ "]" ++ name ++ "[fg] - owned: [yellow]" ++ tostring(class_counts(units)@(class)),
+        [text="[" ++ CLASSES@(class).color_string ++ "]" ++ name ++ "[fg] - owned: [yellow]" ++ tostring(class_counts(units)@(class)),
          font=pixul_font, alignment=:center, height_multiplier=1.25],
         [text=desc, font=pixul_font, alignment=:center],
     ]
@@ -181,7 +181,7 @@ func info_class (class, units, tut) {
 ;; The level of the shop (`LevelButton:create_info_text`): its level and
 ;; experience, and the odds of each tier, now and at the next level.
 func info_shop_level (level, xp) {
-    val o = level_to_shop_odds@(level)
+    val o = SHOP_ODDS@(level)
     if level == 5 {
         return [
             [text="[yellow]Lv.5[fg] shop", font=pixul_font, alignment=:center, height_multiplier=1.5],
@@ -193,7 +193,7 @@ func info_shop_level (level, xp) {
             [text="[purple]tier 4: " ++ tostring(o@3) ++ "%", font=pixul_font, alignment=:left, height_multiplier=1.25],
         ]
     }
-    val n = level_to_shop_odds@(level + 1)
+    val n = SHOP_ODDS@(level + 1)
     pin row = func (k, c, m) {
         val pad = if o@(k) < 10 => "  " => ""
         [text="[" ++ c ++ "]tier " ++ tostring(k + 1) ++ ": " ++ tostring(o@(k)) ++ "%" ++ pad ++

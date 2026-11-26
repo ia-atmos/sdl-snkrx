@@ -928,7 +928,7 @@ func attacking_unit (A) {
     var u = rtable(A.units)
     var runs = 0
     loop {
-        while X.in(u.character, non_attacking_characters) && (runs < 1000)
+        while !CHARACTERS@(u.character).attacks && (runs < 1000)
         set u = rtable(A.units)
         set runs += 1
     }

@@ -122,12 +122,12 @@ task SpawnOne (A, x, y, pass, foes, fx, shots) {
     if !pass && spawn_blocked(A, x, y) {
         set A.spawns_prevented += 1
     } else {
-        val ws = level_to_elite_spawn_weights@(A.level)
+        val ws = LEVELS@(A.level).elite_weights
         var sum = 0
         loop _, w in ws {
             set sum += w
         }
-        val elite = if rbool(sum) => (level_to_elite_spawn_types@(A.level))@(rweighted(ws)) => nil
+        val elite = if rbool(sum) => (LEVELS@(A.level).elite_types)@(rweighted(ws)) => nil
         spawn @foes Seeker(A, [x=x, y=y, level=A.level, elite=elite], fx, shots)
     }
 }

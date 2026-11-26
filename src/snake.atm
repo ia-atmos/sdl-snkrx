@@ -142,8 +142,8 @@ task WallHit (f, delay, p1, p2, fx) {
 
 task Unit (A, u, fx, shots) {
     set u.kind    = :player
-    set u.classes = character_classes@(u.character)
-    set u.color   = character_colors@(u.character)
+    set u.classes = CHARACTERS@(u.character).classes
+    set u.color   = CHARACTERS@(u.character).color
     set u.hit     = hfx(1)
     set u.shoot   = hfx(1)
     set u.hp_shown = 0
@@ -209,8 +209,8 @@ task Unit (A, u, fx, shots) {
             ;; the arrow in front of the leader (`state.arrow_snake`)
             if STATE.arrow_snake && (A.units@0 == u) && !A.menu {
                 val ax = u.x + 0.9*9
-                eng.line(ax + 3, u.y, ax, u.y - 3, character_colors@(u.character), 1)
-                eng.line(ax + 3, u.y, ax, u.y + 3, character_colors@(u.character), 1)
+                eng.line(ax + 3, u.y, ax, u.y - 3, CHARACTERS@(u.character).color, 1)
+                eng.line(ax + 3, u.y, ax, u.y + 3, CHARACTERS@(u.character).color, 1)
             }
             ;; the halos: ouroboros (yellow), divined (green), the fairy (blue)
             if (u.ouroboros_def_m || 1) > 1 {

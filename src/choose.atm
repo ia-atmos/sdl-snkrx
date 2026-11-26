@@ -8,7 +8,7 @@ task PassiveCard (screen, i, x, y, passive) {
     pin s = spring(1)
     spring_pull(s, 0.2, 200, 10)
     spawn UISprings(s)
-    pin name = text([ [text="[fg, wavy_mid]" ++ passive_names@(passive), font=pixul_font, alignment=:center] ])
+    pin name = text([ [text="[fg, wavy_mid]" ++ PASSIVES@(passive).name, font=pixul_font, alignment=:center] ])
     spawn {
         loop on :draw {
             eng.push(x, y, 0, s.x)
@@ -36,7 +36,7 @@ task PassiveCard (screen, i, x, y, passive) {
                 }
             } with {
                 await InfoText(W/2, H/2 + H/4 - 6,
-                    [ [text=passive_descriptions@(passive), font=pixul_font, alignment=:center, height_multiplier=1.25] ], true)
+                    [ [text=PASSIVES@(passive).description, font=pixul_font, alignment=:center, height_multiplier=1.25] ], true)
             }
         }
     } with {

@@ -11,11 +11,11 @@ task TutorialPart (x, y, character, level, list) {
     pin s = spring(1)
     spring_pull(s, 0.2, 200, 10)
     spawn Springs(s)
-    val ramp = RAMPS@(character_color_strings@(character))
+    val ramp = RAMPS@(CHARACTERS@(character).color_string)
     spawn {
         loop on :draw {
             eng.push(x, y, 0, s.x)
-            eng.rect(x, y, 14, 14, 3, 3, character_colors@(character))
+            eng.rect(x, y, 14, 14, 3, 3, CHARACTERS@(character).color)
             print_centered(pixul_font, tostring(level), x + 0.5, y + 2, 0, 1, 1, ramp@(-5))
             eng.pop()
         }
@@ -25,7 +25,7 @@ task TutorialPart (x, y, character, level, list) {
         (mx >= x - 10) && (mx <= x + 10) && (my >= y - 10) && (my <= y + 10)
     }
     pin lines = info_character(character, level)
-    set lines@(0).text = "[" ++ character_color_strings@(character) ++ "]" ++ capitalize(character) ++
+    set lines@(0).text = "[" ++ CHARACTERS@(character).color_string ++ "]" ++ capitalize(character) ++
                          "[fg] - [yellow]Lv." ++ tostring(level)
     loop {
         if !inside() {

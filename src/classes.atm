@@ -1,5 +1,5 @@
 ;; The classes of the units, as `get_number_of_units_per_class`,
-;; `get_class_levels`, `get_classes`, and `class_set_numbers` of the
+;; `get_class_levels` and `get_classes` of the
 ;; original (`main.lua:1089-1197`). A unit here is a record with
 ;; `character` and `level` (or a pair [character, level]).
 
@@ -26,7 +26,7 @@ func class_counts (units) {
         set n@(k) = 0
     }
     loop _, u in units {
-        loop _, c in character_classes@(unit_character(u)) {
+        loop _, c in CHARACTERS@(unit_character(u)).classes {
             set n@(c) = (n@(c) || 0) + 1
         }
     }
@@ -53,7 +53,7 @@ func class_levels (units) {
 func classes_of (units) {
     val out = []
     loop _, u in units {
-        loop _, c in character_classes@(unit_character(u)) {
+        loop _, c in CHARACTERS@(unit_character(u)).classes {
             if X.nin(c, out) {
                 set out@+ = c
             }
@@ -76,5 +76,6 @@ func active_sets (units) {
 
 ;; Whether a unit is of a class.
 func has_class (u, c) {
-    X.in(c, character_classes@(unit_character(u)) || [])
+    val ch = CHARACTERS@(unit_character(u))     ;; nil for a summon
+    ch && X.in(c, ch.classes)
 }

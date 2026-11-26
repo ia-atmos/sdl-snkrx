@@ -8,23 +8,76 @@
 --   a function of a level (descriptions) is called for levels 1 to 3;
 --   numeric keys above 150 are left out (the loops past level 150).
 
-local names = {
-  'class_colors', 'class_color_strings', 'character_names', 'character_colors',
-  'character_color_strings', 'character_classes', 'character_class_strings',
-  'character_descriptions', 'character_effect_names', 'character_effect_names_gray',
-  'character_effect_descriptions', 'character_effect_descriptions_gray',
-  'class_stat_multipliers', 'class_descriptions', 'tier_to_characters',
-  'non_attacking_characters', 'non_cooldown_characters', 'character_tiers',
-  'class_set_numbers', 'passive_names', 'passive_descriptions',
-  'passive_descriptions_level', 'level_to_tier_weights', 'level_to_gold_gained',
-  'level_to_elite_spawn_weights', 'level_to_boss', 'level_to_elite_spawn_types',
-  'level_to_shop_odds', 'unlevellable_items', 'run_passive_pool',
-}
-local by_level = {
-  character_descriptions = true, character_effect_descriptions = true,
-  character_effect_descriptions_gray = true, class_descriptions = true,
-  passive_descriptions_level = true,
-}
+-- The tables of the original, grouped by entity: one record per
+-- character, class, passive, and level, from the parallel tables of the
+-- original (`character_colors[c]`, `character_classes[c]`, ...). Lists
+-- whose order matters (the characters of a tier, drawn at random) stay
+-- lists.
+local function contains (t, x)
+  for _, v in ipairs(t) do if v == x then return true end end
+  return false
+end
+
+-- The keys of all of the tables (a class of the enemies has only its
+-- stat multipliers; a character, all of its tables).
+local function keys (...)
+  local ks = {}
+  for _, t in ipairs({...}) do
+    for k in pairs(t) do ks[k] = true end
+  end
+  return pairs(ks)
+end
+
+local function groups ()
+  local chars = {}
+  for k in keys(character_names, character_colors, character_color_strings, character_classes,
+                 character_class_strings, character_descriptions, character_effect_names,
+                 character_effect_names_gray, character_effect_descriptions,
+                 character_effect_descriptions_gray, character_tiers) do
+    chars[k] = {
+      name = character_names[k], color = character_colors[k], color_string = character_color_strings[k],
+      classes = character_classes[k], class_string = character_class_strings[k],
+      description = character_descriptions[k],
+      effect_name = character_effect_names[k], effect_name_gray = character_effect_names_gray[k],
+      effect_description = character_effect_descriptions[k],
+      effect_description_gray = character_effect_descriptions_gray[k],
+      tier = character_tiers[k],
+      attacks = not contains(non_attacking_characters, k),
+      cooldown = not contains(non_cooldown_characters, k),
+    }
+  end
+  local classes = {}
+  for k in keys(class_colors, class_color_strings, class_stat_multipliers, class_descriptions) do
+    classes[k] = {
+      color = class_colors[k], color_string = class_color_strings[k],
+      stat_multipliers = class_stat_multipliers[k], description = class_descriptions[k],
+    }
+  end
+  local passives = {}
+  for k in keys(passive_names, passive_descriptions, passive_descriptions_level) do
+    passives[k] = {
+      name = passive_names[k], description = passive_descriptions[k],
+      description_level = passive_descriptions_level[k],
+    }
+  end
+  local levels = {}
+  for l = 1, 150 do
+    levels[l] = {
+      tier_weights = level_to_tier_weights[l], gold = level_to_gold_gained[l],
+      elite_weights = level_to_elite_spawn_weights[l], elite_types = level_to_elite_spawn_types[l],
+      boss = level_to_boss[l],
+    }
+  end
+  return {
+    { 'CLASSES', classes, true },
+    { 'CHARACTERS', chars, true },
+    { 'TIER_CHARACTERS', tier_to_characters },
+    { 'PASSIVES', passives, true },
+    { 'LEVELS', levels },
+    { 'SHOP_ODDS', level_to_shop_odds },
+    { 'UNLEVELLABLE_ITEMS', unlevellable_items },
+  }
+end
 
 local function str (s)
   return '"' .. s:gsub('\\', '\\\\'):gsub('"', '\\"'):gsub('\n', '\\n') .. '"'
@@ -102,14 +155,10 @@ end
 return function (path)
   local f = assert(io.open(path, 'w'))
   f:write(';; The data of the original (a327ex/SNKRX@6b93a64), as dumped by\n')
-  f:write(';; tools/bench/dump.lua from the running game: do not edit.\n')
-  for _, name in ipairs(names) do
-    local v = _G[name]
-    if v ~= nil then
-      f:write('\nval ' .. name .. ' = ' .. dump(v, '', by_level[name]) .. '\n')
-    else
-      f:write('\n;; ' .. name .. ': not found\n')
-    end
+  f:write(';; tools/bench/dump.lua from the running game, one record per\n')
+  f:write(';; class, character, passive, and level: do not edit.\n')
+  for _, g in ipairs(groups()) do
+    f:write('\npin ' .. g[1] .. ' = ' .. dump(g[2], '', g[3]) .. '\n')
   end
   f:close()
 end
