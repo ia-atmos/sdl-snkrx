@@ -518,7 +518,7 @@ func snake_places (A) {
         set sum += math.sqrt((prev.x - q.x)*(prev.x - q.x) + (prev.y - q.y)*(prev.y - q.y))
         loop {
             while (k < n) && (sum >= 10.4*k)
-            set out@(k) = A.path@(i-1)
+            set out@k = A.path@(i-1)
             set k += 1
         }
         set prev = q

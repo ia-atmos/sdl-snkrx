@@ -37,7 +37,7 @@ func passive_pool () {
 pin PASSIVE_IMAGES = do {
     val t = []
     loop _, p in PASSIVE_POOL {
-        set t@(p) = image(p)
+        set t@p = image(p)
     }
     t
 }

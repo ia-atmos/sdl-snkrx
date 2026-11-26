@@ -472,19 +472,19 @@ task Dot (e, dmg, duration, color, fx) {
 task Cursed (e, k, v, d) {
     ;; the token is made in the field, which owns it: one made here could
     ;; not go to the enemy, which outlives this task
-    set e@(k) = [ v=v ]
-    val token = e@(k)
+    set e@k = [ v=v ]
+    val token = e@k
     await(d * 1s)
-    if e@(k) == token {
-        set e@(k) = nil
+    if e@k == token {
+        set e@k = nil
     }
 }
 
 ;; A field for a while, and back (as `t:after(d, ...)` with no tag).
 task TimedField (e, k, v, back, d) {
-    set e@(k) = v
+    set e@k = v
     await(d * 1s)
-    set e@(k) = back
+    set e@k = back
 }
 
 ;; The curse of the launcher: after it, the enemy flies along an axis, and

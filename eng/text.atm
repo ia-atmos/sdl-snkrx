@@ -85,7 +85,7 @@ func loop_chars (cs) {
 
 ;; Sets the text of a line, as `Text:set_text` of one line.
 func text_set (t, i, s) {
-    val line = t.lines@(i)
+    val line = t.lines@i
     set line.text = s
     set line.chars = text_parse(s)
     set line.raw = string.join(loop_chars(line.chars))
@@ -135,11 +135,11 @@ func text_draw (t, x, y, r, sx, sy) {
             var color = c.color || white@0
             var oy = 0
             loop _, tag in c.tags {
-                val k = TAG_COLORS@(tag)
+                val k = TAG_COLORS@tag
                 if k && !c.color {
                     set color = k
                 }
-                val w = TAG_WAVES@(tag)
+                val w = TAG_WAVES@tag
                 if w {
                     set oy = w@0 * math.sin(w@1*time + i + 1)
                 }

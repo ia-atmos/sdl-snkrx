@@ -1147,7 +1147,7 @@ func unit_buffs (A, u) {
             set o.ouroboros_def_m = d
         }
     }
-    pin m = \(k) { u@(k) || 1 }
+    pin m = \(k) { u@k || 1 }
     buffs_reset(u)
     set u.buff_def_a = u.warrior_def_a || 0
     set u.buff_aspd_m = m("chronomancer_aspd_m")*m("vagrant_aspd_m")*m("outlaw_aspd_m")*m("fairy_aspd_m")*
@@ -1169,7 +1169,7 @@ func unit_buffs (A, u) {
 ;; A buff for a while: a field of the unit, back to 1 at the end (as
 ;; `t:after(d, function() u.field = 1 end)`).
 task TimedBuff (u, k, v, d) {
-    set u@(k) = v
+    set u@k = v
     await(d * 1s)
-    set u@(k) = 1
+    set u@k = 1
 }

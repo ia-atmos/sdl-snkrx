@@ -88,7 +88,7 @@ task Springs (...) {
 task Tween (dur, target, source, method) {
     pin from = []
     loop k, _ in source {
-        set from@(k) = target@(k)
+        set from@k = target@k
     }
     val f = method || linear
     var timer = 0
@@ -97,7 +97,7 @@ task Tween (dur, target, source, method) {
         set timer += us / 1000000
         val t = f(timer / dur)
         loop k, v in source {
-            set target@(k) = lerp(t, from@(k), v)
+            set target@k = lerp(t, from@k, v)
         }
         until timer > dur
     }
@@ -110,7 +110,7 @@ task Tween (dur, target, source, method) {
 task TweenReal (dur, target, source, method) {
     pin from = []
     loop k, _ in source {
-        set from@(k) = target@(k)
+        set from@k = target@k
     }
     val f = method || linear
     val end = math.floor(dur*1000000 + 0.5)    ;; in whole microseconds
@@ -119,7 +119,7 @@ task TweenReal (dur, target, source, method) {
         set timer = math.min(timer + e.us, end)
         val t = if end > 0 => f(timer / end) => 1
         loop k, v in source {
-            set target@(k) = lerp(t, from@(k), v)
+            set target@k = lerp(t, from@k, v)
         }
         until timer >= end
     }

@@ -24,8 +24,8 @@ func load (name) {
 ;; An achievement, as `state.achievement_x = true; system.save_state()`
 ;; with `steam.userStats.setAchievement`: once, saved with the state.
 func achieve (name) {
-    if !STATE.achievements@(name) {
-        set STATE.achievements@(name) = true
+    if !STATE.achievements@name {
+        set STATE.achievements@name = true
         trace("achievement", name)
         save("state.atm", STATE)
     }

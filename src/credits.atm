@@ -73,7 +73,7 @@ task Credits () {
     loop i, c in CREDITS {
         if c@4 {
             pin cs = button_colors(c@3)
-            set urls@(i) = c@4
+            set urls@i = c@4
             spawn @ps Button(task, i, c@0, c@1, c@2, [ fg_color=cs@0, bg_color=cs@1 ])
         } else {
             spawn @ps Text2(c@0, c@1, text([ [text=c@2, font=pixul_font] ]))

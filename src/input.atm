@@ -7,16 +7,16 @@
 pin HELD = [ left=[n=0, since=nil], right=[n=0, since=nil] ]
 
 func held_press (a) {
-    val h = HELD@(a)
+    val h = HELD@a
     set h.n += 1
     val other = if a == :left => :right => :left
-    if (h.n == 1) && !HELD@(other).since {
+    if (h.n == 1) && !HELD@other.since {
         set h.since = eng.tick() / 60
     }
 }
 
 func held_release (a) {
-    val h = HELD@(a)
+    val h = HELD@a
     set h.n = math.max(0, h.n - 1)
     if h.n == 0 {
         set h.since = nil
@@ -40,7 +40,7 @@ func mouse_turning (A, dir) {
 
 ;; Whether an action is held for more than `s` seconds.
 func held_for (a, s) {
-    val since = HELD@(a).since
+    val since = HELD@a.since
     since && ((eng.tick()/60 - since) > s)
 }
 

@@ -23,11 +23,11 @@ func unit_level (u) {
 func class_counts (units) {
     val n = []
     loop k, _ in CLASS_SETS {
-        set n@(k) = 0
+        set n@k = 0
     }
     loop _, u in units {
         loop _, c in CHARACTERS@(unit_character(u)).classes {
-            set n@(c) = (n@(c) || 0) + 1
+            set n@c = (n@c || 0) + 1
         }
     }
     n
@@ -40,11 +40,11 @@ func class_levels (units) {
     loop k, s in CLASS_SETS {
         var lv = 0
         loop _, t in s {
-            if n@(k) >= t {
+            if n@k >= t {
                 set lv += 1
             }
         }
-        set l@(k) = if k == "explorer" => math.min(lv, 1) => lv
+        set l@k = if k == "explorer" => math.min(lv, 1) => lv
     }
     l
 }

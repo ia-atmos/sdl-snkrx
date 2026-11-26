@@ -17,7 +17,7 @@
 pin CLASS_IMAGES = do {
     val t = []
     loop k, _ in CLASS_SETS {
-        set t@(k) = image(k)
+        set t@k = image(k)
     }
     t
 }
@@ -34,10 +34,10 @@ func shop_max_xp (level) {
 ;; A text, made once for each string.
 pin SHOP_TEXTS = []
 func shop_text (s) {
-    if !SHOP_TEXTS@(s) {
-        set SHOP_TEXTS@(s) = text([ [text=s, font=pixul_font, alignment=:center] ])
+    if !SHOP_TEXTS@s {
+        set SHOP_TEXTS@s = text([ [text=s, font=pixul_font, alignment=:center] ])
     }
-    SHOP_TEXTS@(s)
+    SHOP_TEXTS@s
 }
 
 ;;; BUTTONS ;;;
@@ -51,7 +51,7 @@ func shop_text (s) {
 task ShopButton (owner, id, x, y, look, info) {
     pin s = spring(1)
     if owner.pub && owner.pub.springs {
-        set :out owner.pub.springs@(id) = s     ;; the owner pulls it on a click
+        set :out owner.pub.springs@id = s     ;; the owner pulls it on a click
     }
     spawn UISprings(s)
     pin draw = func (over) {
@@ -129,7 +129,7 @@ func class_pips (s) {
 
 ;; Whether the units reach the first set of a class.
 func class_lit (class, units) {
-    class_counts(units)@(class) >= CLASS_SETS@(class)@0
+    class_counts(units)@class >= CLASS_SETS@class@0
 }
 
 ;; The icon of a class (`ClassIcon`): in its color when the units reach
@@ -142,7 +142,7 @@ func class_lit (class, units) {
 task ClassIcon (x, y, class, units, next, s, party, tut) {
     spring_pull(s, 0.2, 200, 10)
     spawn UISprings(s)
-    val sets = CLASS_SETS@(class)
+    val sets = CLASS_SETS@class
     pin pips = class_pips(sets)
     var flash = false
     spawn {
@@ -179,10 +179,10 @@ task ClassIcon (x, y, class, units, next, s, party, tut) {
             }
         }
     }
-    val c = CLASSES@(class).color
-    val ramp = RAMPS@(CLASSES@(class).color_string)
+    val c = CLASSES@class.color
+    val ramp = RAMPS@(CLASSES@class.color_string)
     loop on :draw {
-        val n = class_counts(units)@(class)
+        val n = class_counts(units)@class
         var next_n = nil
         if next {
             set next_n = n + 1
@@ -198,7 +198,7 @@ task ClassIcon (x, y, class, units, next, s, party, tut) {
         val lit = n >= sets@0
         eng.push(x, y, 0, s.x)
         eng.rect(x, y, 16, 24, 4, 4, if lit => c => bg@3)
-        draw_image(CLASS_IMAGES@(class), x, y, 0, 0.3, 0.3, if lit => ramp@(-5) => bg@10)
+        draw_image(CLASS_IMAGES@class, x, y, 0, 0.3, 0.3, if lit => ramp@(-5) => bg@10)
         eng.rect(x, y + 26, 16, 16, 3, 3, bg@3)
         loop i, p in pips {
             val col = ifs {
@@ -240,7 +240,7 @@ func owned_marks (character, units) {
 
 ;; The places of the icons of the classes of a card.
 func card_classes (x, y, character) {
-    val cs = CHARACTERS@(character).classes
+    val cs = CHARACTERS@character.classes
     val dx = match #cs { 2 => -10 ; 3 => -20 ; else => 0 }
     val out = []
     loop i, c in cs {
@@ -258,10 +258,10 @@ task ShopCard (shop, i, x, y, character, units) {
     pin is = spring(1)          ;; of the icon
     spring_pull(s, 0.2, 200, 10)
     spawn UISprings(s, is)
-    val cost = CHARACTERS@(character).tier
-    val name = shop_text("[" ++ CHARACTERS@(character).color_string ++ "]" ++ string.lower(CHARACTERS@(character).name))
-    val ramp = RAMPS@(CHARACTERS@(character).color_string)
-    val color = CHARACTERS@(character).color
+    val cost = CHARACTERS@character.tier
+    val name = shop_text("[" ++ CHARACTERS@character.color_string ++ "]" ++ string.lower(CHARACTERS@character.name))
+    val ramp = RAMPS@(CHARACTERS@character.color_string)
+    val color = CHARACTERS@character.color
     pin cs = []
     pin p = [ sx=1 ]            ;; the pulse while selected
     var selected = false
@@ -364,7 +364,7 @@ task ShopCard (shop, i, x, y, character, units) {
 ;; The effects of a card that is bought, as `ShopCard:die`: at its icon
 ;; and at the icons of its classes.
 task CardGone (x, y, character, units, fx) {
-    spawn @fx SpawnEffect(x, y - 22, CHARACTERS@(character).color, fx)
+    spawn @fx SpawnEffect(x, y - 22, CHARACTERS@character.color, fx)
     loop _, ci in card_classes(x, y, character) {
         spawn @fx SpawnEffect(ci@1, ci@2 + 4, if class_lit(ci@0, units) => CLASSES@(ci@0).color => bg@3, fx)
     }
@@ -375,7 +375,7 @@ task CardGone (x, y, character, units, fx) {
 ;; The price of a unit of the party, or of one copy toward its next
 ;; level (`get_sale_price`).
 func sale_price (character, level, reserve) {
-    val t = CHARACTERS@(character).tier
+    val t = CHARACTERS@character.tier
     val base = match level { 1 => t ; 2 => 2*t ; else => 6*t }
     base + (reserve && (reserve@1*t*2 + reserve@0*t) || 0)
 }
@@ -400,7 +400,7 @@ task CharacterPart (shop, row, x, u, copy, sc) {
     spring_pull(s, 0.2, 200, 10)
     spawn UISprings(s)
     val level = copy || unit_level(u)
-    val ramp = RAMPS@(CHARACTERS@(c).color_string)
+    val ramp = RAMPS@(CHARACTERS@c.color_string)
     var lit = false
     pin y = func () {
         40 + row.i*19
@@ -417,7 +417,7 @@ task CharacterPart (shop, row, x, u, copy, sc) {
                 eng.pop()
             } else {
                 eng.push(x, y(), 0, (sc || 1)*s.x)
-                eng.rect(x, y(), 14, 14, 3, 3, if lit => bg@10 => CHARACTERS@(c).color)
+                eng.rect(x, y(), 14, 14, 3, 3, if lit => bg@10 => CHARACTERS@c.color)
                 print_centered(pixul_font, tostring(level), x + 0.5, y() + 2, 0, 1, 1, if lit => bg@5 => ramp@(-5))
                 eng.pop()
             }
@@ -425,7 +425,7 @@ task CharacterPart (shop, row, x, u, copy, sc) {
     }
     spawn {
         loop e on :Shop.highlight {
-            if X.in(e.class, CHARACTERS@(c).classes) {
+            if X.in(e.class, CHARACTERS@c.classes) {
                 set lit = e.on
                 spring_pull(s, if e.on => 0.2 => 0.05, 200, 10)
             }
@@ -548,7 +548,7 @@ task Party (shop, run, fx) {
 task ItemCard (shop, i, x, y, p, sc) {
     pin s = spring(1)
     if shop && shop.pub && shop.pub.items {
-        set :out shop.pub.items@(i) = s         ;; the shop pulls it on `:Shop.item_up`
+        set :out shop.pub.items@i = s         ;; the shop pulls it on `:Shop.item_up`
     }
     spawn UISprings(s)
     val w = if shop => 40 => 30
@@ -630,7 +630,7 @@ task Build (run, iy) {
         val c = unit_character(u)
         spawn @ps CharacterPart(nil, [ i=i, n=#run.units ], 20, u)
         spawn @ps Text2(20 + 14 + text_width(pixul_font, c)/2, 40 + i*19,
-                        text([ [text="[" ++ CHARACTERS@(c).color_string ++ "]" ++ c, font=pixul_font, alignment=:left] ]))
+                        text([ [text="[" ++ CHARACTERS@c.color_string ++ "]" ++ c, font=pixul_font, alignment=:left] ]))
     }
     loop i, p in run.passives || [] {
         spawn @ps ItemCard(nil, i, 120 + i*30, iy, p, 0.75)
@@ -654,11 +654,11 @@ func roll_cards (run) {
         vector.clear(cs)
         loop in 3 {
             val tier = rweighted(odds) + 1
-            set cs@+ = rtable(TIER_CHARACTERS@(tier))
+            set cs@+ = rtable(TIER_CHARACTERS@tier)
         }
         var all_idle = true
         loop _, c in cs {
-            if CHARACTERS@(c).attacks {
+            if CHARACTERS@c.attacks {
                 set all_idle = false
             }
         }
@@ -671,7 +671,7 @@ func roll_cards (run) {
 ;; the unit of the party, or a new unit. Returns true when it bought, or
 ;; why not (:max_level, :max_units; false when the gold is short).
 func shop_buy (run, character) {
-    val cost = CHARACTERS@(character).tier
+    val cost = CHARACTERS@character.tier
     var u = nil
     loop _, o in run.units {
         if o.character == character {
@@ -717,7 +717,7 @@ func shop_buy (run, character) {
 
 ;; Sells a unit of the party, or a copy toward its next level.
 func shop_sell (run, i, copy) {
-    val u = run.units@(i)
+    val u = run.units@i
     if copy {
         set run.gold += sale_price(u.character, copy)
         set u.reserve@(copy - 1) -= 1
@@ -824,8 +824,8 @@ task ShopMain (run, shop) {
             do {
                 pin cs = tasks()
                 loop i in 3 {
-                    if run.cards@(i) {
-                        spawn @cs ShopCard(task, i, cards_at@(i), 75, run.cards@(i), run.units)
+                    if run.cards@i {
+                        spawn @cs ShopCard(task, i, cards_at@i, 75, run.cards@i, run.units)
                     }
                 }
                 await :Shop.reroll
@@ -921,8 +921,8 @@ task ShopMain (run, shop) {
         }
         val but = (e ?? :Button.click) && e.but || 1
         ifs {
-            buy && run.cards@(buy) => {
-                val c = run.cards@(buy)
+            buy && run.cards@buy => {
+                val c = run.cards@buy
                 val ok = shop_buy(run, c)
                 emit @:task :Shop.party
                 match ok {
@@ -935,8 +935,8 @@ task ShopMain (run, shop) {
                     play(ui_switch1, [pitch=rfloat(0.95, 1.05), volume=0.5])
                     coins()
                     emit @:task :Shop.bought [ i=buy ]
-                    spawn @fx CardGone(cards_at@(buy), 75, c, run.units, fx)
-                    set run.cards@(buy) = false
+                    spawn @fx CardGone(cards_at@buy, 75, c, run.units, fx)
+                    set run.cards@buy = false
                     set_party_text()
                     emit @:task :Shop.gold
                 } else {

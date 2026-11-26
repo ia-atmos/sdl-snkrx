@@ -24,8 +24,8 @@ func polys_overlap (a, b) {
         loop i in n {
             ;; numbers, not the points: an argument may be fresh or owned,
             ;; and no local can name a part of both kinds
-            val p0 = poly@(i)@0
-            val p1 = poly@(i)@1
+            val p0 = poly@i@0
+            val p1 = poly@i@1
             val q0 = poly@((i + 1) % n)@0
             val q1 = poly@((i + 1) % n)@1
             val ax = q1 - p1

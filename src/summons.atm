@@ -278,7 +278,7 @@ task Automaton (A, x, y, parent, fx, shots) {
 ;; The damage of a character of a level with no buffs, as
 ;; `get_character_stat(character, level, 'dmg')` (a new unit, rounded).
 func character_dmg (character, level) {
-    pin u = [ character=character, level=level, stats=:player, classes=CHARACTERS@(character).classes ]
+    pin u = [ character=character, level=level, stats=:player, classes=CHARACTERS@character.classes ]
     unit_stats(u, true, 0)
     math.floor(u.dmg*100 + 0.5) / 100
 }

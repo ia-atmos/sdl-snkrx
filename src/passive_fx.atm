@@ -220,6 +220,6 @@ task UnitPassives (A, u) {
 task Grows (u, k, d, v) {
     loop {
         await(d * 1s)
-        set u@(k) += v
+        set u@k += v
     }
 }

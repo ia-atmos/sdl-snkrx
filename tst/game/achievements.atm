@@ -19,14 +19,14 @@ spawn Arena(A, [ [100, 100, 1] ])
 await :goto
 val saved = load("state.atm")
 loop _, a in ACHIEVEMENTS {
-    if saved.achievements@(a) {
+    if saved.achievements@a {
         print("achievement_" ++ a, true)
     }
 }
 set STATE.achievements = []
 state_load()
 loop _, a in ACHIEVEMENTS {
-    if STATE.achievements@(a) {
+    if STATE.achievements@a {
         print("loaded", a)
     }
 }

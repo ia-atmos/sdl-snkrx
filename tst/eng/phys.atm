@@ -14,7 +14,7 @@ pin f = \(v) { string.format("%.1f", v) }
 task Ball (name, x, y, vx, tag, rest) {
     set pub = [ name=name ]
     val b = body(w, pub, :dynamic, x, y, tag, [:circle, 4]).b
-    set :out w.objs@(b).task = task     ;; its contacts come to this task
+    set :out w.objs@b.task = task     ;; its contacts come to this task
     if rest {
         body_restitution(b, rest)
     }
