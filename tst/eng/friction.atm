@@ -6,6 +6,7 @@
 ;; the restitution after the friction: the friction works against the
 ;; impulse that stops the box (m*200), not against the whole (m*300).
 
+pin var STATE = [ volume = [ sfx=0.5, music=0.5 ] ]    ;; the game's, which the engine reads
 include "../../eng/eng.atm"
 include "../../eng/phys.atm"
 

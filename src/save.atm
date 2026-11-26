@@ -32,17 +32,7 @@ func achieve (name) {
 }
 
 func state_load () {
-    ;; a table of the state (the volumes, the achievements) gets the
-    ;; fields saved, so that what holds it (the engine, `VOLUME`) sees them
-    loop k, v in load("state.atm") || [] {
-        if type(STATE@(k)) == :table {
-            loop kk, vv in v {
-                set STATE@(k)@(kk) = vv
-            }
-        } else {
-            set STATE@(k) = v
-        }
-    }
+    set STATE = load("state.atm") || STATE
     ;; as `engine_run`: the size saved, or else the size of the desktop
     ;; (not in the test mode, whose screenshots are at 2 pixels per pixel)
     ifs {

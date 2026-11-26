@@ -1,12 +1,12 @@
 ;; The state that outlives a run, as `state` of the original (`main.lua`,
 ;; saved by `system.save_state`): the new game plus reached and the one in
 ;; play, and the options.
-pin STATE = [
+pin var STATE = [
     ng_max = 0,         ;; new_game_plus
     ng = 0,             ;; current_new_game_plus
     dark_transitions = false,
     screen_shake = true,
-    volume = VOLUME,            ;; the volumes of the sounds and of the music (the engine's own)
+    volume = [ sfx=0.5, music=0.5 ],   ;; the volumes of the sounds and of the music (read by the engine)
     mouse_control = false,      ;; the leader turns toward the mouse
     run_timer = false,          ;; the time of the run, in the arena
     cooldown_snake = false,     ;; the cooldown of each unit, under it

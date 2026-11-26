@@ -1,6 +1,7 @@
 ;; The events of the engine, from the test script: mouse, keys, time,
 ;; and the game time in slow motion.
 
+pin var STATE = [ volume = [ sfx=0.5, music=0.5 ] ]    ;; the game's, which the engine reads
 include "../../eng/eng.atm"
 
 spawn {

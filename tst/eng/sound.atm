@@ -2,6 +2,7 @@
 ;; driver. (Game time runs faster than the device in test mode, so only
 ;; what does not depend on the clock is checked.)
 
+pin var STATE = [ volume = [ sfx=0.5, music=0.5 ] ]    ;; the game's, which the engine reads
 include "../../eng/eng.atm"
 
 pin s = sound("Click.ogg")

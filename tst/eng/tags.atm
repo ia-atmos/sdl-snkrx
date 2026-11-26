@@ -1,5 +1,6 @@
 ;; Text with tags: colors, waves, alignment, two lines.
 
+pin var STATE = [ volume = [ sfx=0.5, music=0.5 ] ]    ;; the game's, which the engine reads
 include "../../eng/eng.atm"
 include "../../eng/color.atm"
 include "../../eng/anim.atm"

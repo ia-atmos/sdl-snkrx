@@ -1,6 +1,7 @@
 ;; The shapes of the engine, in the canvases of the original: a
 ;; background with no shadow, and a main canvas with its shadow.
 
+pin var STATE = [ volume = [ sfx=0.5, music=0.5 ] ]    ;; the game's, which the engine reads
 include "../../eng/eng.atm"
 
 val bg   = eng.canvas(true, false)

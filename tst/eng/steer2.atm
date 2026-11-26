@@ -1,6 +1,7 @@
 ;; Steering: three bodies that seek the same point while they separate
 ;; (radius 16), and a body that wanders. Positions every 60 ticks.
 
+pin var STATE = [ volume = [ sfx=0.5, music=0.5 ] ]    ;; the game's, which the engine reads
 include "../../eng/eng.atm"
 include "../../eng/random.atm"
 include "../../eng/phys.atm"

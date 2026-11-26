@@ -1,5 +1,6 @@
 ;; Springs and tweens, tick by tick.
 
+pin var STATE = [ volume = [ sfx=0.5, music=0.5 ] ]    ;; the game's, which the engine reads
 include "../../eng/eng.atm"
 include "../../eng/anim.atm"
 

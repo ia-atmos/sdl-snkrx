@@ -39,7 +39,7 @@ task Music () {
         }
         par :any {
             loop on :frame {
-                set_volume(inst, st.v*VOLUME.music)
+                set_volume(inst, st.v*STATE.volume.music)
                 until !playing(inst)
             }
         } with {

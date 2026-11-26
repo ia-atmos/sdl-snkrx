@@ -18,4 +18,4 @@ spawn {
     print("paused: game time in 1s of real time", string.format("%.3f", A.time - t0))
 }
 await(240, :frame)
-print("sfx", VOLUME.sfx, "dark", STATE.dark_transitions)
+print("sfx", STATE.volume.sfx, "dark", STATE.dark_transitions)

@@ -5,6 +5,7 @@
 ;; pixels at most (145.8 against 145.2 at tick 30), and both arrive at
 ;; the point by tick 150.
 
+pin var STATE = [ volume = [ sfx=0.5, music=0.5 ] ]    ;; the game's, which the engine reads
 include "../../eng/eng.atm"
 include "../../eng/random.atm"
 include "../../eng/phys.atm"

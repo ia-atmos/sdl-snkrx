@@ -283,9 +283,8 @@ func draw_image (img, x, y, r, sx, sy, color) {
 ;;; SOUNDS ;;;
 
 ;; The volumes of the tags of sounds of the original (`sfx`, `music`),
-;; which multiply the volume of each instance; the game saves it as
-;; `STATE.volume`.
-pin VOLUME = [ sfx=0.5, music=0.5 ]
+;; which multiply the volume of each instance, are `STATE.volume` of the
+;; game (`src/state.atm`, included before the engine).
 
 ;; A sound of the original by file name, with its tag, as `Sound(...)`.
 func sound (file, tag) {
@@ -298,7 +297,7 @@ func sound (file, tag) {
 ;; Plays a sound, as `sound:play{pitch=, volume=}`: an instance.
 func play (snd, opts) {
     val i = snd.i
-    val v = (opts && opts.volume || 1) * VOLUME@(snd.kind)
+    val v = (opts && opts.volume || 1) * STATE.volume@(snd.kind)
     val p = opts && opts.pitch || 1
     val l = opts && opts.loop
     `:number eg_snd_play(eg_int($i), eg_dbl($v), eg_dbl($p), a_truthy($l))`

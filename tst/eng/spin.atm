@@ -4,6 +4,7 @@
 ;; turn per step (47 rad/s), three times as fast as the original, and a
 ;; pushed seeker lost its bounce on a wall by its corners.
 
+pin var STATE = [ volume = [ sfx=0.5, music=0.5 ] ]    ;; the game's, which the engine reads
 include "../../eng/eng.atm"
 include "../../eng/phys.atm"
 

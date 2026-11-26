@@ -1,5 +1,6 @@
 ;; Text in the fonts of the original, and an image.
 
+pin var STATE = [ volume = [ sfx=0.5, music=0.5 ] ]    ;; the game's, which the engine reads
 include "../../eng/eng.atm"
 
 val main = eng.canvas(true, true)
