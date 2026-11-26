@@ -36,6 +36,10 @@ session, `session#N` (this session: `sdl-snxkx`, for the repository
 | #25 | The options do not take the input today: a click behind them buys a card in the shop (the original does not update the shop while `paused`) | defect | closed (author's go, 2026-11-21): the shop opens the options itself and is toggled off behind them until they start to close (`ShopPause`, `:Shop.options`, `:Options.closing`); no flag; test `tst/game/pause`, the same output as `exp-grab`; two tutorial screenshots change (the shop frozen while paused). To be replaced by `grab` if it enters the language |
 | #26 | In level 2 with one sentry, the sentry dies earlier in the port than in the original (1671 to 2513 against 2945, ten runs, `doc/compiler.md` 8) | work | open, in part: fixed the friction (`c17ce1e`), the spin of a push (`9f11a0d`), a push from a contact from the velocity before the step (`fd59ee9`), and the bounce of the leader in the step of the contact; with 15 seeds, level 1 near the original (cleared 2442 against 2450), the sentry of level 2 dies at 2182 against 2945. Left: Box2D 3 applies the restitution after the friction (no world setting changes it; `eng/friction` -100 160 against -100 140); the original is one run, so the long scenes cannot separate smaller causes. `doc/compiler.md` 8 |
 | #27 | `toggle` replaced by `mute` (lang `f416c03`, approved in `atmos-grab`) | work | closed: the shop and the win screen use `mute <!:draw> on :X.mute`; compiler `4b4d3c4`, 41 tests identical; `exp-grab` (#23) is superseded |
+| #28 | context: one canvas switch for a pool of stars (`src/shared.atm:81`) | excerpt, good | shown 2026-11-26 |
+| #29 | the shop frozen behind the options: three events and a `par :all` (`src/shop.atm:763`) | excerpt, bad | shown 2026-11-26: needs a way to mute a task but not the tasks it awaits |
+| #30 | a push from a contact reads the velocity before the step (`src/seeker.atm:22`) | excerpt, good | shown 2026-11-26 |
+| #31 | `send`: every game event checks whether its target has an arena (`src/snake.atm:27`) | excerpt, bad | shown 2026-11-26: a leftover of the pin rules on global emits |
 
 ## Items
 
