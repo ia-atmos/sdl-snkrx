@@ -156,7 +156,11 @@ lines at S7, 8647 at S9.) Since the move to env-sdl (sdl-snxkx#6), the
 window, the loop, the events, the time, and the test mode are in
 env-sdl, which, as LÖVE for the original, is not counted: `eng/` is then
 2048 lines and 18037 tokens, against 2194 and 19347 just before
-(`tools/count.py eng/*.h eng/*.atm`).
+(`tools/count.py eng/*.h eng/*.atm`). Since the data became one record per
+class, character, passive, and level (sdl-snxkx#34b), `src/data.atm` is
+2359 lines and 16162 tokens (a field per line, against 1665 and 14650),
+and the game 10129 lines and 93304 tokens; without `data.atm`, 7770
+lines and 77142 tokens, about as before.
 
 The lines fall less than the tokens, for three measured reasons:
 
