@@ -42,7 +42,7 @@ loop st_ on :step {
         }
         val x, y = body_pos(wr.b)
         set out@+ = "wander " ++ f(x) ++ "," ++ f(y)
-        print(vector.join(out, "  "))
+        print(string.join(out, "  "))
     }
     until eng.tick() == 240
 }

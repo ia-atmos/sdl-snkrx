@@ -21,7 +21,7 @@ val SAVE_DIR = os.getenv("SNX_SAVE") ||
 
 func save_lines (name, lines) {
     if SAVE_DIR {
-        eng.write_file(SAVE_DIR ++ "/" ++ name, vector.join(lines, "\n") ++ "\n")
+        eng.write_file(SAVE_DIR ++ "/" ++ name, string.join(lines, "\n") ++ "\n")
     }
 }
 
@@ -125,7 +125,7 @@ func run_save (run) {
         loop i in 3 {
             set cs@+ = run.cards@(i) || "-"
         }
-        set ls@+ = "locked true " ++ vector.join(cs, " ")
+        set ls@+ = "locked true " ++ string.join(cs, " ")
     }
     loop _, u in run.units {
         set ls@+ = "unit " ++ unit_character(u) ++ " " ++ tostring(unit_level(u)) ++ " " ++
@@ -134,7 +134,7 @@ func run_save (run) {
     loop _, p in run.passives {
         set ls@+ = "passive " ++ p.passive ++ " " ++ tostring(p.level) ++ " " ++ tostring(p.xp)
     }
-    set ls@+ = "pool " ++ vector.join(run.pool || [], " ")
+    set ls@+ = "pool " ++ string.join(run.pool || [], " ")
     save_lines("run.txt", ls)
 }
 

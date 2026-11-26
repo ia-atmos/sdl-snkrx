@@ -167,7 +167,7 @@ func info_class (class, units, tut) {
         lv > 0 => class_descriptions@(class)@(lv)
         class == "sorcerer" => do {
             val d = class_descriptions@(class)@(3)
-            vector.join(string.split(d, "[yellow]"), "[light_bg]")
+            string.join(string.split(d, "[yellow]"), "[light_bg]")
         }
         else => class_descriptions@(class)@(3)
     }

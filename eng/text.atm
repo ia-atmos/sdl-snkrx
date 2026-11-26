@@ -69,7 +69,7 @@ func text (lines) {
     loop _, l in lines {
         val line = vector.insert(t.lines, X.copy(l))
         set line.chars = text_parse(line.text)
-        set line.raw = vector.join(loop_chars(line.chars))
+        set line.raw = string.join(loop_chars(line.chars))
     }
     text_layout(t)
     t
@@ -88,7 +88,7 @@ func text_set (t, i, s) {
     val line = t.lines@(i)
     set line.text = s
     set line.chars = text_parse(s)
-    set line.raw = vector.join(loop_chars(line.chars))
+    set line.raw = string.join(loop_chars(line.chars))
     text_layout(t)
 }
 

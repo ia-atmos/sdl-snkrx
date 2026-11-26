@@ -137,7 +137,7 @@ task Transition (e) {
                 set t.lines = gold_lines(e.counting, k)
                 loop _, l in t.lines {
                     set l.chars = text_parse(l.text)
-                    set l.raw = vector.join(loop_chars(l.chars))
+                    set l.raw = string.join(loop_chars(l.chars))
                 }
                 text_layout(t)
                 play(rtable([coins1, coins2, coins3]), [pitch=rfloat(0.95, 1.05), volume=0.5])
