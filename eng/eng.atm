@@ -100,15 +100,15 @@ pin eng = [
     target = func (c) {
         `eg_canvas_set(eg_int($c));`
     },
-    ;; eng.on(c): [enter, leave] of a `context` that draws in the canvas `c`
+    ;; eng.on(c): a context (`in eng.on(c), ...`) that draws in the canvas `c`
     on = func (c) {
-        [
-            func () {
+        :Context [
+            enter = func () {
                 val old = `:number EG_CUR`
                 `eg_canvas_set(eg_int($c));`
                 old
             },
-            func (old) {
+            leave = func (old) {
                 `eg_canvas_set(eg_int($old));`
             },
         ]

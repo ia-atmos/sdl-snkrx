@@ -18,7 +18,7 @@ pin pixul_font = font("PixulBrush", 8)
 ;; The background: a checkerboard of 22-pixel cells and a vertical
 ;; gradient, drawn while it lives.
 task Background () {
-    context eng.on(BACK) {
+    in eng.on(BACK), do {
         loop on :draw {
             loop i in (1, 32) {
                 loop j in (1, 18) {
@@ -76,14 +76,12 @@ task Star (p) {
 
 ;; Spawns a star every 0.375s, while it lives.
 ;; The stars draw in their canvas: one switch to STARS and back for all
-;; of them in a frame, by the `context` around their pool.
+;; of them in a frame, by the context of their pool.
 task Stars () {
-    context eng.on(STARS) {
-        pin ss = tasks()
-        loop {
-            await 375ms
-            spawn @ss Star(rtable(STAR_POSITIONS))
-        }
+    pin ss = in eng.on(STARS), tasks()
+    loop {
+        await 375ms
+        spawn @ss Star(rtable(STAR_POSITIONS))
     }
 }
 
